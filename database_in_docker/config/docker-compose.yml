@@ -1,0 +1,11 @@
+version: '3'
+services:
+  postgre:
+    build:
+      context: ../container
+    ports:
+      - 5432:5432
+    image: adda_postgre_image
+    container_name: adda_postgre
+    volumes:
+      - ~/adda_data/postgre:/var/lib/postgresql/data
