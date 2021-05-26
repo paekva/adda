@@ -1,0 +1,39 @@
+@startuml
+
+package "com.ifmo.adda" {
+  package "config" {
+    [Spring @Configuration classes]
+  }
+  package "controller" {
+    [Spring @Controller classes]
+  }
+  package "dto" {
+    [Data Transfer objects]
+  }
+  package "dao" {
+    [Data Access objects (@Entity)]
+  }
+  package "exception" {
+    [Custom exceptions]
+  }
+  package "repository" {
+    [Spring @Repository classes]
+  }
+  package "service" {
+    [Business-logic services (Spring @Service)]
+  }
+  [AddaServerApplication]
+
+  controller --> service : <<use>>
+  service --> repository : <<use>>
+  service --> exception : <<create>>
+  service --> dto : <<create>>
+  service --> dao : <<use>>
+  controller --> dto : <<use>>
+  repository --> dao : <<create>>
+  AddaServerApplication --> config : <<use>>
+  AddaServerApplication --> service : <<use>>
+
+}
+
+@enduml

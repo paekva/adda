@@ -1,0 +1,60 @@
+@startuml
+
+package "com.ifmo.adda" {
+  package "controller" {
+    class BasketController {
+     - {field} BasketService: BasketService
+     + {method} Basket(userId: Int): BasketDto
+    }
+  }
+  package "service" {
+    class BasketService {
+     - {field} BasketEntryRepository: BasketEntryRepository
+     + {method} getBasketData(): BasketDto
+     + {method} addEntryToBasket(productId: Int, amount: Int): ProductDto
+     + {method} deleteEntryFromBasket(id: Int): ProductDto
+     + {method} checkout(id: Int): void
+    }
+  }
+  package "repository" {
+    interface JpaRepository
+    class BasketEntryRepository
+  }
+  package "dto" {
+    class BasketDto {
+      + {field} Basket: List<BasketEntryDto>
+    }
+    class BasketEntryDto {
+      + {field} id: Int
+      + {field} products: List<ProductDto>
+      + {field} clientId: Int
+    }
+    BasketDto "0..1" o-- "0..*" BasketEntryDto
+  }
+  package "dao" {
+    class BasketEntry {
+      + {field} id: Int
+      + {field} productIds: List<Int>
+      + {field} clientId: Int
+    }
+  }
+
+  BasketController --> BasketService : <<use>>
+  BasketService --> BasketEntryRepository : <<use>>
+  BasketService --> BasketDto : <<create>>
+  BasketService --> BasketEntryDto : <<create>>
+  BasketService --> BasketEntry : <<create>>
+  BasketEntryRepository --|> JpaRepository : <<implement>>
+  BasketEntryRepository --* BasketEntry : <<contains>>
+}
+
+@enduml
+
+
+Заказ имеет:
+- id
+- статус
+- дата заказа
+- лист товаров
+- id клиента
+- лист ошибок выполнения заказа 
