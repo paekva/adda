@@ -16,8 +16,8 @@ spring:
           lob:
             non_contextual_creation: true
   flyway:
-    locations: classpath:db/migrations
-    enabled: false
+    locations: classpath:migrations
+    enabled: true
     baselineOnMigrate: true
   resources:
     static-locations: /tmp # change it to path where the static is
