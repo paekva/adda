@@ -1,6 +1,6 @@
 package com.ifmo.adda
 
-import com.itmo.adda.ADDAServerApp
+import com.ifmo.adda.ADDAServerApp
 
 class ADDAServerAppRunner {
     companion object {

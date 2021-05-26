@@ -1,4 +1,4 @@
-package com.itmo.adda
+package com.ifmo.adda
 
 import mu.KLogging
 import org.springframework.boot.SpringApplication
