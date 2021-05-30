@@ -3,7 +3,7 @@ import {getUrl} from "./url";
 import {Method} from "./types";
 
 export enum AppRole {
-    MANAGER = "MANAGER",
+    ADMIN = "ADMIN",
     CLIENT = "CLIENT",
     PURCHASER = "PURCHASER",
     LOADER = "LOADER",

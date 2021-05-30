@@ -1,12 +1,12 @@
 import React, {useEffect} from "react";
-import {connect} from "react-redux";
 import {AppRole, getUserData} from "../api/user";
-import store from "../store/store";
-import {StateChangeActionType} from "../store/actions";
 import {getAuthService} from "./auth/authService";
 import ProductList from "./common/ProductList";
 import {Product} from "../types/Product";
 import {getProductsList} from "../api/products";
+import {StateChangeActionType} from "../store/actions";
+import store from "../store/store";
+import {connect} from "react-redux";
 
 type Props = {
     setUserData: (roles: AppRole[], userName: string) => void;
@@ -39,7 +39,10 @@ const Workspace = (props: Props): JSX.Element => {
     }, [setProductsData]);
 
     return <div style={{display: 'flex', justifyContent: 'center'}}>
-        <ProductList products={products}/>
+        {(roles.includes(AppRole.CLIENT) || roles.includes(AppRole.ADMIN))
+            ? (<ProductList products={products}/>)
+            : username
+        }
     </div>
 }
 
