@@ -16,7 +16,7 @@ const ProductList = (props: ProductListProps) => {
                     <div className='controls'>
                         <div>
                             {el.name}
-                            {el.cost}
+                            {el.price}
                         </div>
 
                         <button onClick={() => console.warn(el.id)} >+</button>

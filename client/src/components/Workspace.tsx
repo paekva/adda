@@ -5,15 +5,19 @@ import store from "../store/store";
 import {StateChangeActionType} from "../store/actions";
 import {getAuthService} from "./auth/authService";
 import ProductList from "./common/ProductList";
+import {Product} from "../types/Product";
+import {getProductsList} from "../api/products";
 
 type Props = {
     setUserData: (roles: AppRole[], userName: string) => void;
+    setProductsData: (products: Product[]) => void;
+    products: Product[];
     roles: AppRole[],
     username: string,
 };
 
 const Workspace = (props: Props): JSX.Element => {
-    const {setUserData, roles, username} = props;
+    const {setUserData, roles, username, setProductsData, products} = props;
 
     useEffect(() => {
         getUserData()
@@ -23,14 +27,19 @@ const Workspace = (props: Props): JSX.Element => {
             });
     }, [setUserData]);
 
+    useEffect(() => {
+        getProductsList()
+            .then((response) => {
+                    setProductsData(response.products)
+                }
+            )
+            .catch((e) => {
+                console.error(e.toString());
+            });
+    }, [setProductsData]);
+
     return <div style={{display: 'flex', justifyContent: 'center'}}>
-        <ProductList products={[
-            {id: 1, name: 'first', cost: '11 rub'},
-            {id: 1, name: 'first', cost: '11 rub'},
-            {id: 1, name: 'first', cost: '11 rub'},
-            {id: 1, name: 'first', cost: '11 rub'},
-            {id: 1, name: 'first', cost: '11 rub'}
-            ]}/>
+        <ProductList products={products}/>
     </div>
 }
 
@@ -38,6 +47,7 @@ const mapStateToProps = (store: any) => {
     return {
         roles: store.roles,
         username: store.username,
+        products: store.products
     };
 };
 
@@ -50,6 +60,12 @@ const mapDispatchToProps = () => {
                     roles,
                     userName,
                 },
+            });
+        },
+        setProductsData: (products: Product[]) => {
+            store.dispatch({
+                type: StateChangeActionType.SET_PRODUCTS_LIST,
+                payload: products
             });
         },
     };

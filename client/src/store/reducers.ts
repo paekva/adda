@@ -1,8 +1,8 @@
 import {StateChangeActions, StateChangeActionType} from "./actions";
-import {initialState} from "./store";
+import {AppStore, initialState} from "./store";
 
 function rootReducer(
-    state: any = initialState,
+    state: AppStore = initialState,
     action: StateChangeActions
 ): any {
     switch (action.type) {
@@ -23,6 +23,12 @@ function rootReducer(
                 ...state,
                 roles: action.payload.roles,
                 username: action.payload.userName,
+            };
+        }
+        case StateChangeActionType.SET_PRODUCTS_LIST: {
+            return {
+                ...state,
+                products: action.payload,
             };
         }
     }

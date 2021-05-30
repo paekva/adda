@@ -1,9 +1,11 @@
 import {AppRole} from "../api/user";
+import {Product} from "../types/Product";
 
 export enum StateChangeActionType {
     SET_TOKEN = "SET_TOKEN",
     SET_AUTH_FAIL = "SET_AUTH_FAIL",
     SET_ADMIN_ROLE = "SET_ADMIN_ROLE",
+    SET_PRODUCTS_LIST = "SET_PRODUCTS_LIST",
 }
 
 type SetToken = {
@@ -24,8 +26,14 @@ type SetAdminRole = {
     };
 };
 
+type SetProductsList = {
+    type: StateChangeActionType.SET_PRODUCTS_LIST;
+    payload: Product[];
+};
+
 
 export type StateChangeActions =
     | SetToken
     | SetAuthFail
-    | SetAdminRole;
+    | SetAdminRole
+    | SetProductsList;
