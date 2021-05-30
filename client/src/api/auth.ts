@@ -1,5 +1,6 @@
 import {route} from './url'
 import {getAuthService} from '../components/auth/authService'
+import {Method} from "./types";
 
 const request = require('request')
 
@@ -14,7 +15,7 @@ const makeRequest = (body: string) => {
     request(
         {
             url: `${route}/oauth/token`,
-            method: 'POST',
+            method: Method.POST,
             headers: {'Content-Type': 'application/x-www-form-urlencoded'},
             body,
             auth: {
