@@ -4,6 +4,7 @@ import {AppRole, getUserData} from "../api/user";
 import store from "../store/store";
 import {StateChangeActionType} from "../store/actions";
 import {getAuthService} from "./auth/authService";
+import ProductList from "./common/ProductList";
 
 type Props = {
     setUserData: (roles: AppRole[], userName: string) => void;
@@ -22,9 +23,16 @@ const Workspace = (props: Props): JSX.Element => {
             });
     }, [setUserData]);
 
-    return <div>Success {roles} {username}</div>
+    return <div style={{display: 'flex', justifyContent: 'center'}}>
+        <ProductList products={[
+            {id: 1, name: 'first', cost: '11 rub'},
+            {id: 1, name: 'first', cost: '11 rub'},
+            {id: 1, name: 'first', cost: '11 rub'},
+            {id: 1, name: 'first', cost: '11 rub'},
+            {id: 1, name: 'first', cost: '11 rub'}
+            ]}/>
+    </div>
 }
-
 
 const mapStateToProps = (store: any) => {
     return {

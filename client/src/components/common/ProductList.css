@@ -1,0 +1,30 @@
+.gridWrapper {
+    width: 1050px;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    grid-column-gap: 50px;
+    grid-row-gap: 50px;
+}
+
+.productEl {
+    display: flex;
+    flex-direction: column;
+    width: 180px;
+    height: 180px;
+
+    border: 1px solid black;
+    border-radius: 4px;
+
+    padding: 10px;
+}
+
+.controls {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    flex: 1
+}
+
+.image {
+    flex: 4
+}

@@ -38,6 +38,7 @@ const SignIn = (props: {
 
     return (
         <div className='signInWrapper'>
+            <div className='title'> Авторизация</div>
             <FormWrapper inputs={[
                 <SimpleField
                     label={'Логин'}
@@ -65,8 +66,10 @@ const SignIn = (props: {
                 <Button
                     type="submit"
                     variant="contained"
-                    color="primary"
+                    color="default"
                     onClick={onSignIn}
+                    fullWidth
+                    style={{height: 56}}
                 >
                     Войти
                 </Button>

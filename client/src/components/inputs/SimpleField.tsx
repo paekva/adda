@@ -58,8 +58,8 @@ export const SimpleField = (props: FieldData): JSX.Element => {
     />
 }
 
-export const FormWrapper = (props: {inputs: JSX.Element[], style?: any}):JSX.Element => {
-    return <Grid style={props.style ?? {width: '400px'} } container spacing={2}>
+export const FormWrapper = (props: { inputs: JSX.Element[], style?: any }): JSX.Element => {
+    return <Grid style={props.style ?? {width: '400px'}} container spacing={2}>
         {props.inputs.map((el, index) => {
             return <Grid item xs={12} key={'grid ' + index}>
                 {el}
@@ -74,7 +74,7 @@ export const validatePhoneNumber = (value: string) => {
     return v !== null;
 }
 
-export const validatePercentage = (value: string)=> {
+export const validatePercentage = (value: string) => {
     const r = RegExp('^[0-9]+$');
     const v = value.match(r);
     const toNum = Number(value);
