@@ -1,7 +1,5 @@
 package com.ifmo.adda
 
-import com.ifmo.adda.ADDAServerApp
-
 class ADDAServerAppRunner {
     companion object {
         @JvmStatic
