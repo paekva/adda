@@ -1,4 +1,5 @@
-import { route } from './url'
+import {route} from './url'
+import {getAuthService} from '../components/auth/authService'
 
 const request = require('request')
 
@@ -14,7 +15,7 @@ const makeRequest = (body: string) => {
         {
             url: `${route}/oauth/token`,
             method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
             body,
             auth: {
                 user,
@@ -28,11 +29,11 @@ const makeRequest = (body: string) => {
 
 const callback = (error: any, response: any, body: any) => {
     const ans = JSON.parse(body)
-    if(ans.error) {
-        console.error(ans.error_description);
+    if (ans.error) {
+        getAuthService().setAuthError(ans.error_description);
         return
     }
 
     const token = ans.access_token
-    console.warn(token)
+    getAuthService().setUserToken(token)
 }

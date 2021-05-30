@@ -1,0 +1,12 @@
+.signInWrapper {
+    width: 350px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.error {
+    color: red;
+    padding: 20px;
+}
