@@ -5,7 +5,8 @@ export enum StateChangeActionType {
     SET_TOKEN = "SET_TOKEN",
     SET_AUTH_FAIL = "SET_AUTH_FAIL",
     SET_ADMIN_ROLE = "SET_ADMIN_ROLE",
-    SET_CURRENT_MENU_ITEM = "SET_CURRENT_MENU_ITEM"
+    SET_CURRENT_MENU_ITEM = "SET_CURRENT_MENU_ITEM",
+    SET_ORDER_OPENED = "SET_ORDER_OPENED"
 }
 
 type SetToken = {
@@ -31,8 +32,14 @@ type SetCurrentMenuItem = {
     payload: MenuItem;
 };
 
+type SetOrderOpened = {
+    type: StateChangeActionType.SET_ORDER_OPENED;
+    payload: number;
+};
+
 export type StateChangeActions =
     | SetToken
     | SetAuthFail
     | SetAdminRole
-    | SetCurrentMenuItem;
+    | SetCurrentMenuItem
+    | SetOrderOpened;

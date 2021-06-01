@@ -4,11 +4,13 @@ import {ordersTableScheme} from "./OrdersTableScheme";
 import {getOrdersList, getOrdersListForUser} from "../../api/orders";
 import {connect} from "react-redux";
 import {Order} from "../../types";
-import {AppStore} from "../../store/store";
+import store, {AppStore} from "../../store/store";
 import {AppRole} from "../../api/user";
+import {StateChangeActionType} from "../../store/actions";
 
 export type OrdersTableProps = {
     roles: AppRole[]
+    setSelectedOrder: (selectedOrder: number) => void
 }
 const OrdersTable = (props: OrdersTableProps): JSX.Element => {
     const [orderList, setOrdersList] = useState<Order[]>([
@@ -19,7 +21,8 @@ const OrdersTable = (props: OrdersTableProps): JSX.Element => {
         (props.roles.includes(AppRole.ADMIN) ? getOrdersList : getOrdersListForUser)()
             .then((response) => setOrdersList(response.orders))
     }, [props.roles]);
-    return <DataTable data={orderList} scheme={ordersTableScheme}/>
+
+    return <DataTable data={orderList} scheme={ordersTableScheme} onRowClick={props.setSelectedOrder}/>
 }
 
 const mapStateToProps = (store: AppStore) => {
@@ -28,4 +31,15 @@ const mapStateToProps = (store: AppStore) => {
     };
 };
 
-export default connect(mapStateToProps)(OrdersTable);
+const mapDispatchToProps = () => {
+    return {
+        setSelectedOrder: (selectedOrder: number) => {
+            store.dispatch({
+                type: StateChangeActionType.SET_ORDER_OPENED,
+                payload: selectedOrder,
+            });
+        },
+    };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(OrdersTable);
