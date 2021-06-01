@@ -13,7 +13,7 @@ const AdminMenu = [
 
 const WorkerMenu = [
     {menu: MenuItem.ORDERS, title: 'Статус заказов'},
-    {menu: MenuItem.USER_PAGE, title: 'Личный кабинет'},
+    {menu: MenuItem.PERSONAL, title: 'Личный кабинет'},
     {menu: MenuItem.NOTIFICATIONS, title: 'Уведомления'},
 ]
 

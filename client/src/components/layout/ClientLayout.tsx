@@ -7,7 +7,7 @@ import {MenuItem} from "../../types";
 const ClientMenu = [
     {menu: MenuItem.ORDERS, title: 'Мои заказы'},
     {menu: MenuItem.BUCKET, title: 'Корзина'},
-    {menu: MenuItem.USER_PAGE, title: 'Личный кабинет'},
+    {menu: MenuItem.PERSONAL, title: 'Личный кабинет'},
     {menu: MenuItem.NOTIFICATIONS, title: 'Уведомления'},
 ]
 

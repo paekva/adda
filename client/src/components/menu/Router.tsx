@@ -5,6 +5,7 @@ import {MenuItem} from "../../types";
 import OrdersTable from "../orders/OrdersTable";
 import ProductList from "../products/ProductList";
 import React from "react";
+import {Personal} from "../personal/Personal";
 
 export type RouterProps = {
     currentMenuItem: MenuItem | null
@@ -17,6 +18,8 @@ export const Router = (props: RouterProps): JSX.Element => {
             return <OrdersTable/>
         case MenuItem.PRODUCTS:
             return <ProductList/>
+        case MenuItem.PERSONAL:
+            return <Personal/>
         default:
             return <div>no such page yet</div>
     }

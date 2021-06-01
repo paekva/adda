@@ -18,8 +18,8 @@ export enum MenuItem {
     ORDERS,
     SINGLE_ORDER,
     NOTIFICATIONS,
-    USER_PAGE,
+    PERSONAL,
     NEW_USER,
-    SINGLE_PRODUCTб,
+    SINGLE_PRODUCT,
     BUCKET
 }
