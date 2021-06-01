@@ -14,18 +14,19 @@ export type OrdersTableProps = {
     resetLastSelectedData: () => void
 }
 const OrdersTable = (props: OrdersTableProps): JSX.Element => {
+    const {roles, setSelectedOrder, resetLastSelectedData} = props;
     const [orderList, setOrdersList] = useState<Order[]>([
         {id: 1, client: 0, dateOfOrder: 11, dateOfReceive: 22, status: 0, products: [1]}
     ]);
 
     useEffect(() => {
-        (props.roles.includes(AppRole.ADMIN) ? getOrdersList : getOrdersListForUser)()
+        (roles.includes(AppRole.ADMIN) ? getOrdersList : getOrdersListForUser)()
             .then((response) => setOrdersList(response.orders))
-            .then(props.resetLastSelectedData)
-    }, [props.roles, props.resetLastSelectedData]);
+            .then(resetLastSelectedData)
+    }, [roles, resetLastSelectedData]);
 
-    const rowCLickHandler = useCallback((id) => props.setSelectedOrder(orderList.find(el => el.id === id) ?? null),
-        [props.setSelectedOrder, orderList])
+    const rowCLickHandler = useCallback((id) => setSelectedOrder(orderList.find(el => el.id === id) ?? null),
+        [setSelectedOrder, orderList])
     return <DataTable data={orderList} scheme={ordersTableScheme} onRowClick={rowCLickHandler}/>
 }
 
