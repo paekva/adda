@@ -36,7 +36,7 @@ const Workspace = (props: Props): JSX.Element => {
         ? <div>Wait for it...</div>
         : roles.includes(AppRole.USER)
             ? (<ClientLayout/>)
-            : (<WorkerLayout/>)
+            : (<WorkerLayout roles={roles}/>)
 
 }
 

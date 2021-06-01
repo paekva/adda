@@ -1,7 +1,7 @@
 import React from "react";
 import './Layout.css';
-import Router from "../menuBar/Router";
-import {MenuBar} from "../menuBar/MenuBar";
+import Router from "../menu/Router";
+import MenuBar from "../menu/MenuBar";
 import {MenuItem} from "../../types";
 
 
