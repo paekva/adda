@@ -11,10 +11,12 @@ export const ordersTableScheme: Scheme = {
         label: 'Состав'
     },
     'dateOfOrder': {
-        label: 'Дата заказа'
+        label: 'Дата заказа',
+        formatter: (num) => new Date(num).toLocaleDateString("en-US")
     },
     'dateOfReceive': {
-        label: 'Дата доставки'
+        label: 'Дата доставки',
+        formatter: (num) => new Date(num).toLocaleDateString("en-US")
     },
     'status': {
         label: 'Состояние'

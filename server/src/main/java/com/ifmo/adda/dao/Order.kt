@@ -1,19 +1,25 @@
 package com.ifmo.adda.dao
 
-import java.math.BigDecimal
+import java.time.Instant
 import javax.persistence.*
 
 @Entity
-@Table(name = "PRODUCT")
-data class Product(
+@Table(name = "ORDER_ITEM")
+data class Order(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false)
     var id: Int? = null,
 
     @Column(nullable = false)
-    val name: String,
+    val client: Int,
 
     @Column(nullable = false)
-    val price: BigDecimal
+    var dateOfOrder: Instant,
+
+    @Column(nullable = false)
+    val dateOfReceive: Instant,
+
+    @Column(nullable = false)
+    val status: Int
 )

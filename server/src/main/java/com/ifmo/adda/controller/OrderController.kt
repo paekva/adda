@@ -1,5 +1,7 @@
 package com.ifmo.adda.controller
 
+import com.ifmo.adda.dto.OrderDto
+import com.ifmo.adda.service.OrdersService
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
@@ -11,22 +13,17 @@ import org.springframework.web.bind.annotation.RestController
     produces = [MediaType.APPLICATION_JSON_VALUE]
 )
 class OrderController(
+    private val ordersService: OrdersService
 ) {
     @GetMapping(
         value = ["/all"]
     )
-    fun getAllProducts(): OrdersList = OrdersList(listOf(Order(1, 2, listOf(3, 8, 9), 4, 5, 6)))
+    fun getAllProducts(): OrdersList = ordersService.getOrders()
 }
 
-data class Order(
-    val id: Int,
-    val client: Int,
-    val products: List<Int>,
-    val dateOfOrder: Int,
-    val dateOfReceive: Long,
-    val status: Int
-)
+//OrdersList(listOf(Order(1, 2, listOf(3, 8, 9), 4, 5, 6)))
+
 
 data class OrdersList(
-    val orders: List<Order>
+    val orders: List<OrderDto>
 )
