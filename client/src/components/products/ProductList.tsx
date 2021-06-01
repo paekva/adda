@@ -20,7 +20,7 @@ const ProductList = (props: ProductListProps) => {
             });
     }, []);
 
-    return <div className='gridWrapper'>
+    return <div className='wrapper'>
         {
             products.map((el) => <ProductItem product={el}/>)
         }
