@@ -12,6 +12,7 @@ interface UserRepository : JpaRepository<User, Long> {
   @Query(
       "SELECT DISTINCT user FROM User user " +
           "INNER JOIN FETCH user.authorities AS authorities " +
-          "WHERE user.username = :username")
+          "WHERE user.username = :username"
+  )
   fun findByUsername(@Param("username") username: String): User?
 }
