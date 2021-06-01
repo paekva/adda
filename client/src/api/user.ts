@@ -14,6 +14,7 @@ export enum AppRole {
 type UserDataResponse = {
     username: string;
     roles: AppRole[];
+    id: number;
 };
 
 export const getUserData = (): Promise<UserDataResponse> => {

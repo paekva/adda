@@ -5,6 +5,7 @@ import ProductList from "./products/ProductList";
 import {StateChangeActionType} from "../store/actions";
 import store from "../store/store";
 import {connect} from "react-redux";
+import OrdersTable from "./orders/OrdersTable";
 
 type Props = {
     setUserData: (roles: AppRole[], userName: string) => void;
@@ -13,7 +14,7 @@ type Props = {
 };
 
 const Workspace = (props: Props): JSX.Element => {
-    const {setUserData, roles, username} = props;
+    const {setUserData, roles} = props;
 
     useEffect(() => {
         getUserData()
@@ -23,12 +24,10 @@ const Workspace = (props: Props): JSX.Element => {
             });
     }, [setUserData]);
 
-
-
     return <div style={{display: 'flex', justifyContent: 'center'}}>
         {(roles.includes(AppRole.CLIENT) || roles.includes(AppRole.ADMIN))
             ? (<ProductList />)
-            : username
+            : (<OrdersTable />)
         }
     </div>
 }

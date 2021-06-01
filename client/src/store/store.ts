@@ -1,6 +1,5 @@
 import {createStore} from "redux";
 import rootReducer from "./reducers";
-import {Product} from "../types/Product";
 import {AppRole} from "../api/user";
 
 export type AppStore = {
