@@ -4,13 +4,19 @@ import Router from "../menu/Router";
 import MenuBar from "../menu/MenuBar";
 import {MenuItem} from "../../types";
 
+const ClientMenu = [
+    {menu: MenuItem.ORDERS, title: 'Мои заказы'},
+    {menu: MenuItem.BUCKET, title: 'Корзина'},
+    {menu: MenuItem.USER_PAGE, title: 'Личный кабинет'},
+    {menu: MenuItem.NOTIFICATIONS, title: 'Уведомления'},
+]
 
 export const ClientLayout = (): JSX.Element => {
 
     return <div className='client'>
         <div className='inner'>
             <div className='title'>Каталог</div>
-            <MenuBar style={'clientMenuBar'} items={[{menu: MenuItem.ORDERS, title: 'Мои заказы'}]} />
+            <MenuBar style={'clientMenuBar'} items={ClientMenu} />
         </div>
         <Router />
     </div>

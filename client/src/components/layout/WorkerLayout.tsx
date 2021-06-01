@@ -7,20 +7,23 @@ import {AppRole} from "../../api/user";
 
 
 const AdminMenu = [
-    {menu: MenuItem.ORDERS, title: 'Заказы'},
-    {menu: MenuItem.PRODUCTS, title: 'Редактировать каталог'},
+    {menu: MenuItem.NEW_USER, title: 'Добавление пользователя'},
+    {menu: MenuItem.PRODUCTS, title: 'Обновление каталог'},
 ]
 
 const WorkerMenu = [
-    {menu: MenuItem.ORDERS, title: 'Заказы'},
+    {menu: MenuItem.ORDERS, title: 'Статус заказов'},
+    {menu: MenuItem.USER_PAGE, title: 'Личный кабинет'},
+    {menu: MenuItem.NOTIFICATIONS, title: 'Уведомления'},
 ]
 
-export const WorkerLayout = (props: {roles: AppRole[]}): JSX.Element => {
+export const WorkerLayout = (props: { roles: AppRole[] }): JSX.Element => {
     return <div className='outer'>
         <div className='title'>Статус заказов</div>
         <div className='worker'>
-            <MenuBar style={'workerMenuBar'} items={props.roles.includes(AppRole.ADMIN) ? AdminMenu : WorkerMenu} />
-            <Router />
+            <MenuBar style={'workerMenuBar'}
+                     items={props.roles.includes(AppRole.ADMIN) ? [...AdminMenu, ...WorkerMenu] : [...WorkerMenu]}/>
+            <Router/>
         </div>
     </div>
 }
