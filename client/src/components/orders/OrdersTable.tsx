@@ -5,8 +5,7 @@ import {Order} from "../../types/Order";
 import {getOrdersListByUser} from "../../api/orders";
 import {connect} from "react-redux";
 
-export type OrdersTableProps = {
-}
+export type OrdersTableProps = {}
 const OrdersTable = (props: OrdersTableProps): JSX.Element => {
     const [orderList, setOrdersList] = useState<Order[]>([
         {id: 1, client: 0, dateOfOrder: 11, dateOfReceive: 22, status: 0, products: [1]}

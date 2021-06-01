@@ -1,0 +1,17 @@
+.workerMenuBar {
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+    border: 1px solid black;
+}
+
+.clientMenuBar {
+    display: flex;
+    flex-direction: row;
+}
+
+.menuItem {
+    padding: 20px 10px;
+    border: 1px solid black;
+    width: 200px;
+}

@@ -4,7 +4,7 @@ import {Method} from "./types";
 
 export enum AppRole {
     ADMIN = "ADMIN",
-    CLIENT = "CLIENT",
+    USER = "USER",
     PURCHASER = "PURCHASER",
     LOADER = "LOADER",
     COURIER = "COURIER",
