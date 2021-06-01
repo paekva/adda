@@ -1,7 +1,7 @@
 import {createStore} from "redux";
 import rootReducer from "./reducers";
 import {AppRole} from "../api/user";
-import {MenuItem} from "../types";
+import {MenuItem, Order} from "../types";
 
 export type AppStore = {
     userToken: string | null,
@@ -9,7 +9,7 @@ export type AppStore = {
     roles: AppRole[];
     username: string | null;
     currentMenuItem: MenuItem | null
-    lastOpenedOrder: number | null
+    lastOpenedOrder: Order | null
 }
 
 export const initialState: AppStore = {

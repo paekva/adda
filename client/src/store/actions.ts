@@ -1,5 +1,5 @@
 import {AppRole} from "../api/user";
-import {MenuItem} from "../types";
+import {MenuItem, Order} from "../types";
 
 export enum StateChangeActionType {
     SET_TOKEN = "SET_TOKEN",
@@ -35,7 +35,7 @@ type SetCurrentMenuItem = {
 
 type SetOrderOpened = {
     type: StateChangeActionType.SET_ORDER_OPENED;
-    payload: number;
+    payload: Order | null;
 };
 
 type ResetLastSelectedData = {

@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useCallback, useEffect, useState} from "react";
 import {DataTable} from "../tableForData/DataTable";
 import {ordersTableScheme} from "./OrdersTableScheme";
 import {getOrdersList, getOrdersListForUser} from "../../api/orders";
@@ -10,7 +10,7 @@ import {StateChangeActionType} from "../../store/actions";
 
 export type OrdersTableProps = {
     roles: AppRole[]
-    setSelectedOrder: (selectedOrder: number) => void
+    setSelectedOrder: (selectedOrder: Order | null) => void
     resetLastSelectedData: () => void
 }
 const OrdersTable = (props: OrdersTableProps): JSX.Element => {
@@ -24,7 +24,9 @@ const OrdersTable = (props: OrdersTableProps): JSX.Element => {
             .then(props.resetLastSelectedData)
     }, [props.roles, props.resetLastSelectedData]);
 
-    return <DataTable data={orderList} scheme={ordersTableScheme} onRowClick={props.setSelectedOrder}/>
+    const rowCLickHandler = useCallback((id) => props.setSelectedOrder(orderList.find(el => el.id === id) ?? null),
+        [props.setSelectedOrder, orderList])
+    return <DataTable data={orderList} scheme={ordersTableScheme} onRowClick={rowCLickHandler}/>
 }
 
 const mapStateToProps = (store: AppStore) => {
@@ -35,7 +37,7 @@ const mapStateToProps = (store: AppStore) => {
 
 const mapDispatchToProps = () => {
     return {
-        setSelectedOrder: (selectedOrder: number) => {
+        setSelectedOrder: (selectedOrder: Order | null) => {
             store.dispatch({
                 type: StateChangeActionType.SET_ORDER_OPENED,
                 payload: selectedOrder,
