@@ -6,7 +6,6 @@ import {AppRole} from "../api/user";
 export type AppStore = {
     userToken: string | null,
     authFailMessage: string | null,
-    products: Product[];
     roles: AppRole[];
     username: string | null;
 }
@@ -14,7 +13,6 @@ export type AppStore = {
 export const initialState: AppStore = {
     userToken: null,
     authFailMessage: null,
-    products: [],
     roles: [],
     username: null,
 };

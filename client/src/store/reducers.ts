@@ -25,12 +25,6 @@ function rootReducer(
                 username: action.payload.userName,
             };
         }
-        case StateChangeActionType.SET_PRODUCTS_LIST: {
-            return {
-                ...state,
-                products: action.payload,
-            };
-        }
     }
     return state;
 }
