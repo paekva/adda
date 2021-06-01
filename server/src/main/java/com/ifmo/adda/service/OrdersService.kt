@@ -14,7 +14,7 @@ class OrdersService(
 ) {
 
     fun getOrders() = OrdersList(
-        ordersRepository.findAll().map { it.toDto() }
+        ordersRepository.findAll().map { it.toDto() } + customOrdersRepository.findAll().map { it.toDto() }
     )
 
     @Throws(Exception::class)
