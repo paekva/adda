@@ -39,6 +39,12 @@ function rootReducer(
                 lastOpenedOrder: action.payload
             };
         }
+        case StateChangeActionType.RESET_LAST_SELECTED_DATA: {
+            return {
+                ...state,
+                lastOpenedOrder: null
+            };
+        }
     }
     return state;
 }

@@ -11,6 +11,7 @@ import {StateChangeActionType} from "../../store/actions";
 export type OrdersTableProps = {
     roles: AppRole[]
     setSelectedOrder: (selectedOrder: number) => void
+    resetLastSelectedData: () => void
 }
 const OrdersTable = (props: OrdersTableProps): JSX.Element => {
     const [orderList, setOrdersList] = useState<Order[]>([
@@ -20,7 +21,8 @@ const OrdersTable = (props: OrdersTableProps): JSX.Element => {
     useEffect(() => {
         (props.roles.includes(AppRole.ADMIN) ? getOrdersList : getOrdersListForUser)()
             .then((response) => setOrdersList(response.orders))
-    }, [props.roles]);
+            .then(props.resetLastSelectedData)
+    }, [props.roles, props.resetLastSelectedData]);
 
     return <DataTable data={orderList} scheme={ordersTableScheme} onRowClick={props.setSelectedOrder}/>
 }
@@ -37,6 +39,11 @@ const mapDispatchToProps = () => {
             store.dispatch({
                 type: StateChangeActionType.SET_ORDER_OPENED,
                 payload: selectedOrder,
+            });
+        },
+        resetLastSelectedData: () => {
+            store.dispatch({
+                type: StateChangeActionType.RESET_LAST_SELECTED_DATA,
             });
         },
     };

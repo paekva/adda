@@ -6,7 +6,8 @@ export enum StateChangeActionType {
     SET_AUTH_FAIL = "SET_AUTH_FAIL",
     SET_ADMIN_ROLE = "SET_ADMIN_ROLE",
     SET_CURRENT_MENU_ITEM = "SET_CURRENT_MENU_ITEM",
-    SET_ORDER_OPENED = "SET_ORDER_OPENED"
+    SET_ORDER_OPENED = "SET_ORDER_OPENED",
+    RESET_LAST_SELECTED_DATA = "RESET_LAST_SELECTED_DATA"
 }
 
 type SetToken = {
@@ -37,9 +38,14 @@ type SetOrderOpened = {
     payload: number;
 };
 
+type ResetLastSelectedData = {
+    type: StateChangeActionType.RESET_LAST_SELECTED_DATA;
+};
+
 export type StateChangeActions =
     | SetToken
     | SetAuthFail
     | SetAdminRole
     | SetCurrentMenuItem
-    | SetOrderOpened;
+    | SetOrderOpened
+    | ResetLastSelectedData;
