@@ -2,13 +2,15 @@ package com.ifmo.adda.service
 
 import com.ifmo.adda.controller.OrdersList
 import com.ifmo.adda.dao.toDto
+import com.ifmo.adda.repository.CustomOrdersRepository
 import com.ifmo.adda.repository.OrdersRepository
 import org.springframework.stereotype.Service
 import java.lang.Exception
 
 @Service
 class OrdersService(
-    private val ordersRepository: OrdersRepository
+    private val ordersRepository: OrdersRepository,
+    private val customOrdersRepository: CustomOrdersRepository
 ) {
 
     fun getOrders() = OrdersList(
@@ -17,8 +19,9 @@ class OrdersService(
 
     @Throws(Exception::class)
     fun getOrdersForClient(clientId: Int):OrdersList {
-        val list = ordersRepository.findForClient(clientId)
-        if (list.isEmpty()) throw Exception("Client with id $clientId not found")
-        else return OrdersList(list.map { it.toDto() })
+        val orders = ordersRepository.findNormalForClient(clientId).map { it.toDto() } +
+                customOrdersRepository.findCustomForClient(clientId).map { it.toDto() }
+        if (orders.isEmpty()) throw Exception("Orders for client with id $clientId not found")
+        else return OrdersList(orders)
     }
 }
