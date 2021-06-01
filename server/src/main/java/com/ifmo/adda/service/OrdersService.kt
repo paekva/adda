@@ -16,7 +16,7 @@ class OrdersService(
     )
 
     @Throws(Exception::class)
-    fun getOrdersForClient(clientId: String):OrdersList {
+    fun getOrdersForClient(clientId: Int):OrdersList {
         val list = ordersRepository.findForClient(clientId)
         if (list.isEmpty()) throw Exception("Client with id $clientId not found")
         else return OrdersList(list.map { it.toDto() })
