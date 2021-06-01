@@ -1,9 +1,9 @@
 import React, {useEffect, useState} from "react";
 import {DataTable} from "../tableForData/DataTable";
 import {ordersTableScheme} from "./OrdersTableScheme";
-import {Order} from "../../types/Order";
 import {getOrdersListByUser} from "../../api/orders";
 import {connect} from "react-redux";
+import {Order} from "../../types";
 
 export type OrdersTableProps = {}
 const OrdersTable = (props: OrdersTableProps): JSX.Element => {

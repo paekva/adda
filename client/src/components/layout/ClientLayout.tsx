@@ -1,6 +1,6 @@
 import React from "react";
 import './Layout.css';
-import ProductList from "../products/ProductList";
+import Router from "../menuBar/Router";
 import {ClientMenuBar} from "../menuBar/ClientMenuBar";
 
 export const ClientLayout = (): JSX.Element => {
@@ -10,6 +10,6 @@ export const ClientLayout = (): JSX.Element => {
             <div className='title'>Каталог</div>
             <ClientMenuBar/>
         </div>
-        <ProductList/>
+        <Router />
     </div>
 }

@@ -1,14 +1,14 @@
 import React from "react";
 import './Layout.css';
-import OrdersTable from "../orders/OrdersTable";
 import {WorkerMenuBar} from "../menuBar/WorkerMenuBar";
+import Router from "../menuBar/Router";
 
 export const WorkerLayout = (): JSX.Element => {
     return <div className='outer'>
         <div className='title'>Статус заказов</div>
         <div className='worker'>
             <WorkerMenuBar />
-            <OrdersTable />
+            <Router />
         </div>
     </div>
 }

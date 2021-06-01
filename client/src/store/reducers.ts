@@ -25,6 +25,12 @@ function rootReducer(
                 username: action.payload.userName,
             };
         }
+        case StateChangeActionType.SET_CURRENT_MENU_ITEM: {
+            return {
+                ...state,
+                currentMenuItem: action.payload
+            };
+        }
     }
     return state;
 }

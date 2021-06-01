@@ -1,9 +1,11 @@
 import {AppRole} from "../api/user";
+import {MenuItem} from "../types";
 
 export enum StateChangeActionType {
     SET_TOKEN = "SET_TOKEN",
     SET_AUTH_FAIL = "SET_AUTH_FAIL",
     SET_ADMIN_ROLE = "SET_ADMIN_ROLE",
+    SET_CURRENT_MENU_ITEM = "SET_CURRENT_MENU_ITEM"
 }
 
 type SetToken = {
@@ -24,7 +26,13 @@ type SetAdminRole = {
     };
 };
 
+type SetCurrentMenuItem = {
+    type: StateChangeActionType.SET_CURRENT_MENU_ITEM;
+    payload: MenuItem;
+};
+
 export type StateChangeActions =
     | SetToken
     | SetAuthFail
-    | SetAdminRole;
+    | SetAdminRole
+    | SetCurrentMenuItem;

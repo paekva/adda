@@ -1,10 +1,10 @@
 import React from "react";
-import {Product} from "../../types/Product";
 import {connect} from "react-redux";
 import "./ProductList.css";
 import {useEffect, useState} from "react";
 import {getProductsList} from "../../api/products";
 import {ProductItem} from "./ProductItem";
+import {Product} from "../../types";
 
 export type ProductListProps = {}
 const ProductList = (props: ProductListProps) => {

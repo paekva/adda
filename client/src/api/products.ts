@@ -1,7 +1,7 @@
 import {customFetch} from "./customFetch";
 import {getUrl} from "./url";
 import {Method} from "./types";
-import {Product} from "../types/Product";
+import {Product} from "../types";
 
 
 export type ProductsListResponse = {
