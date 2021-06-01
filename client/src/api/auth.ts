@@ -4,8 +4,8 @@ import {Method} from "./types";
 
 const request = require('request')
 
-const user = 'oauth2-client'
-const pass = 'oauth2-client-password'
+const user = 'oauth2-layout'
+const pass = 'oauth2-layout-password'
 
 export const getToken = (body: string): any => {
     makeRequest(body);
