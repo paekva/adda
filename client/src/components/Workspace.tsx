@@ -1,11 +1,11 @@
 import React, {useEffect} from "react";
 import {AppRole, getUserData} from "../api/user";
 import {getAuthService} from "./auth/authService";
-import ProductList from "./products/ProductList";
 import {StateChangeActionType} from "../store/actions";
 import store from "../store/store";
 import {connect} from "react-redux";
-import OrdersTable from "./orders/OrdersTable";
+import {ClientLayout} from "./layout/ClientLayout";
+import {WorkerLayout} from "./layout/WorkerLayout";
 
 type Props = {
     setUserData: (roles: AppRole[], userName: string) => void;
@@ -24,12 +24,10 @@ const Workspace = (props: Props): JSX.Element => {
             });
     }, [setUserData]);
 
-    return <div style={{display: 'flex', justifyContent: 'center'}}>
-        {(roles.includes(AppRole.CLIENT) || roles.includes(AppRole.ADMIN))
-            ? (<ProductList />)
-            : (<OrdersTable />)
-        }
-    </div>
+    return roles.includes(AppRole.CLIENT)
+        ? (<ClientLayout/>)
+        : (<WorkerLayout/>)
+
 }
 
 const mapStateToProps = (store: any) => {

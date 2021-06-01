@@ -1,0 +1,17 @@
+.client, .outer {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.worker, .inner {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.title {
+    padding: 20px;
+    font-size: 28px;
+    text-align: start;
+}
