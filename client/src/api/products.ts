@@ -16,3 +16,12 @@ export const getProductsList = (): Promise<ProductsListResponse> => {
         true
     );
 }
+
+export const getBucketList = (): Promise<ProductsListResponse> => {
+    return customFetch<{}, ProductsListResponse>(
+        `${getUrl()}/products/all`,
+        Method.GET,
+        undefined,
+        true
+    );
+}

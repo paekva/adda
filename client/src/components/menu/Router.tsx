@@ -6,6 +6,7 @@ import ProductList from "../products/ProductList";
 import React from "react";
 import {Personal} from "../personal/Personal";
 import OrderPage from "../order/OrderPage";
+import {Bucket} from "../products/Bucket";
 
 export type RouterProps = {
     currentMenuItem: MenuItem | null
@@ -23,6 +24,8 @@ export const Router = (props: RouterProps): JSX.Element => {
             return <Personal/>
         case MenuItem.SINGLE_ORDER:
             return <OrderPage selectedOrder={props.selectedOrder}/>
+        case MenuItem.BUCKET:
+            return <Bucket/>
         default:
             return <div>no such page yet</div>
     }
