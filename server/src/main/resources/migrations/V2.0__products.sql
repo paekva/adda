@@ -1,7 +1,7 @@
 CREATE TABLE PRODUCT
 (
     id          SERIAL          NOT NULL PRIMARY KEY,
-    name        varchar(32)     NOT NULL,
+    name        varchar(64)     NOT NULL,
     description text            NOT NULL,
     price       NUMERIC         NOT NULL
 );
