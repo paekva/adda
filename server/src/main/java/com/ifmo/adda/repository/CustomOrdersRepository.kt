@@ -6,11 +6,11 @@ import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.query.Param
 import java.math.BigInteger
 
-interface CustomOrdersRepository : JpaRepository<CustomOrder, BigInteger> {
+interface CustomOrdersRepository : JpaRepository<CustomOrder, Int> {
 
     @Query(
             "SELECT DISTINCT custom_order_item FROM CustomOrder custom_order_item WHERE custom_order_item.client = :clientId"
     )
-    fun findCustomForClient(@Param("clientId") clientId: BigInteger): List<CustomOrder>
+    fun findCustomForClient(@Param("clientId") clientId: Int): List<CustomOrder>
 
 }

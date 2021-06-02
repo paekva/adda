@@ -8,14 +8,14 @@ import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.query.Param
 import java.math.BigInteger
 
-interface OrdersRepository : JpaRepository<Order, BigInteger> {
+interface OrdersRepository : JpaRepository<Order, Int> {
 
     @Query(
             "SELECT DISTINCT order_item FROM Order order_item " +
                     "INNER JOIN FETCH order_item.products as products " +
                     "WHERE order_item.client = :clientId"
     )
-    fun findNormalForClient(@Param("clientId") clientId: BigInteger): List<Order>
+    fun findNormalForClient(@Param("clientId") clientId: Int): List<Order>
 
     @Modifying
     @Query(
