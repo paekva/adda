@@ -4,9 +4,8 @@ import com.ifmo.adda.dto.OrderDto
 import com.ifmo.adda.service.OrdersService
 import com.ifmo.adda.service.UserService
 import org.springframework.http.MediaType
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
+import java.time.Instant
 
 @RestController
 @RequestMapping(
@@ -26,6 +25,11 @@ class OrderController(
             value = ["/forUser"]
     )
     fun getOrdersForUser(): OrdersList = if (userService.IAmAdmin()) ordersService.getOrders() else ordersService.getOrdersForClient(userService.myId())
+
+    @PostMapping(
+            value = ["/createCustom"]
+    )
+    fun createCustomOrder(@RequestBody description: String) = ordersService.makeCustomOrder(OrderDto(null, userService.myId(), true, description, null, Instant.now().toEpochMilli(), Instant.now().toEpochMilli() + 2592000000, 10))
 }
 
 //OrdersList(listOf(Order(1, 2, listOf(3, 8, 9), 4, 5, 6)))
