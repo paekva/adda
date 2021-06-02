@@ -1,7 +1,7 @@
 CREATE TABLE CUSTOM_ORDER_ITEM
 (
     id              SERIAL      NOT NULL PRIMARY KEY,
-    client          INT         NOT NULL,
+    client          BIGINT      NOT NULL,
     description     TEXT        NOT NULL,
     date_of_order   TIMESTAMPTZ NOT NULL,
     date_of_receive TIMESTAMPTZ NOT NULL,

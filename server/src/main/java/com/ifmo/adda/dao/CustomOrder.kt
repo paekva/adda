@@ -13,7 +13,7 @@ data class CustomOrder(
         var id: Int? = null,
 
         @Column(nullable = false)
-        val client: Int,
+        val client: BigInteger,
 
         @Column(nullable = true)
         val description: String,

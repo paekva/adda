@@ -19,7 +19,7 @@ class OrdersService(
     )
 
     @Throws(Exception::class)
-    fun getOrdersForClient(clientId: Int):OrdersList {
+    fun getOrdersForClient(clientId: BigInteger):OrdersList {
         val orders = ordersRepository.findNormalForClient(clientId).map { it.toDto() } +
                 customOrdersRepository.findCustomForClient(clientId).map { it.toDto() }
         if (orders.isEmpty()) throw Exception("Orders for client with id $clientId not found")
