@@ -18,6 +18,6 @@ data class Product(
     val description: String,
 
     @Column(nullable = false)
-    val price: Long
+    val price: BigDecimal
 
 )
