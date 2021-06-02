@@ -39,7 +39,7 @@ class UserService(
     return userRepository.findByUsername(user.username)!!
   }
 
-  fun myId(): Long {
+  fun myId(): Int {
     return meAsEntity().id!!
   }
 

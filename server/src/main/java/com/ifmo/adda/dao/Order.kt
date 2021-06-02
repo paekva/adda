@@ -21,5 +21,13 @@ data class Order(
     val dateOfReceive: Instant,
 
     @Column(nullable = false)
-    val status: Int
+    val status: Int,
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+        name = "product_to_order",
+        joinColumns = [JoinColumn(name = "order_id", referencedColumnName = "ID")],
+        inverseJoinColumns = [JoinColumn(name = "product_id", referencedColumnName = "ID")]
+    )
+    var products: Collection<Product>? = null
 )
