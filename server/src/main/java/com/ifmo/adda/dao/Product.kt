@@ -12,8 +12,12 @@ data class Product(
     var id: Int? = null,
 
     @Column(nullable = false)
-    val name: String,
+    var name: String,
 
     @Column(nullable = false)
-    val price: BigDecimal
+    val description: String,
+
+    @Column(nullable = false)
+    val price: Long
+
 )
