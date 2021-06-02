@@ -12,7 +12,7 @@ data class Product(
     var id: Int? = null,
 
     @Column(nullable = false)
-    var name: String,
+    val name: String,
 
     @Column(nullable = false)
     val description: String,
