@@ -15,9 +15,7 @@ export type OrdersTableProps = {
 }
 const OrdersTable = (props: OrdersTableProps): JSX.Element => {
     const {roles, setSelectedOrder, resetLastSelectedData} = props;
-    const [orderList, setOrdersList] = useState<Order[]>([
-        {id: 1, client: 0, dateOfOrder: 11, dateOfReceive: 22, status: 0, products: [1]}
-    ]);
+    const [orderList, setOrdersList] = useState<Order[]>([]);
 
     useEffect(() => {
         (roles.includes(AppRole.ADMIN) ? getOrdersList : getOrdersListForUser)()

@@ -7,10 +7,12 @@ export type Product = {
 export type Order = {
     id: number;
     client: number;
-    products: number[],
     dateOfOrder: number;
     dateOfReceive: number;
     status: number;
+    isCustom: boolean;
+    products: number[];
+    description: string;
 }
 
 export enum MenuItem {
