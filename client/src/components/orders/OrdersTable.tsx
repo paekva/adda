@@ -20,10 +20,12 @@ const OrdersTable = (props: OrdersTableProps): JSX.Element => {
     useEffect(() => {
         (roles.includes(AppRole.ADMIN) ? getOrdersList : getOrdersListForUser)()
             .then((response) => setOrdersList(response.orders))
-            // .then(resetLastSelectedData)
+            .then(resetLastSelectedData)
     }, [roles, resetLastSelectedData]);
 
-    const rowCLickHandler = useCallback((id) => setSelectedOrder(orderList.find(el => el.id === id) ?? null),
+    const rowCLickHandler = useCallback((id) => {
+        setSelectedOrder(orderList.find(el => el.id === id) ?? null)
+        },
         [setSelectedOrder, orderList])
 
     return <DataTable data={orderList} scheme={ordersTableScheme} onRowClick={rowCLickHandler}/>
