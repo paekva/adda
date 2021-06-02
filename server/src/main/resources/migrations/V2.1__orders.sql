@@ -1,7 +1,7 @@
 CREATE TABLE ORDER_ITEM
 (
     id              SERIAL      NOT NULL PRIMARY KEY,
-    client          INT         NOT NULL REFERENCES user_ (id),
+    client          BIGINT      NOT NULL REFERENCES user_ (id),
     date_of_order   TIMESTAMPTZ NOT NULL,
     date_of_receive TIMESTAMPTZ NOT NULL,
     status          INT         NOT NULL
