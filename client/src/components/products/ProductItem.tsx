@@ -1,6 +1,7 @@
 import React from "react";
 import "./ProductList.css";
 import {Product} from "../../types";
+import {addProduct} from "../../api/products";
 
 export type ProductItemProps = {
     product: Product
@@ -16,7 +17,7 @@ export const ProductItem = (props: ProductItemProps): JSX.Element => {
                 {product.price}
             </div>
 
-            <button onClick={() => console.warn(product.id)}>+</button>
+            <button onClick={() => addProduct(product.id)}>+</button>
         </div>
     </div>
 }

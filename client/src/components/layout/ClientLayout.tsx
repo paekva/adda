@@ -5,6 +5,7 @@ import MenuBar from "../menu/MenuBar";
 import {MenuItem} from "../../types";
 
 const ClientMenu = [
+    {menu: MenuItem.PRODUCTS, title: 'Товары'},
     {menu: MenuItem.ORDERS, title: 'Мои заказы'},
     {menu: MenuItem.BUCKET, title: 'Корзина'},
     {menu: MenuItem.PERSONAL, title: 'Личный кабинет'},
