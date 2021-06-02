@@ -6,6 +6,8 @@ import StatusPanel from "./StatusPanel";
 import {AppStore} from "../../store/store";
 import {connect} from "react-redux";
 import Button from "@material-ui/core/Button";
+import {OrderInfo} from "./OrderInfo";
+import {Confirmation} from "./Confirmation";
 
 const admin: Status[] = [
     Status.ACCEPTANCE,
@@ -23,35 +25,32 @@ const client: Status[] = [
     Status.DELIVERY
 ]
 
-const adminButton = [
+const adminButton = (order?: Order | null) => [
     {
         label: "Сообщить об ошибке",
-        handler: () => {
-        },
+        handler: () => order?.id ? console.warn('rejecting') : null,
         disabled: false
     },
     {
         label: "Подтвердить",
-        handler: () => {
-        },
+        handler: () => order?.id ? console.warn('accepting') : null,
         disabled: false
     },
 ]
 
-const clientButton = [
+const clientButton = (order?: Order | null) => [
     {
         label: "Отказаться от заказа",
-        handler: () => {
-        },
-        disabled: false
+        handler: () => order?.id ? console.warn('rejecting') : null,
+        disabled: (order?.status === Status.ACCEPTANCE || order?.status === Status.PREPARE)
     },
     {
         label: "Оплатить заказ",
-        handler: () => {
-        },
+        handler: () => order?.id ? console.warn('paying') : null,
         disabled: false
     },
 ]
+
 export type OrderPageProps = {
     selectedOrder: Order | null
     roles: AppRole[]
@@ -59,6 +58,7 @@ export type OrderPageProps = {
 const OrderPage = (props: OrderPageProps): JSX.Element => {
     const {selectedOrder, roles} = props;
     return <div className='order'>
+
         <div className='header'>
             <div className='orderId'>Заказ №{selectedOrder?.id}</div>
             <div
@@ -66,36 +66,22 @@ const OrderPage = (props: OrderPageProps): JSX.Element => {
                 ? statusToStringMap[getStatusByCode(selectedOrder?.status)]
                 : 'Not available'}</div>
         </div>
+
         {(roles.includes(AppRole.USER) || roles.includes(AppRole.ADMIN))
         && <StatusPanel statusList={roles.includes(AppRole.USER) ? client : admin} current={Status.ACCEPTANCE}/>}
+
         <div className='info'>
             <div>Информация о заказе</div>
-            <div className='elements'>
-                {selectedOrder ?
-                    <>
-                        <div>
-                            {!roles.includes(AppRole.USER) && (`Клиент: ${selectedOrder.client}`)}
-                        </div>
-                        <div>
-                            Дата заказа: {new Date(selectedOrder.dateOfOrder).toLocaleDateString("en-US")}
-                        </div>
-
-                        <div>
-                            Дата доставки: {new Date(selectedOrder.dateOfReceive).toLocaleDateString("en-US")}
-                        </div>
-
-                        <div>
-                            Состав заказа: {selectedOrder.products ?? selectedOrder.description}
-                        </div>
-
-                    </>
-                    : <div>none</div>
-                }
-            </div>
+            <OrderInfo selectedOrder={selectedOrder} roles={roles} />
         </div>
-        {!roles.includes(AppRole.USER) && <div className='manage'>Data</div>}
+
+        {!roles.includes(AppRole.USER) && <div className='manage'>
+            <div>Информация о выполнении</div>
+            <Confirmation selectedOrder={selectedOrder} roles={roles} />
+        </div>}
+
         <div className='controlsInOrder'>
-            {(roles.includes(AppRole.USER) ? clientButton : adminButton)
+            {(roles.includes(AppRole.USER) ? clientButton : adminButton)(selectedOrder)
                 .map((el) => <Button
                     type="submit"
                     variant="contained"
