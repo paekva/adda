@@ -11,6 +11,11 @@
   flex-direction: row;
 }
 
+.dataTableRow:hover {
+  cursor: pointer;
+  background: antiquewhite;
+}
+
 .headerRow {
   border-bottom: 1px solid #000;
 }
