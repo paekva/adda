@@ -23,4 +23,10 @@ interface OrdersRepository : JpaRepository<Order, Int> {
     )
     fun createNormalOrder(@Param("orderDto") orderDto: OrderDto)
 
+    @Modifying
+    @Query(
+            "INSERT INTO custom_order_item (client, description, date_of_order, date_of_receive, status) VALUES (:orderDto.client, :orderDto.description, :orderDto.dateOfOrder, :orderDto.dateOfReceive, :orderDto:status)", nativeQuery = true
+    )
+    fun createCustomOrder(@Param("orderDto") orderDto: OrderDto)
+
 }

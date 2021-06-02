@@ -2,6 +2,7 @@ package com.ifmo.adda.service
 
 import com.ifmo.adda.controller.OrdersList
 import com.ifmo.adda.dao.toDto
+import com.ifmo.adda.dto.OrderDto
 import com.ifmo.adda.repository.CustomOrdersRepository
 import com.ifmo.adda.repository.OrdersRepository
 import org.springframework.stereotype.Service
@@ -25,4 +26,6 @@ class OrdersService(
         if (orders.isEmpty()) throw Exception("Orders for client with id $clientId not found")
         else return OrdersList(orders)
     }
+
+    fun makeCustomOrder(orderDto: OrderDto) = ordersRepository.createCustomOrder(orderDto)
 }
