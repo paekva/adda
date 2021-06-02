@@ -15,5 +15,9 @@ data class Product(
     val name: String,
 
     @Column(nullable = false)
+    val description: String,
+
+    @Column(nullable = false)
     val price: BigDecimal
+
 )

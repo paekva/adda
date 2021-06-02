@@ -21,6 +21,7 @@ class OrderController(
         value = ["/all"]
     )
     fun getAllProducts(): OrdersList = ordersService.getOrders()
+
     @GetMapping(
             value = ["/forUser"]
     )
