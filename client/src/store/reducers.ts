@@ -35,7 +35,7 @@ function rootReducer(
         case StateChangeActionType.SET_ORDER_OPENED: {
             return {
                 ...state,
-                lastOpenedOrder: action.payload,
+                lastSelectedOrder: action.payload,
                 currentMenuItem: MenuItem.SINGLE_ORDER,
             };
         }

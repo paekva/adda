@@ -1,5 +1,4 @@
-import store, {AppStore} from "../../store/store";
-import {StateChangeActionType} from "../../store/actions";
+import {AppStore} from "../../store/store";
 import {connect} from "react-redux";
 import {MenuItem, Order} from "../../types";
 import OrdersTable from "../orders/OrdersTable";
@@ -36,14 +35,4 @@ const mapStateToProps = (store: AppStore) => {
     };
 };
 
-const mapDispatchToProps = () => {
-    return {
-        setMenuItem: (currentMenuItem: MenuItem) => {
-            store.dispatch({
-                type: StateChangeActionType.SET_CURRENT_MENU_ITEM,
-                payload: currentMenuItem,
-            });
-        },
-    };
-};
-export default connect(mapStateToProps, mapDispatchToProps)(Router);
+export default connect(mapStateToProps)(Router);
