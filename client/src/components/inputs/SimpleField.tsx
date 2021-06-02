@@ -78,7 +78,6 @@ export const validatePercentage = (value: string) => {
     const r = RegExp('^[0-9]+$');
     const v = value.match(r);
     const toNum = Number(value);
-    console.warn(toNum)
     return v !== null && toNum !== null && toNum >= 0 && toNum <= 100 && toNum === parseInt(value, 10);
 }
 

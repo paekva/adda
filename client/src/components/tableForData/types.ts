@@ -1,6 +1,7 @@
 export type DataTableProps = {
   scheme: Scheme;
   data: RowData[] | null;
+  onRowClick?: (rowId: number) => void
 };
 
 export type RowData = {

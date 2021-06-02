@@ -1,25 +1,34 @@
-import React, {useEffect, useState} from "react";
+import React, {useCallback, useEffect, useState} from "react";
 import {DataTable} from "../tableForData/DataTable";
 import {ordersTableScheme} from "./OrdersTableScheme";
 import {getOrdersList, getOrdersListForUser} from "../../api/orders";
 import {connect} from "react-redux";
 import {Order} from "../../types";
-import {AppStore} from "../../store/store";
+import store, {AppStore} from "../../store/store";
 import {AppRole} from "../../api/user";
+import {StateChangeActionType} from "../../store/actions";
 
 export type OrdersTableProps = {
     roles: AppRole[]
+    setSelectedOrder: (selectedOrder: Order | null) => void
+    resetLastSelectedData: () => void
 }
 const OrdersTable = (props: OrdersTableProps): JSX.Element => {
-    const [orderList, setOrdersList] = useState<Order[]>([
-        {id: 1, client: 0, dateOfOrder: 11, dateOfReceive: 22, status: 0, products: [1]}
-    ]);
+    const {roles, setSelectedOrder, resetLastSelectedData} = props;
+    const [orderList, setOrdersList] = useState<Order[]>([]);
 
     useEffect(() => {
-        (props.roles.includes(AppRole.ADMIN) ? getOrdersList : getOrdersListForUser)()
+        (roles.includes(AppRole.ADMIN) ? getOrdersList : getOrdersListForUser)()
             .then((response) => setOrdersList(response.orders))
-    }, [props.roles]);
-    return <DataTable data={orderList} scheme={ordersTableScheme}/>
+            .then(resetLastSelectedData)
+    }, [roles, resetLastSelectedData]);
+
+    const rowCLickHandler = useCallback((id) => {
+        setSelectedOrder(orderList.find(el => el.id === id) ?? null)
+        },
+        [setSelectedOrder, orderList])
+
+    return <DataTable data={orderList} scheme={ordersTableScheme} onRowClick={rowCLickHandler}/>
 }
 
 const mapStateToProps = (store: AppStore) => {
@@ -28,4 +37,20 @@ const mapStateToProps = (store: AppStore) => {
     };
 };
 
-export default connect(mapStateToProps)(OrdersTable);
+const mapDispatchToProps = () => {
+    return {
+        setSelectedOrder: (selectedOrder: Order | null) => {
+            store.dispatch({
+                type: StateChangeActionType.SET_ORDER_OPENED,
+                payload: selectedOrder,
+            });
+        },
+        resetLastSelectedData: () => {
+            store.dispatch({
+                type: StateChangeActionType.RESET_LAST_SELECTED_DATA,
+            });
+        },
+    };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(OrdersTable);

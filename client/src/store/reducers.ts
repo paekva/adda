@@ -1,5 +1,6 @@
 import {StateChangeActions, StateChangeActionType} from "./actions";
 import {AppStore, initialState} from "./store";
+import {MenuItem} from "../types";
 
 function rootReducer(
     state: AppStore = initialState,
@@ -29,6 +30,19 @@ function rootReducer(
             return {
                 ...state,
                 currentMenuItem: action.payload
+            };
+        }
+        case StateChangeActionType.SET_ORDER_OPENED: {
+            return {
+                ...state,
+                lastSelectedOrder: action.payload,
+                currentMenuItem: MenuItem.SINGLE_ORDER,
+            };
+        }
+        case StateChangeActionType.RESET_LAST_SELECTED_DATA: {
+            return {
+                ...state,
+                lastOpenedOrder: null
             };
         }
     }

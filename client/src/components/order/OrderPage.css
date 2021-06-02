@@ -1,0 +1,64 @@
+.order {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid black;
+    font-size: 24px;
+}
+
+.header, .status {
+    border-bottom: 1px solid black;
+    display: flex;
+    flex-direction: row;
+    padding: 10px;
+
+    text-align: center;
+}
+
+.header {
+    justify-content: space-between;
+    flex: 1;
+}
+
+.status {
+    flex: 2;
+    justify-content: space-between;
+
+}
+
+.info, .manage {
+    padding: 10px;
+    flex: 3;
+    border-bottom: 1px solid black;
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+}
+
+.statusElement {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    align-items: center;
+}
+
+.controlsInOrder {
+    flex: 1;
+    display: flex;
+    padding: 10px;
+    justify-content: flex-end;
+    border-top: 1px solid black;
+}
+
+.elements {
+    margin-top: 15px;
+    font-size: 18px;
+    align-items: start;
+    display: flex;
+    flex-direction: column;
+}
+
+.statusText {
+    color: green
+}

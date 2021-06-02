@@ -1,4 +1,4 @@
-import {Scheme} from "../tableForData/types";
+import {RowData, Scheme} from "../tableForData/types";
 
 export const ordersTableScheme: Scheme = {
     'id': {
@@ -8,7 +8,12 @@ export const ordersTableScheme: Scheme = {
         label: 'Клиент'
     },
     'products': {
-        label: 'Состав'
+        label: 'Состав',
+        renderer: (data: RowData): JSX.Element => {
+            return <div>
+                {data.isCustom ? data.description : data.products.join(',')}
+            </div>
+        }
     },
     'dateOfOrder': {
         label: 'Дата заказа',
