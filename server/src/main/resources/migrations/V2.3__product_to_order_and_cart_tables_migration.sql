@@ -28,3 +28,24 @@ create table product_to_cart(
     quantity    smallint not null default 1,
     constraint product_to_cart_pkey primary key (cart_id, product_id)
 );
+
+INSERT INTO cart (client)
+VALUES (21);
+
+INSERT INTO cart (client)
+VALUES (22);
+
+INSERT INTO product_to_cart
+VALUES (1, 1, 5);
+INSERT INTO product_to_cart
+VALUES (1, 3, 1);
+INSERT INTO product_to_cart
+VALUES (1, 2, 16);
+
+INSERT INTO product_to_cart
+VALUES (2, 1, 3);
+INSERT INTO product_to_cart
+VALUES (2, 5, 1);
+INSERT INTO product_to_cart
+VALUES (2, 4, 1);
+

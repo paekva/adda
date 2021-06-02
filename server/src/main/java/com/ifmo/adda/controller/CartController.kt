@@ -23,7 +23,7 @@ class CartController(
     @PostMapping(
             value = ["/addProduct"]
     )
-    fun addProduct(@RequestBody productId: Int) = cartService.addProduct(userService.myId(), productId)
+    fun addProduct(@RequestParam productId: Int) = cartService.addProduct(userService.myId(), productId)
 
     @GetMapping(
             value = ["/clear"]
