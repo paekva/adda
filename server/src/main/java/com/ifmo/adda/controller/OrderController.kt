@@ -25,7 +25,7 @@ class OrderController(
     @GetMapping(
             value = ["/forUser"]
     )
-    fun getOrdersForUser(): OrdersList = if (userService.IAmAdmin()) ordersService.getOrders() else ordersService.getOrdersForClient(userService.myId().toBigInteger())
+    fun getOrdersForUser(): OrdersList = if (userService.IAmAdmin()) ordersService.getOrders() else ordersService.getOrdersForClient(userService.myId())
 }
 
 //OrdersList(listOf(Order(1, 2, listOf(3, 8, 9), 4, 5, 6)))

@@ -9,7 +9,7 @@ data class Authority(
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "ID")
-  var id: Long? = null,
+  var id: Int? = null,
 
   @Column(name = "NAME")
   var name: String? = null

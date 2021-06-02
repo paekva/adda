@@ -7,7 +7,7 @@ import org.springframework.data.repository.query.Param
 import org.springframework.stereotype.Repository
 
 @Repository
-interface UserRepository : JpaRepository<User, Long> {
+interface UserRepository : JpaRepository<User, Int> {
 
   @Query(
       "SELECT DISTINCT user FROM User user " +
