@@ -1,5 +1,6 @@
 package com.ifmo.adda.dao
 
+import java.math.BigInteger
 import java.time.Instant
 import javax.persistence.*
 
@@ -12,7 +13,7 @@ data class CustomOrder(
         var id: Int? = null,
 
         @Column(nullable = false)
-        val client: Int,
+        val client: BigInteger,
 
         @Column(nullable = true)
         val description: String,
