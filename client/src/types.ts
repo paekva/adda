@@ -1,3 +1,5 @@
+import {AppRole} from "./api/user";
+
 export type Product = {
     id: number;
     name: string;
@@ -66,4 +68,11 @@ export const getStatusByCode = (code: number):Status => {
         default:
             return Status.UNKNOWN
     }
+}
+
+export const userRoleToOrderStatusMap = {
+    [AppRole.COURIER.toString()]: Status.DELIVERY,
+    [AppRole.LOADER.toString()]: Status.LOAD,
+    [AppRole.MASTER.toString()]: Status.UNLOAD,
+    [AppRole.PURCHASER.toString()]: Status.BUY,
 }

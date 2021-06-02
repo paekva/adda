@@ -1,5 +1,5 @@
 import React from "react";
-import {getStatusByCode, Order, Status, statusToStringMap} from "../../types";
+import {getStatusByCode, Order, Status, statusToStringMap, userRoleToOrderStatusMap} from "../../types";
 import {AppRole} from "../../api/user";
 import './OrderPage.css'
 import StatusPanel from "./StatusPanel";
@@ -72,12 +72,13 @@ const OrderPage = (props: OrderPageProps): JSX.Element => {
 
         <div className='info'>
             <div>Информация о заказе</div>
-            <OrderInfo selectedOrder={selectedOrder} roles={roles} />
+            <OrderInfo selectedOrder={selectedOrder} roles={roles}/>
         </div>
 
-        {!roles.includes(AppRole.USER) && <div className='manage'>
+        {!(roles.includes(AppRole.USER) || (!roles.includes(AppRole.ADMIN) && selectedOrder?.status !== userRoleToOrderStatusMap[roles[0]])) &&
+        <div className='manage'>
             <div>Информация о выполнении</div>
-            <Confirmation selectedOrder={selectedOrder} roles={roles} />
+            <Confirmation selectedOrder={selectedOrder} roles={roles}/>
         </div>}
 
         <div className='controlsInOrder'>
