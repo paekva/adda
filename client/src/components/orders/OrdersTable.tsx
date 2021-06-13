@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useState} from "react";
+import React, {useCallback, useEffect, useMemo, useState} from "react";
 import {DataTable} from "../tableForData/DataTable";
 import {ordersTableScheme} from "./OrdersTableScheme";
 import {getOrdersListForUser} from "../../api/orders";
@@ -14,6 +14,7 @@ export type OrdersTableProps = {
     setSelectedOrder: (selectedOrder: Order | null) => void
     resetLastSelectedData: () => void
 }
+
 const OrdersTable = (props: OrdersTableProps): JSX.Element => {
     const {roles, setSelectedOrder, resetLastSelectedData} = props;
     const [orderList, setOrdersList] = useState<Order[]>([]);
@@ -49,7 +50,10 @@ const OrdersTable = (props: OrdersTableProps): JSX.Element => {
         },
         [setSelectedOrder, orderList])
 
-    return <DataTable data={orderList} scheme={ordersTableScheme} onRowClick={rowCLickHandler}/>
+    const scheme = useMemo(() => {
+        return ordersTableScheme(roles)
+    }, [roles])
+    return <DataTable data={orderList} scheme={scheme} onRowClick={rowCLickHandler}/>
 }
 
 const mapStateToProps = (store: AppStore) => {

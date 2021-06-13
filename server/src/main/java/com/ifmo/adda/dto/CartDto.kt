@@ -21,5 +21,6 @@ fun CartDto.toOrderDto() = OrderDto(
     products,
     Instant.now().toEpochMilli(),
     Instant.now().toEpochMilli() + 2592000000,
-    1
+    Status.ACCEPTANCE
+
 )

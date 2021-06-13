@@ -1,9 +1,6 @@
 package com.ifmo.adda.service
 
-import com.ifmo.adda.dao.Cart
-import com.ifmo.adda.dao.CustomOrder
-import com.ifmo.adda.dao.Order
-import com.ifmo.adda.dao.toDto
+import com.ifmo.adda.dao.*
 import com.ifmo.adda.dto.OrderDto
 import com.ifmo.adda.repository.CustomOrdersRepository
 import com.ifmo.adda.repository.OrdersRepository
@@ -30,7 +27,7 @@ class OrdersService(
             description = orderDto.description!!,
             dateOfOrder = Instant.ofEpochMilli(orderDto.dateOfOrder),
             dateOfReceive = Instant.ofEpochMilli(orderDto.dateOfReceive),
-            status = orderDto.status
+            status = getStatusIntItem(orderDto.status)
         )
         val saved = customOrdersRepository.save(new)
         return saved.toDto()

@@ -11,7 +11,7 @@ export type Order = {
     client: number;
     dateOfOrder: number;
     dateOfReceive: number;
-    status: number;
+    status: Status;
     isCustom: boolean;
     products?: any[];
     description?: string;
@@ -29,14 +29,14 @@ export enum MenuItem {
 }
 
 export enum Status {
-    ACCEPTANCE,
-    BUY,
-    LOAD,
-    UNLOAD,
-    DELIVERY,
-    PREPARE,
-    ON_THE_WAY,
-    UNKNOWN
+    ACCEPTANCE = 'ACCEPTANCE',
+    BUY = 'BUY',
+    LOAD = 'LOAD',
+    UNLOAD = 'UNLOAD',
+    DELIVERY = 'DELIVERY',
+    PREPARE = 'PREPARE',
+    ON_THE_WAY = 'ON_THE_WAY',
+    UNKNOWN = 'UNKNOWN'
 }
 
 export const statusToStringMap: { [key: string]: string } = {
@@ -47,27 +47,6 @@ export const statusToStringMap: { [key: string]: string } = {
     [Status.ON_THE_WAY.toString()]: 'В пути',
     [Status.UNLOAD.toString()]: 'Выгрузка',
     [Status.DELIVERY.toString()]: 'Доставка',
-}
-
-export const getStatusByCode = (code: number):Status => {
-    switch (code) {
-        case 0:
-            return Status.ACCEPTANCE;
-        case 1:
-            return Status.BUY;
-        case 2:
-            return Status.LOAD;
-        case 3:
-            return Status.PREPARE;
-        case 4:
-            return Status.ON_THE_WAY;
-        case 5:
-            return Status.UNLOAD;
-        case 6:
-            return Status.DELIVERY;
-        default:
-            return Status.UNKNOWN
-    }
 }
 
 export const userRoleToOrderStatusMap = {

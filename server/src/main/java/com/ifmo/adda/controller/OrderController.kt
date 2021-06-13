@@ -2,6 +2,7 @@ package com.ifmo.adda.controller
 
 import com.ifmo.adda.dto.OrderDto
 import com.ifmo.adda.dto.OrdersDto
+import com.ifmo.adda.dto.Status
 import com.ifmo.adda.service.OrdersService
 import com.ifmo.adda.service.OrdersService.Companion.EXPECTED_DELIVERY_TIME
 import com.ifmo.adda.service.UserService
@@ -36,7 +37,7 @@ class OrderController(
             null,
             Instant.now().toEpochMilli(),
             Instant.now().plusMillis(EXPECTED_DELIVERY_TIME).toEpochMilli(),
-            10
+            Status.ACCEPTANCE
         )
     )
 }
