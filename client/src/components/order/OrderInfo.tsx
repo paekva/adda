@@ -7,7 +7,7 @@ export const OrderInfo = (props: { selectedOrder?: Order | null, roles: AppRole[
     const {selectedOrder, roles} = props;
     const [products, setProducts] = useState<string>('информация о заказе отсутствует')
     useEffect(() => {
-        if (selectedOrder && selectedOrder?.description && !selectedOrder?.products)
+        if (selectedOrder && selectedOrder?.description && selectedOrder?.products?.length == 0)
             setProducts(selectedOrder?.description)
         else if (selectedOrder) {
             const makeDescription = selectedOrder?.products?.map(e => {
