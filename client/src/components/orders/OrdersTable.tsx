@@ -3,11 +3,11 @@ import {DataTable} from "../tableForData/DataTable";
 import {ordersTableScheme} from "./OrdersTableScheme";
 import {getOrdersListForUser} from "../../api/orders";
 import {connect} from "react-redux";
-import {Order, Product} from "../../types";
+import {Order} from "../../types";
 import store, {AppStore} from "../../store/store";
 import {AppRole} from "../../api/user";
 import {StateChangeActionType} from "../../store/actions";
-import {getProductsByIds} from "../../api/products";
+import {getProductsList} from "../../api/products";
 
 export type OrdersTableProps = {
     roles: AppRole[]
@@ -19,30 +19,27 @@ const OrdersTable = (props: OrdersTableProps): JSX.Element => {
     const [orderList, setOrdersList] = useState<Order[]>([]);
 
     useEffect(() => {
-        getOrdersListForUser()
-            .then(async (response) => {
-                const productsLists = response.orders.map(o => o.products)
-                let idsList = [] as number[];
-                productsLists.forEach((pl) => {
-                    const tmp = pl?.map(p => Object.values(p))
-                        .reduce((a, v) => [...a, ...v]) as number[]
-                    idsList = [...idsList, ...tmp]
-                })
-
-                let ids = [] as number[];
-                idsList.forEach((e) => ids.includes(e) ? null : ids = [...ids, e])
-                const tmp: Product[] = await getProductsByIds(ids);
-
-                const arr = response.orders.map(e => {
-                    return {
-                        ...e,
-                        productsData: e.products?.map(id =>
-                            (tmp.find((p) => p.id === id) ?? null))
-                    }
-                })
-                setOrdersList(arr)
-                console.warn(arr)
-
+        Promise
+            .all([getProductsList(), getOrdersListForUser()])
+            .then((response) => {
+                if (response[1] != null) {
+                    const orders = [] as any[];
+                    response[1].orders.forEach((el: any, index: number) => {
+                        orders[index] = {
+                            ...el,
+                            products: el.products.map((pr: any) => {
+                                return {
+                                    ...pr,
+                                    ...(response[0]?.products.find((e) => e.id == pr.productId) ?? {})
+                                }
+                            })
+                        }
+                    });
+                    setOrdersList(orders);
+                }
+            })
+            .catch((e) => {
+                console.error(e.toString());
             })
             .then(resetLastSelectedData)
     }, [roles, resetLastSelectedData]);

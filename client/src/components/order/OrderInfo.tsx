@@ -1,11 +1,21 @@
 import {AppRole} from "../../api/user";
-import React, {useEffect} from "react";
+import React, {useEffect, useState} from "react";
 import {Order} from "../../types";
 import './OrderPage.css'
-import {getProductsByIds} from "../../api/products";
 
 export const OrderInfo = (props: { selectedOrder?: Order | null, roles: AppRole[] }): JSX.Element => {
     const {selectedOrder, roles} = props;
+    const [products, setProducts] = useState<string>('информация о заказе отсутствует')
+    useEffect(() => {
+        if (selectedOrder && selectedOrder?.description && !selectedOrder?.products)
+            setProducts(selectedOrder?.description)
+        else if (selectedOrder) {
+            const makeDescription = selectedOrder?.products?.map(e => {
+                return `${e.name}  ${e.price}`
+            }).join(",  ");
+            if (makeDescription) setProducts(makeDescription);
+        }
+    }, [])
     return <div className='elements'>
         {selectedOrder ?
             <>
@@ -21,7 +31,7 @@ export const OrderInfo = (props: { selectedOrder?: Order | null, roles: AppRole[
                 </div>
 
                 <div>
-                    Состав заказа: {selectedOrder.products ?? selectedOrder.description}
+                    Состав заказа: {products}
                 </div>
 
             </>

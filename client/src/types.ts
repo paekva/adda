@@ -13,8 +13,7 @@ export type Order = {
     dateOfReceive: number;
     status: number;
     isCustom: boolean;
-    products?: number[];
-    productsData?: (Product | null)[];
+    products?: any[];
     description?: string;
 }
 

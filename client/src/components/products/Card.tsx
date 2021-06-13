@@ -1,11 +1,13 @@
-import React, {useEffect, useState} from "react";
-import {clearCat, getCardList, getProductsList, makeOrder} from "../../api/products";
+import React, {useCallback, useEffect, useState} from "react";
+import {getProductsList} from "../../api/products";
 import {CardItem} from "./CardItem";
 import Button from "@material-ui/core/Button";
+import {clearCat, deleteProductFromCard, getCardList, makeOrder} from "../../api/cart";
 
 export const Card = (): JSX.Element => {
     const [products, setProducts] = useState<any[]>([]);
-    useEffect(() => {
+
+    const updateCart = useCallback(() => {
         Promise.all([getProductsList(), getCardList()])
             .then((response) => {
                 if (response[1] != null) {
@@ -22,12 +24,30 @@ export const Card = (): JSX.Element => {
             .catch((e) => {
                 console.error(e.toString());
             });
+    }, [])
+
+    useEffect(() => {
+        updateCart();
     }, []);
+
+    const onDelete = useCallback((id: number) => {
+        deleteProductFromCard(id).then(() => updateCart());
+    }, [])
+
+    const onClear = useCallback(() => {
+        clearCat().then(() => updateCart());
+    }, [])
+
+    const onMakeOrder = useCallback(() => {
+        makeOrder().then(() => updateCart());
+    }, [])
 
     return <div style={{display: 'flex', flexDirection: 'column'}}>
         <div className='wrapper'>
             {
-                products.length > 0 ? products.map((el) => <CardItem product={el}/>) : 'Вы еще ничего не выбрали'
+                products.length > 0
+                    ? products.map((el) => <CardItem product={el} deleteCallback={onDelete}/>)
+                    : 'Вы еще ничего не выбрали'
             }
         </div>
         <div style={{display: 'flex', flexDirection: 'row', justifyContent: "space-between", padding: 10}}>
@@ -35,7 +55,7 @@ export const Card = (): JSX.Element => {
                 type="submit"
                 variant="contained"
                 color="default"
-                onClick={() => makeOrder()}
+                onClick={() => onMakeOrder()}
                 style={{height: 56}}
                 disabled={products.length == 0}
             >
@@ -45,7 +65,7 @@ export const Card = (): JSX.Element => {
                 type="submit"
                 variant="contained"
                 color="default"
-                onClick={() => clearCat().then((r) => r != null ? setProducts([]) : null)}
+                onClick={() => onClear()}
                 style={{height: 56}}
                 disabled={products.length == 0}
             >

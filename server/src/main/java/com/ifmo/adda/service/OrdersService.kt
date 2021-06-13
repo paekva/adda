@@ -42,7 +42,7 @@ class OrdersService(
             dateOfOrder = Instant.now(),
             dateOfReceive = Instant.now().plusMillis(EXPECTED_DELIVERY_TIME),
             status = 10,
-            products = cart.products
+            products = cart.products.toMutableList()
         )
         val saved = ordersRepository.save(new)
         return saved.toDto()

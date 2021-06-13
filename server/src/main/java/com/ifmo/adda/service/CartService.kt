@@ -54,7 +54,9 @@ class CartService(
     fun convertCartToOrder(clientId: Int): OrderDto {
         val cart = getCartForUser(clientId)
         if (cart.products.isEmpty()) throw BadRequestException("unable to create order from empty cart")
-        return ordersService.makeNormalOrder(cart)
+        val order = ordersService.makeNormalOrder(cart)
+        clearCart(clientId)
+        return order
     }
 
     fun getCartDtoForUser(clientId: Int): CartDto {

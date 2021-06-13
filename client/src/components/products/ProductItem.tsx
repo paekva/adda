@@ -1,7 +1,7 @@
 import React from "react";
 import "./ProductList.css";
 import {Product} from "../../types";
-import {addProduct} from "../../api/products";
+import {addProduct} from "../../api/cart";
 
 export type ProductItemProps = {
     product: Product

@@ -12,7 +12,7 @@ export const ordersTableScheme: Scheme = {
         label: 'Состав',
         renderer: (data: RowData): JSX.Element => {
             return <div>
-                {data.isCustom ? data.description : data.productsList?.map((el: Product) => el.name).join(',')}
+                {data.isCustom ? data.description : data.products?.map((el: Product) => el.name).join(',')}
             </div>
         }
     },

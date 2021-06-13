@@ -16,3 +16,12 @@ export const getOrdersListForUser = (): Promise<OrdersListResponse> => {
         true
     );
 }
+
+export const makeCustomOrder = (description: string): Promise<OrdersListResponse> => {
+    return customFetch<{}, OrdersListResponse>(
+        `${getUrl()}/orders/createCustom`,
+        Method.POST,
+        description,
+        true
+    );
+}

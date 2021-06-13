@@ -19,9 +19,6 @@ class OrderController(
     private val ordersService: OrdersService,
     private val userService: UserService
 ) {
-    @GetMapping("/all")
-    fun getAllProducts(): OrdersDto = OrdersDto(ordersService.getOrders())
-
     @GetMapping("/forUser")
     fun getOrdersForUser(): OrdersDto {
         val orders =
