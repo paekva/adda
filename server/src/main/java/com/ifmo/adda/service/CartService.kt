@@ -1,44 +1,63 @@
 package com.ifmo.adda.service
 
+import com.ifmo.adda.dao.Cart
 import com.ifmo.adda.dao.toDto
 import com.ifmo.adda.dto.CartDto
-import com.ifmo.adda.dto.toOrderDto
+import com.ifmo.adda.dto.OrderDto
+import com.ifmo.adda.exception.BadRequestException
 import com.ifmo.adda.repository.CartRepository
-import com.ifmo.adda.repository.OrdersRepository
 import org.springframework.stereotype.Service
-import org.springframework.transaction.annotation.Transactional
 
 @Service
 class CartService(
     private val cartRepository: CartRepository,
-    private val ordersRepository: OrdersRepository
+    private val productsService: ProductsService,
+    private val ordersService: OrdersService
 ) {
-    @Transactional
+
     fun addProduct(clientId: Int, productId: Int): CartDto {
-        if (cartRepository.cartIsEmpty(clientId)) cartRepository.addNewCart(clientId)
-
-        val id = cartRepository.getCartId(clientId)
-        cartRepository.addProductToCart(id, productId)
-
-        return getCartForTheUser(clientId)
+        val cart = getCartForUser(clientId)
+        cart.products.add(productsService.getProduct(productId))
+        cartRepository.save(cart)
+        return getCartDtoForUser(clientId)
     }
 
-    @Throws(Exception::class)
+    fun deleteProduct(clientId: Int, productId: Int): CartDto {
+        val cart = getCartForUser(clientId)
+        cart.products.removeIf { it.id == productId }
+        cartRepository.save(cart)
+        return getCartDtoForUser(clientId)
+    }
+
     fun getCartContents(clientId: Int): CartDto {
-        return getCartForTheUser(clientId)
+        return getCartDtoForUser(clientId)
     }
 
-    @Transactional
     fun clearCart(clientId: Int): CartDto {
-        cartRepository.clearCart(clientId)
-        return getCartForTheUser(clientId)
+        val cart = getCartForUser(clientId)
+        cart.products.clear()
+        cartRepository.save(cart)
+        return getCartDtoForUser(clientId)
     }
 
-    fun makeOrder(clientId: Int) = ordersRepository.createNormalOrder(getCartContents(clientId).toOrderDto())
+    fun getCartForUser(clientId: Int): Cart {
+        val cart = cartRepository.findByClient(clientId)
+        return if (cart == null) {
+            val newCart = Cart(client = clientId, products = ArrayList())
+            cartRepository.save(newCart)
+            getCartForUser(clientId)
+        } else {
+            cart
+        }
+    }
 
-    fun getCartForTheUser(clientId: Int): CartDto {
-        val cart = cartRepository.listCartForClient(clientId)
-        if (cart.isEmpty()) throw Exception("Cart is empty")
-        else return cart[0].toDto()
+    fun convertCartToOrder(clientId: Int): OrderDto {
+        val cart = getCartForUser(clientId)
+        if (cart.products.isEmpty()) throw BadRequestException("unable to create order from empty cart")
+        return ordersService.makeNormalOrder(cart)
+    }
+
+    fun getCartDtoForUser(clientId: Int): CartDto {
+        return getCartForUser(clientId).toDto()
     }
 }

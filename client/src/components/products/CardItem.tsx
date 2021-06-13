@@ -1,15 +1,15 @@
 import React from "react";
 import "./ProductList.css";
-import {Product} from "../../types";
+import {deleteProductFromCard} from "../../api/products";
 
 export type BucketItemProps = {
-    product: Product
+    product: any
 }
 
 export const CardItem = (props: BucketItemProps): JSX.Element => {
     const {product} = props;
     return <div className='productEl'>
-        <button onClick={() => console.warn(product.id)}>delete</button>
+        <button onClick={() => deleteProductFromCard(product.id)}>delete</button>
         <div className={'image'}> image</div>
         <div className='controls'>
             <div>
@@ -18,7 +18,7 @@ export const CardItem = (props: BucketItemProps): JSX.Element => {
             </div>
 
             <div>
-                number
+                {product.quantity}
             </div>
         </div>
     </div>

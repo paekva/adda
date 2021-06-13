@@ -1,11 +1,14 @@
 package com.ifmo.adda.controller
 
 import com.ifmo.adda.dto.OrderDto
+import com.ifmo.adda.dto.OrdersDto
 import com.ifmo.adda.service.OrdersService
+import com.ifmo.adda.service.OrdersService.Companion.EXPECTED_DELIVERY_TIME
 import com.ifmo.adda.service.UserService
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.*
 import java.time.Instant
+import java.time.temporal.ChronoUnit
 
 @RestController
 @RequestMapping(
@@ -16,25 +19,27 @@ class OrderController(
     private val ordersService: OrdersService,
     private val userService: UserService
 ) {
-    @GetMapping(
-        value = ["/all"]
-    )
-    fun getAllProducts(): OrdersList = ordersService.getOrders()
+    @GetMapping("/all")
+    fun getAllProducts(): OrdersDto = OrdersDto(ordersService.getOrders())
 
-    @GetMapping(
-            value = ["/forUser"]
-    )
-    fun getOrdersForUser(): OrdersList = if (userService.IAmAdmin()) ordersService.getOrders() else ordersService.getOrdersForClient(userService.myId())
+    @GetMapping("/forUser")
+    fun getOrdersForUser(): OrdersDto {
+        val orders =
+            if (userService.IAmAdmin()) ordersService.getOrders() else ordersService.getOrdersForClient(userService.myId())
+        return OrdersDto(orders)
+    }
 
-    @PostMapping(
-            value = ["/createCustom"]
+    @PostMapping("/createCustom")
+    fun createCustomOrder(@RequestBody description: String) = ordersService.makeCustomOrder(
+        OrderDto(
+            null,
+            userService.myId(),
+            true,
+            description,
+            null,
+            Instant.now().toEpochMilli(),
+            Instant.now().plusMillis(EXPECTED_DELIVERY_TIME).toEpochMilli(),
+            10
+        )
     )
-    fun createCustomOrder(@RequestBody description: String) = ordersService.makeCustomOrder(OrderDto(null, userService.myId(), true, description, null, Instant.now().toEpochMilli(), Instant.now().toEpochMilli() + 2592000000, 10))
 }
-
-//OrdersList(listOf(Order(1, 2, listOf(3, 8, 9), 4, 5, 6)))
-
-
-data class OrdersList(
-    val orders: List<OrderDto>
-)

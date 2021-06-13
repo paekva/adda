@@ -1,13 +1,15 @@
 package com.ifmo.adda.service
 
-import com.ifmo.adda.controller.OrdersList
+import com.ifmo.adda.dao.Cart
+import com.ifmo.adda.dao.CustomOrder
+import com.ifmo.adda.dao.Order
 import com.ifmo.adda.dao.toDto
 import com.ifmo.adda.dto.OrderDto
 import com.ifmo.adda.repository.CustomOrdersRepository
 import com.ifmo.adda.repository.OrdersRepository
 import org.springframework.stereotype.Service
-import java.lang.Exception
-import java.math.BigInteger
+import java.time.Duration
+import java.time.Instant
 
 @Service
 class OrdersService(
@@ -15,17 +17,38 @@ class OrdersService(
     private val customOrdersRepository: CustomOrdersRepository
 ) {
 
-    fun getOrders() = OrdersList(
+    fun getOrders(): List<OrderDto> =
         ordersRepository.findAll().map { it.toDto() } + customOrdersRepository.findAll().map { it.toDto() }
-    )
 
-    @Throws(Exception::class)
-    fun getOrdersForClient(clientId: Int):OrdersList {
-        val orders = ordersRepository.findNormalForClient(clientId).map { it.toDto() } +
-                customOrdersRepository.findCustomForClient(clientId).map { it.toDto() }
-        if (orders.isEmpty()) throw Exception("Orders for client with id $clientId not found")
-        else return OrdersList(orders)
+    fun getOrdersForClient(clientId: Int): List<OrderDto> =
+        ordersRepository.findAllByClient(clientId).map { it.toDto() } +
+                customOrdersRepository.findAllByClient(clientId).map { it.toDto() }
+
+    fun makeCustomOrder(orderDto: OrderDto): OrderDto {
+        val new = CustomOrder(
+            client = orderDto.client,
+            description = orderDto.description!!,
+            dateOfOrder = Instant.ofEpochMilli(orderDto.dateOfOrder),
+            dateOfReceive = Instant.ofEpochMilli(orderDto.dateOfReceive),
+            status = orderDto.status
+        )
+        val saved = customOrdersRepository.save(new)
+        return saved.toDto()
     }
 
-    fun makeCustomOrder(orderDto: OrderDto) = ordersRepository.createCustomOrder(orderDto)
+    fun makeNormalOrder(cart: Cart): OrderDto {
+        val new = Order(
+            client = cart.client,
+            dateOfOrder = Instant.now(),
+            dateOfReceive = Instant.now().plusMillis(EXPECTED_DELIVERY_TIME),
+            status = 10,
+            products = cart.products
+        )
+        val saved = ordersRepository.save(new)
+        return saved.toDto()
+    }
+
+    companion object {
+        val EXPECTED_DELIVERY_TIME = Duration.ofDays(30).toMillis()
+    }
 }

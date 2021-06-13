@@ -29,5 +29,5 @@ data class Order(
         joinColumns = [JoinColumn(name = "order_id", referencedColumnName = "ID")],
         inverseJoinColumns = [JoinColumn(name = "product_id", referencedColumnName = "ID")]
     )
-    var products: Collection<Product>? = null
+    var products: MutableList<Product>
 )

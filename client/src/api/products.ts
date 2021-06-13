@@ -33,8 +33,8 @@ export const getProductsByIds = (ids: number[]): Promise<any> => {
 
 }
 
-export const getCardList = (): Promise<ProductsListResponse | null> => {
-    return customFetch<{}, ProductsListResponse>(
+export const getCardList = (): Promise<any | null> => {
+    return customFetch<{}, any>(
         `${getUrl()}/cart/cartContents`,
         Method.GET,
         undefined,
@@ -54,6 +54,18 @@ export const addProduct = (productId: number): Promise<any> => {
         true
     ).catch((e) => {
         console.error('addProduct not working');
+        return null;
+    });
+}
+
+export const deleteProductFromCard = (productId: number): Promise<any> => {
+    return customFetch<{}, ProductsListResponse>(
+        `${getUrl()}/cart/deleteProduct?productId=${productId}`,
+        Method.POST,
+        undefined,
+        true
+    ).catch((e) => {
+        console.error('deleteProductFromCard not working');
         return null;
     });
 }
