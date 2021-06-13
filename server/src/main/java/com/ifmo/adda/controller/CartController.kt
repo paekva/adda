@@ -25,6 +25,9 @@ class CartController(
     @PostMapping("/deleteProduct")
     fun deleteProduct(@RequestParam productId: Int): CartDto = cartService.deleteProduct(userService.myId(), productId)
 
+    @PostMapping("/removeOneProduct")
+    fun removeOneProduct(@RequestParam productId: Int): CartDto = cartService.removeOneProduct(userService.myId(), productId)
+
     @GetMapping("/clear")
     fun clearCart(): CartDto = cartService.clearCart(userService.myId())
 

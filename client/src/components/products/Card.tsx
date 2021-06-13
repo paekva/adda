@@ -2,7 +2,7 @@ import React, {useCallback, useEffect, useState} from "react";
 import {getProductsList} from "../../api/products";
 import {CardItem} from "./CardItem";
 import Button from "@material-ui/core/Button";
-import {clearCat, deleteProductFromCard, getCardList, makeOrder} from "../../api/cart";
+import {addProduct, clearCat, deleteProductFromCard, getCardList, makeOrder, removeOneProduct} from "../../api/cart";
 
 export const Card = (): JSX.Element => {
     const [products, setProducts] = useState<any[]>([]);
@@ -34,6 +34,14 @@ export const Card = (): JSX.Element => {
         deleteProductFromCard(id).then(() => updateCart());
     }, [])
 
+    const onIncrement = useCallback((id: number) => {
+        addProduct(id).then(() => updateCart());
+    }, [])
+
+    const onDecrement = useCallback((id: number) => {
+        removeOneProduct(id).then(() => updateCart());
+    }, [])
+
     const onClear = useCallback(() => {
         clearCat().then(() => updateCart());
     }, [])
@@ -46,7 +54,8 @@ export const Card = (): JSX.Element => {
         <div className='wrapper'>
             {
                 products.length > 0
-                    ? products.map((el) => <CardItem product={el} deleteCallback={onDelete}/>)
+                    ? products.map((el) => <CardItem product={el} deleteCallback={onDelete}
+                                                     incrementCallback={onIncrement} decrementCallback={onDecrement}/>)
                     : 'Вы еще ничего не выбрали'
             }
         </div>

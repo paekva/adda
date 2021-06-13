@@ -29,6 +29,14 @@ class CartService(
         return getCartDtoForUser(clientId)
     }
 
+    fun removeOneProduct(clientId: Int, productId: Int): CartDto {
+        val cart = getCartForUser(clientId)
+        val product = cart.products.find { it.id == productId }
+        cart.products.remove(product)
+        cartRepository.save(cart)
+        return getCartDtoForUser(clientId)
+    }
+
     fun getCartContents(clientId: Int): CartDto {
         return getCartDtoForUser(clientId)
     }

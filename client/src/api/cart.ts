@@ -40,6 +40,19 @@ export const deleteProductFromCard = (productId: number): Promise<any> => {
     });
 }
 
+
+export const removeOneProduct = (productId: number): Promise<any> => {
+    return customFetch<{}, ProductsListResponse>(
+        `${getUrl()}/cart/removeOneProduct?productId=${productId}`,
+        Method.POST,
+        undefined,
+        true
+    ).catch((e) => {
+        console.error('removeOneProduct not working');
+        return null;
+    });
+}
+
 export const makeOrder = (): Promise<any> => {
     return customFetch<{}, ProductsListResponse>(
         `${getUrl()}/cart/makeOrder`,
