@@ -6,7 +6,7 @@ export type BucketItemProps = {
     product: Product
 }
 
-export const BucketItem = (props: BucketItemProps): JSX.Element => {
+export const CardItem = (props: BucketItemProps): JSX.Element => {
     const {product} = props;
     return <div className='productEl'>
         <button onClick={() => console.warn(product.id)}>delete</button>

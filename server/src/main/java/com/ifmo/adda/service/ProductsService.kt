@@ -13,4 +13,7 @@ class ProductsService(
     fun getProducts() = ProductsList(
         productRepository.findAll().map { it.toDto() }
     )
+
+    fun getProductsByIds(ids: List<Int>) =
+        productRepository.findAllById(ids).map { it.toDto() }
 }

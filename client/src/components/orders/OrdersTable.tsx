@@ -1,12 +1,13 @@
 import React, {useCallback, useEffect, useState} from "react";
 import {DataTable} from "../tableForData/DataTable";
 import {ordersTableScheme} from "./OrdersTableScheme";
-import {getOrdersList, getOrdersListForUser} from "../../api/orders";
+import {getOrdersListForUser} from "../../api/orders";
 import {connect} from "react-redux";
-import {Order} from "../../types";
+import {Order, Product} from "../../types";
 import store, {AppStore} from "../../store/store";
 import {AppRole} from "../../api/user";
 import {StateChangeActionType} from "../../store/actions";
+import {getProductsByIds} from "../../api/products";
 
 export type OrdersTableProps = {
     roles: AppRole[]
@@ -18,13 +19,36 @@ const OrdersTable = (props: OrdersTableProps): JSX.Element => {
     const [orderList, setOrdersList] = useState<Order[]>([]);
 
     useEffect(() => {
-        (roles.includes(AppRole.ADMIN) ? getOrdersList : getOrdersListForUser)()
-            .then((response) => setOrdersList(response.orders))
+        getOrdersListForUser()
+            .then(async (response) => {
+                const productsLists = response.orders.map(o => o.products)
+                let idsList = [] as number[];
+                productsLists.forEach((pl) => {
+                    const tmp = pl?.map(p => Object.values(p))
+                        .reduce((a, v) => [...a, ...v]) as number[]
+                    idsList = [...idsList, ...tmp]
+                })
+
+                let ids = [] as number[];
+                idsList.forEach((e) => ids.includes(e) ? null : ids = [...ids, e])
+                const tmp: Product[] = await getProductsByIds(ids);
+
+                const arr = response.orders.map(e => {
+                    return {
+                        ...e,
+                        productsData: e.products?.map(id =>
+                            (tmp.find((p) => p.id === id) ?? null))
+                    }
+                })
+                setOrdersList(arr)
+                console.warn(arr)
+
+            })
             .then(resetLastSelectedData)
     }, [roles, resetLastSelectedData]);
 
     const rowCLickHandler = useCallback((id) => {
-        setSelectedOrder(orderList.find(el => el.id === id) ?? null)
+            setSelectedOrder(orderList.find(el => el.id === id) ?? null)
         },
         [setSelectedOrder, orderList])
 

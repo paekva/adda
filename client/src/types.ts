@@ -14,6 +14,7 @@ export type Order = {
     status: number;
     isCustom: boolean;
     products?: number[];
+    productsData?: (Product | null)[];
     description?: string;
 }
 

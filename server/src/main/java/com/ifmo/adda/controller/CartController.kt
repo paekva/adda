@@ -8,30 +8,30 @@ import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping(
-        value = ["/api/1.0/cart/"],
-        produces = [MediaType.APPLICATION_JSON_VALUE]
+    value = ["/api/1.0/cart/"],
+    produces = [MediaType.APPLICATION_JSON_VALUE]
 )
 class CartController(
-        private val cartService: CartService,
-        private val userService: UserService
+    private val cartService: CartService,
+    private val userService: UserService
 ) {
     @GetMapping(
-            value = ["/cartContents"]
+        value = ["/cartContents"]
     )
     fun getCartContents(): CartDto = cartService.getCartContents(userService.myId())
 
     @PostMapping(
-            value = ["/addProduct"]
+        value = ["/addProduct"]
     )
-    fun addProduct(@RequestParam productId: Int) = cartService.addProduct(userService.myId(), productId)
+    fun addProduct(@RequestParam productId: Int): CartDto = cartService.addProduct(userService.myId(), productId)
 
     @GetMapping(
-            value = ["/clear"]
+        value = ["/clear"]
     )
-    fun clearCart() = cartService.clearCart(userService.myId())
+    fun clearCart(): CartDto = cartService.clearCart(userService.myId())
 
     @GetMapping(
-            value = ["/makeOrder"]
+        value = ["/makeOrder"]
     )
     fun makeOrder() = cartService.makeOrder(userService.myId())
 }

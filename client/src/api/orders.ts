@@ -8,15 +8,6 @@ export type OrdersListResponse = {
     orders: Order[]
 }
 
-export const getOrdersList = (): Promise<OrdersListResponse> => {
-    return customFetch<{}, OrdersListResponse>(
-        `${getUrl()}/orders/all`,
-        Method.GET,
-        undefined,
-        true
-    );
-}
-
 export const getOrdersListForUser = (): Promise<OrdersListResponse> => {
     return customFetch<{}, OrdersListResponse>(
         `${getUrl()}/orders/forUser`,

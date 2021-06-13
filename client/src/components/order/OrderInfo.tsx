@@ -1,7 +1,8 @@
 import {AppRole} from "../../api/user";
-import React from "react";
+import React, {useEffect} from "react";
 import {Order} from "../../types";
 import './OrderPage.css'
+import {getProductsByIds} from "../../api/products";
 
 export const OrderInfo = (props: { selectedOrder?: Order | null, roles: AppRole[] }): JSX.Element => {
     const {selectedOrder, roles} = props;

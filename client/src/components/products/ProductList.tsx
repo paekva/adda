@@ -1,7 +1,6 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import {connect} from "react-redux";
 import "./ProductList.css";
-import {useEffect, useState} from "react";
 import {getProductsList} from "../../api/products";
 import {ProductItem} from "./ProductItem";
 import {Product} from "../../types";
@@ -12,7 +11,7 @@ const ProductList = (props: ProductListProps) => {
     useEffect(() => {
         getProductsList()
             .then((response) => {
-                    setProducts(response.products)
+                response && setProducts(response.products)
                 }
             )
             .catch((e) => {

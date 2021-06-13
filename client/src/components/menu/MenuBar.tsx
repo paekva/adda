@@ -1,7 +1,7 @@
 import React from "react";
 import './MenuBar.css'
 import {MenuItem} from "../../types";
-import store from "../../store/store";
+import store, {AppStore} from "../../store/store";
 import {StateChangeActionType} from "../../store/actions";
 import {connect} from "react-redux";
 
@@ -9,16 +9,22 @@ export type MenuBarProps = {
     style: string,
     items: { menu: MenuItem, title: string }[]
     setMenuItem: (currentMenuItem: MenuItem) => void;
+    currentMenuItem: MenuItem | null
 }
 
 const MenuBar = (props: MenuBarProps): JSX.Element => {
     return <div className={props.style}>
         {props.items.map((el) =>
-            <div className='menuItem' onClick={() => props.setMenuItem(el.menu)}>{el.title}</div>)}
+            <div className='menuItem' style={props.currentMenuItem === el.menu ? {background: "antiquewhite"} : {}} onClick={() => props.setMenuItem(el.menu)}>{el.title}</div>)}
     </div>
 }
 
 
+const mapStateToProps = (store: AppStore) => {
+    return {
+        currentMenuItem: store.currentMenuItem
+    }
+}
 const mapDispatchToProps = () => {
     return {
         setMenuItem: (currentMenuItem: MenuItem) => {
@@ -30,4 +36,4 @@ const mapDispatchToProps = () => {
     };
 };
 
-export default connect(null, mapDispatchToProps)(MenuBar);
+export default connect(mapStateToProps, mapDispatchToProps)(MenuBar);

@@ -6,7 +6,6 @@ import com.ifmo.adda.dto.ProductDto
 
 fun Product.toDto() = ProductDto(id!!, name, "$price SLG")
 
-// TODO: finish with products list (need a separate table for this)
 fun Order.toDto() = OrderDto(id!!, client, false, "", if (products.isNullOrEmpty()) listOf() else products!!.map { Pair(it.id!!, 1) }, dateOfOrder.toEpochMilli(), dateOfReceive.toEpochMilli(), status)
 
 fun CustomOrder.toDto() = OrderDto(id!!, client, true, description, listOf(), dateOfOrder.toEpochMilli(), dateOfReceive.toEpochMilli(), status)
