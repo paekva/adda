@@ -22,9 +22,8 @@ fun getStatusEnumItem(status: Int): Status =
         3 -> Status.LOAD
         4 -> Status.UNLOAD
         5 -> Status.DELIVERY
-        6 -> Status.PREPARE
-        7 -> Status.ON_THE_WAY
-        8 -> Status.UNKNOWN
+        6 -> Status.ON_THE_WAY
+        7 -> Status.CANCELED
         else -> Status.UNKNOWN
     }
 
@@ -35,9 +34,9 @@ fun getStatusIntItem(status: Status): Int =
         Status.LOAD -> 3
         Status.UNLOAD -> 4
         Status.DELIVERY -> 5
-        Status.PREPARE -> 6
-        Status.ON_THE_WAY -> 7
-        Status.UNKNOWN -> 8
+        Status.ON_THE_WAY -> 6
+        Status.CANCELED -> 7
+        Status.UNKNOWN -> 0
         else -> 0
     }
 

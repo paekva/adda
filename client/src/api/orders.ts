@@ -25,3 +25,12 @@ export const makeCustomOrder = (description: string): Promise<OrdersListResponse
         true
     );
 }
+
+export const cancelOrder = (orderId: number): Promise<any> => {
+    return customFetch<{}, any>(
+        `${getUrl()}/orders/cancel?orderId=${orderId}`,
+        Method.GET,
+        undefined,
+        true
+    );
+}

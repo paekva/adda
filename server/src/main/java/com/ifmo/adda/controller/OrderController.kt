@@ -40,4 +40,9 @@ class OrderController(
             Status.ACCEPTANCE
         )
     )
+
+    @GetMapping("/cancel")
+    fun cancelOrder(@RequestParam orderId: Int): OrderDto {
+        return ordersService.cancelOrder(orderId)
+    }
 }

@@ -22,5 +22,6 @@ enum class Status {
     UNLOAD,
     DELIVERY,
     ON_THE_WAY,
+    CANCELED,
     UNKNOWN
 }

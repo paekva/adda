@@ -2,6 +2,7 @@ package com.ifmo.adda.service
 
 import com.ifmo.adda.dao.*
 import com.ifmo.adda.dto.OrderDto
+import com.ifmo.adda.dto.Status
 import com.ifmo.adda.repository.CustomOrdersRepository
 import com.ifmo.adda.repository.OrdersRepository
 import org.springframework.stereotype.Service
@@ -43,6 +44,20 @@ class OrdersService(
         )
         val saved = ordersRepository.save(new)
         return saved.toDto()
+    }
+
+    fun cancelOrder(orderId: Int): OrderDto {
+        val order = ordersRepository.findById(orderId)
+        val newOrder = Order(
+            id = order.get().id,
+            client = order.get().client,
+            dateOfOrder = order.get().dateOfOrder,
+            dateOfReceive = order.get().dateOfReceive,
+            products = order.get().products,
+            status = getStatusIntItem(Status.CANCELED)
+        )
+        ordersRepository.save(newOrder)
+        return newOrder.toDto()
     }
 
     companion object {

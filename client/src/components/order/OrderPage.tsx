@@ -8,6 +8,7 @@ import {connect} from "react-redux";
 import Button from "@material-ui/core/Button";
 import {OrderInfo} from "./OrderInfo";
 import {Confirmation} from "./Confirmation";
+import {cancelOrder} from "../../api/orders";
 
 const admin: Status[] = [
     Status.ACCEPTANCE,
@@ -41,7 +42,7 @@ const adminButton = (order?: Order | null) => [
 const clientButton = (order?: Order | null) => [
     {
         label: "Отказаться от заказа",
-        handler: () => order?.id ? console.warn('rejecting') : null,
+        handler: () => order?.id ? cancelOrder(order.id) : null,
         disabled: (order?.status === Status.ACCEPTANCE || order?.status === Status.PREPARE)
     },
     {

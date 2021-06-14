@@ -36,6 +36,7 @@ export enum Status {
     DELIVERY = 'DELIVERY',
     PREPARE = 'PREPARE',
     ON_THE_WAY = 'ON_THE_WAY',
+    CANCELED = 'CANCELED',
     UNKNOWN = 'UNKNOWN'
 }
 
@@ -47,6 +48,8 @@ export const statusToStringMap: { [key: string]: string } = {
     [Status.ON_THE_WAY.toString()]: 'В пути',
     [Status.UNLOAD.toString()]: 'Выгрузка',
     [Status.DELIVERY.toString()]: 'Доставка',
+    [Status.CANCELED.toString()]: 'Заказ отменен',
+    [Status.UNKNOWN.toString()]: 'Статус заказа не известен',
 }
 
 export const userRoleToOrderStatusMap = {
