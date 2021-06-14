@@ -58,7 +58,3 @@
     display: flex;
     flex-direction: column;
 }
-
-.statusText {
-    color: green
-}

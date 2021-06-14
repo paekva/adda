@@ -18,25 +18,50 @@ fun CustomOrder.toDto() = OrderDto(
 fun getStatusEnumItem(status: Int): Status =
     when (status) {
         1 -> Status.ACCEPTANCE
-        2 -> Status.BUY
-        3 -> Status.LOAD
-        4 -> Status.UNLOAD
-        5 -> Status.DELIVERY
-        6 -> Status.ON_THE_WAY
-        7 -> Status.CANCELED
+        2 -> Status.RETURNED
+        3 -> Status.BUY_WAIT
+        4 -> Status.BUY
+        5 -> Status.BUY_WAIT_ACCEPTANCE
+        6 -> Status.BUY_ERROR
+        7 -> Status.LOAD_WAIT
+        8 -> Status.LOAD
+        9 -> Status.ON_THE_WAY
+        10 -> Status.UNLOAD_WAIT
+        11 -> Status.UNLOAD
+        12 -> Status.UNLOAD_WAIT_ACCEPTANCE
+        13 -> Status.UNLOAD_ERROR
+        14 -> Status.DELIVERY_WAIT
+        15 -> Status.DELIVERY
+        16 -> Status.DELIVERY_WAIT_ACCEPTANCE
+        17 -> Status.DELIVERY_ERROR
+        18 -> Status.DELIVERED
+        19 -> Status.CANCELED
+        20 -> Status.PAID
         else -> Status.UNKNOWN
     }
 
 fun getStatusIntItem(status: Status): Int =
     when (status) {
         Status.ACCEPTANCE -> 1
-        Status.BUY -> 2
-        Status.LOAD -> 3
-        Status.UNLOAD -> 4
-        Status.DELIVERY -> 5
-        Status.ON_THE_WAY -> 6
-        Status.CANCELED -> 7
-        Status.UNKNOWN -> 0
+        Status.RETURNED -> 2
+        Status.BUY_WAIT -> 3
+        Status.BUY -> 4
+        Status.BUY_WAIT_ACCEPTANCE -> 5
+        Status.BUY_ERROR -> 6
+        Status.LOAD_WAIT -> 7
+        Status.LOAD -> 8
+        Status.ON_THE_WAY -> 9
+        Status.UNLOAD_WAIT -> 10
+        Status.UNLOAD -> 11
+        Status.UNLOAD_WAIT_ACCEPTANCE -> 12
+        Status.UNLOAD_ERROR -> 13
+        Status.DELIVERY_WAIT -> 14
+        Status.DELIVERY -> 15
+        Status.DELIVERY_WAIT_ACCEPTANCE -> 16
+        Status.DELIVERY_ERROR -> 17
+        Status.DELIVERED -> 18
+        Status.CANCELED -> 19
+        Status.PAID -> 20
         else -> 0
     }
 

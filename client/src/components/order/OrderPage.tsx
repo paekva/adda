@@ -21,9 +21,9 @@ const admin: Status[] = [
 
 const client: Status[] = [
     Status.ACCEPTANCE,
-    Status.PREPARE,
+    Status.USER_ONLY_PREPARE,
     Status.ON_THE_WAY,
-    Status.DELIVERY
+    Status.USER_ONLY_DELIVERY
 ]
 
 const adminButton = (order?: Order | null) => [
@@ -43,7 +43,7 @@ const clientButton = (order?: Order | null) => [
     {
         label: "Отказаться от заказа",
         handler: () => order?.id ? cancelOrder(order.id) : null,
-        disabled: (order?.status === Status.ACCEPTANCE || order?.status === Status.PREPARE)
+        disabled: (order?.status === Status.ACCEPTANCE || order?.status === Status.USER_ONLY_PREPARE)
     },
     {
         label: "Оплатить заказ",
@@ -59,11 +59,19 @@ export type OrderPageProps = {
 
 export const getStatusForUser: any = (status: Status) => {
     switch (status) {
+        case Status.BUY_WAIT:
         case Status.BUY:
+        case Status.BUY_ERROR:
+        case Status.LOAD_WAIT:
         case Status.LOAD:
-            return Status.PREPARE;
+            return Status.USER_ONLY_PREPARE;
+        case Status.UNLOAD_WAIT:
         case Status.UNLOAD:
-            return Status.DELIVERY;
+        case Status.UNLOAD_ERROR:
+        case Status.DELIVERY_WAIT:
+        case Status.DELIVERY:
+        case Status.DELIVERY_ERROR:
+            return Status.USER_ONLY_DELIVERY;
         default:
             return status;
 
@@ -81,8 +89,14 @@ const OrderPage = (props: OrderPageProps): JSX.Element => {
 
         <div className='header'>
             <div className='orderId'>Заказ №{selectedOrder?.id}</div>
-            <div
-                className='statusText'>{statusToStringMap[currentStatus]}</div>
+            <div style={{
+                color:
+                    currentStatus.includes('WAIT')
+                        ? 'yellow'
+                        : currentStatus.includes('ERROR')
+                        ? 'red'
+                        : 'green'
+            }}>{statusToStringMap[currentStatus]}</div>
         </div>
 
         {(roles.includes(AppRole.USER) || roles.includes(AppRole.ADMIN))

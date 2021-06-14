@@ -17,11 +17,24 @@ data class OrdersDto(
 
 enum class Status {
     ACCEPTANCE,
+    RETURNED,
+    BUY_WAIT,
     BUY,
+    BUY_ERROR,
+    BUY_WAIT_ACCEPTANCE,
+    LOAD_WAIT,
     LOAD,
-    UNLOAD,
-    DELIVERY,
     ON_THE_WAY,
+    UNLOAD_WAIT,
+    UNLOAD,
+    UNLOAD_WAIT_ACCEPTANCE,
+    UNLOAD_ERROR,
+    DELIVERY_WAIT,
+    DELIVERY,
+    DELIVERY_WAIT_ACCEPTANCE,
+    DELIVERY_ERROR,
+    DELIVERED,
     CANCELED,
+    PAID,
     UNKNOWN
 }
