@@ -21,13 +21,13 @@ export const customFetch = <ReqT, ResT>(
         body: JSON.stringify(requestBody),
     })
         .then(async (data) => {
-        const response = await data.json();
+            const response = await data.json();
 
-        if (throwException && data.status.toString()[0] == '4')
-            throw Error(response.message ?? response.error);
+            if (throwException && data.status.toString()[0] == '4')
+                throw Error(response.message ?? response.error);
 
-        return response
-    });
+            return response
+        });
 };
 
 export const customFetchForImages = <ReqT, ResT>(

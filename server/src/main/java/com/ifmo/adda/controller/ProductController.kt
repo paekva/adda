@@ -26,16 +26,17 @@ class ProductController(
     fun getProductById(@RequestBody ids: List<Int>): List<ProductDto> =
         productsService.getProductsByIds(ids)
 
-    @PostMapping("/image/set/{id}")
+    @PostMapping("/image/set/{productId}")
     fun setImage(
-        @PathVariable("id") id: Int,
+        @PathVariable("productId") productId: Int,
         @RequestParam("file") file: MultipartFile,
         redirectAttributes: RedirectAttributes
-    ) = productPhotoService.saveImage(id, file.bytes)
+    ) = productPhotoService.saveImage(productId, file.bytes)
 
     @GetMapping(
-        value = ["/image/get/{id}"],
+        value = ["/image/get/{productPhotoId}"],
         produces = [MediaType.IMAGE_JPEG_VALUE]
     )
-    fun getImage(@PathVariable("id") id: Int): ByteArray = productPhotoService.getImage(id)
+    fun getImage(@PathVariable("productPhotoId") productPhotoId: Int): ByteArray =
+        productPhotoService.getImage(productPhotoId)
 }

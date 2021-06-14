@@ -4,6 +4,7 @@ export type Product = {
     id: number;
     name: string;
     price: string;
+    imageId: number
 }
 
 export type Order = {
