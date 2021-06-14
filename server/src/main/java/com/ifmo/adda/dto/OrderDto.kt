@@ -24,6 +24,7 @@ enum class Status {
     BUY_WAIT_ACCEPTANCE,
     LOAD_WAIT,
     LOAD,
+    LOAD_ERROR,
     ON_THE_WAY,
     UNLOAD_WAIT,
     UNLOAD,

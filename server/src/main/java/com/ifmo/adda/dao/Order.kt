@@ -29,5 +29,13 @@ data class Order(
         joinColumns = [JoinColumn(name = "order_id", referencedColumnName = "ID")],
         inverseJoinColumns = [JoinColumn(name = "product_id", referencedColumnName = "ID")]
     )
-    var products: MutableList<Product>
+    var products: MutableList<Product>,
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+        name = "worker_to_order",
+        joinColumns = [JoinColumn(name = "order_id", referencedColumnName = "ID")],
+        inverseJoinColumns = [JoinColumn(name = "client_id", referencedColumnName = "ID")]
+    )
+    var workers: MutableList<User>
 )

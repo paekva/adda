@@ -8,7 +8,7 @@ import {connect} from "react-redux";
 import Button from "@material-ui/core/Button";
 import {OrderInfo} from "./OrderInfo";
 import {Confirmation} from "./Confirmation";
-import {cancelOrder} from "../../api/orders";
+import {acceptOrder, cancelOrder, checkOrder, declineOrder, startOrder} from "../../api/orders";
 
 const admin: Status[] = [
     Status.ACCEPTANCE,
@@ -29,12 +29,25 @@ const client: Status[] = [
 const adminButton = (order?: Order | null) => [
     {
         label: "Сообщить об ошибке",
-        handler: () => order?.id ? console.warn('rejecting') : null,
+        handler: () => order?.id ? declineOrder(order.id) : null,
         disabled: false
     },
     {
         label: "Подтвердить",
-        handler: () => order?.id ? console.warn('accepting') : null,
+        handler: () => order?.id ? acceptOrder(order.id) : null,
+        disabled: false
+    },
+]
+
+const workerButton = (order?: Order | null) => [
+    {
+        label: "Взять в выполнение",
+        handler: () => order?.id ? startOrder(order.id) : null,
+        disabled: false
+    },
+    {
+        label: "Завершить выполнение",
+        handler: () => order?.id ? checkOrder(order.id) : null,
         disabled: false
     },
 ]
@@ -117,7 +130,7 @@ const OrderPage = (props: OrderPageProps): JSX.Element => {
         </div>}
 
         <div className='controlsInOrder'>
-            {(roles.includes(AppRole.USER) ? clientButton : adminButton)(selectedOrder)
+            {(roles.includes(AppRole.USER) ? clientButton : roles.includes(AppRole.ADMIN) ? adminButton : workerButton)(selectedOrder)
                 .map((el) => <Button
                     type="submit"
                     variant="contained"

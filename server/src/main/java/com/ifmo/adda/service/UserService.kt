@@ -2,8 +2,10 @@ package com.ifmo.adda.service
 
 import com.ifmo.adda.dao.User
 import com.ifmo.adda.dto.UserDto
+import com.ifmo.adda.exception.BadRequestException
 import com.ifmo.adda.repository.UserRepository
 import com.ifmo.adda.util.SecurityContextUtils
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.core.userdetails.UsernameNotFoundException
@@ -29,6 +31,10 @@ class UserService(
     return userRepository.findByUsername(username)
   }
 
+  fun loadUserById(userId: Int): User {
+    return userRepository.findByIdOrNull(userId) ?: throw BadRequestException("no user for id $userId")
+  }
+
   fun me(): UserDto {
     val user = SecurityContextUtils.getUserFromContext()
     return UserDto(user.username, user.authorities.map { it.authority })
@@ -43,7 +49,11 @@ class UserService(
     return meAsEntity().id!!
   }
 
-  fun IAmAdmin(): Boolean {
+  fun iAmAdmin(): Boolean {
     return me().roles.filter { it.contains("ADMIN") }.isNotEmpty()
+  }
+
+  fun iAmWorker(): Boolean {
+    return me().roles.filter { it.contains("ADMIN") || it.contains("USER") }.isEmpty()
   }
 }

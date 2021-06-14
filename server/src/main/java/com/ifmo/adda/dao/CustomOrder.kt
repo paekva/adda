@@ -24,5 +24,13 @@ data class CustomOrder(
     val dateOfReceive: Instant,
 
     @Column(nullable = false)
-    val status: Int
+    val status: Int,
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+        name = "worker_to_order",
+        joinColumns = [JoinColumn(name = "order_id", referencedColumnName = "ID")],
+        inverseJoinColumns = [JoinColumn(name = "client_id", referencedColumnName = "ID")]
+    )
+    var workers: MutableList<User>
 )

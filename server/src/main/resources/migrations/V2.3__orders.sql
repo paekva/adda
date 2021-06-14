@@ -56,3 +56,19 @@ insert into product_to_order(order_id, product_id)
 values (5, 1);
 insert into product_to_order(order_id, product_id)
 values (5, 5);
+
+create table worker_to_order
+(
+    id        SERIAL NOT NULL PRIMARY KEY,
+    order_id  int references ORDER_ITEM (id) on update cascade on delete cascade,
+    client_id int references user_ (id) on update cascade
+);
+
+insert into worker_to_order(order_id, client_id)
+values (1, 3);
+insert into worker_to_order(order_id, client_id)
+values (1, 4);
+insert into worker_to_order(order_id, client_id)
+values (1, 5);
+insert into worker_to_order(order_id, client_id)
+values (1, 6);

@@ -9,7 +9,6 @@ import com.ifmo.adda.service.UserService
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.*
 import java.time.Instant
-import java.time.temporal.ChronoUnit
 
 @RestController
 @RequestMapping(
@@ -23,7 +22,12 @@ class OrderController(
     @GetMapping("/forUser")
     fun getOrdersForUser(): OrdersDto {
         val orders =
-            if (userService.IAmAdmin()) ordersService.getOrders() else ordersService.getOrdersForClient(userService.myId())
+            if (userService.iAmAdmin())
+                ordersService.getOrders()
+            else if (userService.iAmWorker())
+                ordersService.getOrdersForWorker(userService.myId())
+            else
+                ordersService.getOrdersForClient(userService.myId())
         return OrdersDto(orders)
     }
 
@@ -44,5 +48,25 @@ class OrderController(
     @GetMapping("/cancel")
     fun cancelOrder(@RequestParam orderId: Int): OrderDto {
         return ordersService.cancelOrder(orderId)
+    }
+
+    @GetMapping("/accept")
+    fun acceptOrder(@RequestParam orderId: Int): OrderDto {
+        return ordersService.acceptOrder(orderId)
+    }
+
+    @GetMapping("/decline")
+    fun declineOrder(@RequestParam orderId: Int): OrderDto {
+        return ordersService.declineOrder(orderId, userService.iAmAdmin())
+    }
+
+    @GetMapping("/start")
+    fun startOrder(@RequestParam orderId: Int): OrderDto {
+        return ordersService.startOrder(orderId)
+    }
+
+    @GetMapping("/check")
+    fun checkOrder(@RequestParam orderId: Int): OrderDto {
+        return ordersService.sendOrderOnCheck(orderId)
     }
 }

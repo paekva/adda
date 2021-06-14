@@ -34,3 +34,39 @@ export const cancelOrder = (orderId: number): Promise<any> => {
         true
     );
 }
+
+export const acceptOrder = (orderId: number): Promise<any> => {
+    return customFetch<{}, any>(
+        `${getUrl()}/orders/accept?orderId=${orderId}`,
+        Method.GET,
+        undefined,
+        true
+    );
+}
+
+export const declineOrder = (orderId: number): Promise<any> => {
+    return customFetch<{}, any>(
+        `${getUrl()}/orders/decline?orderId=${orderId}`,
+        Method.GET,
+        undefined,
+        true
+    );
+}
+
+export const startOrder = (orderId: number): Promise<any> => {
+    return customFetch<{}, any>(
+        `${getUrl()}/orders/start?orderId=${orderId}`,
+        Method.GET,
+        undefined,
+        true
+    );
+}
+
+export const checkOrder = (orderId: number): Promise<any> => {
+    return customFetch<{}, any>(
+        `${getUrl()}/orders/check?orderId=${orderId}`,
+        Method.GET,
+        undefined,
+        true
+    );
+}
