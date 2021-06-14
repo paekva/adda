@@ -2,7 +2,7 @@ package com.ifmo.adda.dao
 
 import com.ifmo.adda.dto.*
 
-fun Product.toDto() = ProductDto(id!!, name, "$price SLG")
+fun Product.toDto(imageId: Int?) = ProductDto(id!!, name, "$price SLG", imageId)
 
 fun CustomOrder.toDto() = OrderDto(
     id!!,
