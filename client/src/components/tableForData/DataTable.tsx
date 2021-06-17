@@ -26,7 +26,7 @@ export const DataTable = (props: DataTableProps): JSX.Element | null => {
                 {data.map((singleData, index) => {
                     return (
                         <div className="dataTableRow" key={"dataRow" + index}
-                             onClick={() => onRowClick ? onRowClick(singleData.id) : null}>
+                             onClick={() => onRowClick ? onRowClick(singleData.id, singleData.isCustom) : null}>
                             {Object.entries(scheme).map((field) => {
                                 const d = singleData[field[0]];
                                 return (

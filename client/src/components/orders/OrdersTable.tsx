@@ -45,8 +45,9 @@ const OrdersTable = (props: OrdersTableProps): JSX.Element => {
             .then(resetLastSelectedData)
     }, [roles, resetLastSelectedData]);
 
-    const rowCLickHandler = useCallback((id) => {
-            setSelectedOrder(orderList.find(el => el.id === id) ?? null)
+    const rowCLickHandler = useCallback((id, isCustom) => {
+            let newList = orderList.filter(x => x.isCustom === isCustom)
+            setSelectedOrder(newList.find(el => el.id === id) ?? null)
         },
         [setSelectedOrder, orderList])
 
