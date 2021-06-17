@@ -58,7 +58,7 @@ export enum Status {
 
 export const statusToStringMap: { [key: string]: string } = {
     [Status.ACCEPTANCE.toString()]: "На подтверждении",
-    [Status.RETURNED.toString()]: "Заказ откланен",
+    [Status.RETURNED.toString()]: "Заказ отклонен",
     [Status.BUY_WAIT.toString()]: "Ожидание закупки",
     [Status.BUY.toString()]: "Закупка",
     [Status.BUY_WAIT_ACCEPTANCE.toString()]: "Ожидание подтверждения закупки",

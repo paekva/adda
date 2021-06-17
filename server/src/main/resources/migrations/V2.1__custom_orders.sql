@@ -9,10 +9,10 @@ CREATE TABLE CUSTOM_ORDER_ITEM
 );
 
 INSERT INTO CUSTOM_ORDER_ITEM (client, description, date_of_order, date_of_receive, status)
-VALUES (1, 'Хочу слона', TIMESTAMP '2011-05-16 15:36:38', TIMESTAMP '2011-06-16 15:36:38', 0);
+VALUES (1, 'Хочу слона', TIMESTAMP '2011-05-16 15:36:38', TIMESTAMP '2011-06-16 15:36:38', 7);
 
 INSERT INTO CUSTOM_ORDER_ITEM (client, description, date_of_order, date_of_receive, status)
-VALUES (1, 'Хочу лупу', TIMESTAMP '2021-05-16 15:36:38', TIMESTAMP '2021-06-16 15:36:38', 0);
+VALUES (1, 'Хочу лупу', TIMESTAMP '2021-05-16 15:36:38', TIMESTAMP '2021-06-16 15:36:38', 4);
 
 INSERT INTO CUSTOM_ORDER_ITEM (client, description, date_of_order, date_of_receive, status)
-VALUES (1, 'Я банан', TIMESTAMP '2001-05-16 15:36:38', TIMESTAMP '2001-06-16 15:36:38', 0);
+VALUES (1, 'Я банан', TIMESTAMP '2001-05-16 15:36:38', TIMESTAMP '2001-06-16 15:36:38', 3);
