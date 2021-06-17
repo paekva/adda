@@ -10,7 +10,7 @@ import {connect} from "react-redux";
 import Button from "@material-ui/core/Button";
 import {OrderInfo} from "./OrderInfo";
 import {Confirmation} from "./Confirmation";
-import {acceptOrder, cancelOrder, checkOrder, declineOrder, startOrder} from "../../api/orders";
+import {acceptOrder, cancelOrder, acceptCustomOrder, cancelCustomOrder, checkOrder, declineOrder, startOrder} from "../../api/orders";
 
 const admin: Status[] = [
     Status.ACCEPTANCE,
@@ -95,14 +95,33 @@ export const getStatusForUser: any = (status: Status) => {
 
 const OrderPage = (props: OrderPageProps): JSX.Element => {
 
+    const {selectedOrder, roles} = props;
+    const currentStatus = useMemo(() => {
+        return props.selectedOrder?.status != null
+            ? roles.includes(AppRole.USER) ? getStatusForUser(props.selectedOrder?.status) : props.selectedOrder?.status
+            : Status.UNKNOWN
+    }, [props.selectedOrder?.status])
+
     const [isDialog,setDialog] = useState<boolean>(false);
+    const [isCancelDialog, setCancelDialog] = useState<boolean>(false);
+
     const [orderEvaluation, setOrderEvaluation] = useState<string>('');
+    const [orderCancel, setOrderCancel] = useState<string>('');
+
     const onAcceptCustomOrder = useCallback(() => setDialog(true), [])
+    const onCancelCustomOrder = useCallback(() => setCancelDialog(true), [])
+
     const renderHeader = useCallback(() => {
         return <div>
             ОЦЕНКА ЗАКАЗА
         </div>
     }, [])
+    const renderHeaderCancel = useCallback(() => {
+        return <div>
+            ОТКЛОНЕНИЕ ЗАКАЗА
+        </div>
+    }, [])
+
     const renderBody = useCallback(() => {
         return <div style={{display: 'flex', flexDirection: 'column', padding: 10}}>
             <TextField variant="outlined" placeholder="Введите стоимость заказа" onChange={(e) => setOrderEvaluation(e.target.value)}/>
@@ -112,6 +131,7 @@ const OrderPage = (props: OrderPageProps): JSX.Element => {
                     type="submit"
                     variant="contained"
                     color="default"
+                    onClick={() => selectedOrder?.id ? acceptCustomOrder(selectedOrder.id).then(() => setDialog(false)) : null}
                     style={{height: 56}}
                 >
                     Принять заказ
@@ -129,20 +149,47 @@ const OrderPage = (props: OrderPageProps): JSX.Element => {
             </div>
         </div>
     },[orderEvaluation])
-    const adminButtonForCustom = (order?: Order | null) => [
+    const renderBodyCancel = useCallback(() => {
+        return <div style={{display: 'flex', flexDirection: 'column', padding: 10}}>
+            <TextField variant="outlined" placeholder="Укажите причину" onChange={(e) => setOrderCancel(e.target.value)}/>
+
+            <div style={{display: 'flex', flexDirection: 'row', padding: 10, justifyContent: 'space-between'}}>
+                <Button
+                    type="submit"
+                    variant="contained"
+                    color="default"
+                    onClick={() => selectedOrder?.id ? cancelCustomOrder(selectedOrder.id).then(() => setCancelDialog(false)) : null}
+                    style={{height: 56}}
+                >
+                    Отклонить заказ
+                </Button>
+
+                <Button
+                    type="submit"
+                    variant="contained"
+                    color="default"
+                    onClick={() => setCancelDialog(false)}
+                    style={{height: 56}}
+                >
+                    Отмена
+                </Button>
+            </div>
+        </div>
+    },[orderCancel])
+
+    const adminButtonForCustom = () => [
         {
             label: "Подтвердить",
             handler: () => onAcceptCustomOrder(),
             disabled: false
         },
+        {
+            label: "Отклонить",
+            handler: () => onCancelCustomOrder(),
+            disabled: false
+        },
     ]
 
-    const {selectedOrder, roles} = props;
-    const currentStatus = useMemo(() => {
-        return props.selectedOrder?.status != null
-            ? roles.includes(AppRole.USER) ? getStatusForUser(props.selectedOrder?.status) : props.selectedOrder?.status
-            : Status.UNKNOWN
-    }, [props.selectedOrder?.status])
     return <div className='order'>
 
         <div className='header'>
@@ -188,6 +235,9 @@ const OrderPage = (props: OrderPageProps): JSX.Element => {
 
             {isDialog &&
             <Dialog renderBody={renderBody} renderHeader={renderHeader}/>}
+
+            {isCancelDialog &&
+            <Dialog renderBody={renderBodyCancel} renderHeader={renderHeaderCancel}/>}
         </div>
 
     </div>

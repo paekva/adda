@@ -35,6 +35,24 @@ export const cancelOrder = (orderId: number): Promise<any> => {
     );
 }
 
+export const cancelCustomOrder = (orderId: number): Promise<any> => {
+    return customFetch<{}, any>(
+        `${getUrl()}/orders/cancelCustom?orderId=${orderId}`,
+        Method.GET,
+        undefined,
+        true
+    );
+}
+
+export const acceptCustomOrder = (orderId: number): Promise<any> => {
+    return customFetch<{}, any>(
+        `${getUrl()}/orders/acceptCustom?orderId=${orderId}`,
+        Method.GET,
+        undefined,
+        true
+    );
+}
+
 export const acceptOrder = (orderId: number): Promise<any> => {
     return customFetch<{}, any>(
         `${getUrl()}/orders/accept?orderId=${orderId}`,

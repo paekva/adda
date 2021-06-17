@@ -12,42 +12,52 @@ import java.time.Instant
 
 @RestController
 @RequestMapping(
-    value = ["/api/1.0/orders/"],
-    produces = [MediaType.APPLICATION_JSON_VALUE]
+        value = ["/api/1.0/orders/"],
+        produces = [MediaType.APPLICATION_JSON_VALUE]
 )
 class OrderController(
-    private val ordersService: OrdersService,
-    private val userService: UserService
+        private val ordersService: OrdersService,
+        private val userService: UserService
 ) {
     @GetMapping("/forUser")
     fun getOrdersForUser(): OrdersDto {
         val orders =
-            if (userService.iAmAdmin())
-                ordersService.getOrders()
-            else if (userService.iAmWorker())
-                ordersService.getOrdersForWorker(userService.myId())
-            else
-                ordersService.getOrdersForClient(userService.myId())
+                if (userService.iAmAdmin())
+                    ordersService.getOrders()
+                else if (userService.iAmWorker())
+                    ordersService.getOrdersForWorker(userService.myId())
+                else
+                    ordersService.getOrdersForClient(userService.myId())
         return OrdersDto(orders)
     }
 
     @PostMapping("/createCustom")
     fun createCustomOrder(@RequestBody description: String) = ordersService.makeCustomOrder(
-        OrderDto(
-            null,
-            userService.myId(),
-            true,
-            description,
-            null,
-            Instant.now().toEpochMilli(),
-            Instant.now().plusMillis(EXPECTED_DELIVERY_TIME).toEpochMilli(),
-            Status.ACCEPTANCE
-        )
+            OrderDto(
+                    null,
+                    userService.myId(),
+                    true,
+                    description,
+                    null,
+                    Instant.now().toEpochMilli(),
+                    Instant.now().plusMillis(EXPECTED_DELIVERY_TIME).toEpochMilli(),
+                    Status.ACCEPTANCE
+            )
     )
 
     @GetMapping("/cancel")
     fun cancelOrder(@RequestParam orderId: Int): OrderDto {
         return ordersService.cancelOrder(orderId)
+    }
+
+    @GetMapping("/cancelCustom")
+    fun cancelCustomOrder(@RequestParam orderId: Int): OrderDto {
+        return ordersService.cancelCustomOrder(orderId)
+    }
+
+    @GetMapping("/acceptCustom")
+    fun acceptCustomOrder(@RequestParam orderId: Int): OrderDto {
+        return ordersService.acceptCustomOrder(orderId)
     }
 
     @GetMapping("/accept")
