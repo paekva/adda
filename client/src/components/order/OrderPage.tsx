@@ -1,4 +1,6 @@
-import React, {useMemo} from "react";
+import React, {useMemo, useCallback, useState} from "react";
+import {Dialog} from "../dialog/Dialog";
+import {TextField} from "@material-ui/core";
 import {Order, Status, statusToStringMap, userRoleToOrderStatusMap} from "../../types";
 import {AppRole} from "../../api/user";
 import './OrderPage.css'
@@ -92,6 +94,49 @@ export const getStatusForUser: any = (status: Status) => {
 }
 
 const OrderPage = (props: OrderPageProps): JSX.Element => {
+
+    const [isDialog,setDialog] = useState<boolean>(false);
+    const [orderEvaluation, setOrderEvaluation] = useState<string>('');
+    const onAcceptCustomOrder = useCallback(() => setDialog(true), [])
+    const renderHeader = useCallback(() => {
+        return <div>
+            ОЦЕНКА ЗАКАЗА
+        </div>
+    }, [])
+    const renderBody = useCallback(() => {
+        return <div style={{display: 'flex', flexDirection: 'column', padding: 10}}>
+            <TextField variant="outlined" placeholder="Введите стоимость заказа" onChange={(e) => setOrderEvaluation(e.target.value)}/>
+
+            <div style={{display: 'flex', flexDirection: 'row', padding: 10, justifyContent: 'space-between'}}>
+                <Button
+                    type="submit"
+                    variant="contained"
+                    color="default"
+                    style={{height: 56}}
+                >
+                    Принять заказ
+                </Button>
+
+                <Button
+                    type="submit"
+                    variant="contained"
+                    color="default"
+                    onClick={() => setDialog(false)}
+                    style={{height: 56}}
+                >
+                    Отмена
+                </Button>
+            </div>
+        </div>
+    },[orderEvaluation])
+    const adminButtonForCustom = (order?: Order | null) => [
+        {
+            label: "Подтвердить",
+            handler: () => onAcceptCustomOrder(),
+            disabled: false
+        },
+    ]
+
     const {selectedOrder, roles} = props;
     const currentStatus = useMemo(() => {
         return props.selectedOrder?.status != null
@@ -130,7 +175,7 @@ const OrderPage = (props: OrderPageProps): JSX.Element => {
         </div>}
 
         <div className='controlsInOrder'>
-            {(roles.includes(AppRole.USER) ? clientButton : roles.includes(AppRole.ADMIN) ? adminButton : workerButton)(selectedOrder)
+            {(roles.includes(AppRole.USER) ? clientButton : (roles.includes(AppRole.ADMIN) && selectedOrder?.isCustom == false) ? adminButton : (roles.includes(AppRole.ADMIN) && selectedOrder?.isCustom == true) ? adminButtonForCustom : workerButton)(selectedOrder)
                 .map((el) => <Button
                     type="submit"
                     variant="contained"
@@ -140,6 +185,9 @@ const OrderPage = (props: OrderPageProps): JSX.Element => {
                 >
                     {el.label}
                 </Button>)}
+
+            {isDialog &&
+            <Dialog renderBody={renderBody} renderHeader={renderHeader}/>}
         </div>
 
     </div>
