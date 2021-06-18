@@ -1,6 +1,6 @@
 import {AppRole} from "../../api/user";
 import React, {useEffect, useState} from "react";
-import {Order} from "../../types";
+import {Order, Status} from "../../types";
 import './OrderPage.css'
 
 export const OrderInfo = (props: { selectedOrder?: Order | null, roles: AppRole[] }): JSX.Element => {
@@ -32,6 +32,14 @@ export const OrderInfo = (props: { selectedOrder?: Order | null, roles: AppRole[
 
                 <div>
                     Состав заказа: {products}
+                </div>
+
+                <div>
+                    {selectedOrder.isCustom && !(selectedOrder.status === Status.RETURNED) && (`Стоимость: ${selectedOrder.price}`)}
+                </div>
+
+                <div>
+                    {selectedOrder.isCustom && selectedOrder.status === Status.RETURNED && (`Причина отказа: ${selectedOrder.price}`)}
                 </div>
 
             </>
