@@ -1,11 +1,11 @@
 import {Order} from "../../types";
 import {AppRole} from "../../api/user";
-import {getUrl} from "../../api/url";
 import {useState} from "react";
+import {getConfirmation} from "../../api/orders";
 
 export const Confirmation = (props: { selectedOrder?: Order | null, roles: AppRole[] }): JSX.Element => {
 
-    const [url, setUrl] = useState(`${getUrl()}/orders/confirmation/get?orderId=${props.selectedOrder?.id}&status=${props.selectedOrder?.status}`);
+    const [url, setUrl] = useState(props.selectedOrder ? getConfirmation(props.selectedOrder?.id, props.selectedOrder?.status) : '');
 
     return <div>
         {url != '' ?

@@ -1,4 +1,4 @@
-import {customFetch} from "./customFetch";
+import {customFetch, customFetchForImages} from "./customFetch";
 import {getUrl} from "./url";
 import {Method} from "./types";
 import {Order, Status} from "../types";
@@ -89,11 +89,17 @@ export const checkOrder = (orderId: number): Promise<any> => {
     );
 }
 
-export const getConfirmation = (orderId: number, status: Status): Promise<any> => {
-    return customFetch<{}, any>(
-        `${getUrl()}/orders/confirmation/get?orderId=${orderId}&status=${status}`,
-        Method.GET,
-        undefined,
-        true
+export const getConfirmation = (orderId: number, status: Status): string =>
+    `${getUrl()}/orders/confirmation/get?orderId=${orderId}&status=${status}`
+
+export const setConfirmation = (
+    orderId: number,
+    status: Status,
+    body: any
+): Promise<any | null> => {
+    return customFetchForImages<{}, any | null>(
+        `${getUrl()}/products/confirmation/set/${orderId}/${status}`,
+        Method.POST,
+        body
     );
-}
+};

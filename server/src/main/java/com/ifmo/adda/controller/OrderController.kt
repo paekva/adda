@@ -9,6 +9,8 @@ import com.ifmo.adda.service.OrdersService.Companion.EXPECTED_DELIVERY_TIME
 import com.ifmo.adda.service.UserService
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.*
+import org.springframework.web.multipart.MultipartFile
+import org.springframework.web.servlet.mvc.support.RedirectAttributes
 import java.time.Instant
 
 @RestController
@@ -86,4 +88,12 @@ class OrderController(
     fun getConfirmation(@RequestParam orderId: Int, @RequestParam status: Status): ByteArray? {
         return orderConfirmationService.getConfirmationByOrderAndStatus(orderId, status)
     }
+
+    @PostMapping("/image/set/{orderId}/{status}")
+    fun setConfirmation(
+        @PathVariable("orderId") orderId: Int,
+        @PathVariable("status") status: Status,
+        @RequestParam("file") file: MultipartFile,
+        redirectAttributes: RedirectAttributes
+    ) = orderConfirmationService.setConfirmation(orderId, status, file.bytes)
 }

@@ -1,7 +1,7 @@
-import React, {useMemo, useCallback, useState} from "react";
+import React, {useCallback, useMemo, useState} from "react";
 import {Dialog} from "../dialog/Dialog";
 import {TextField} from "@material-ui/core";
-import {Order, Status, statusToStringMap, userRoleToOrderStatusMap} from "../../types";
+import {Order, Status, statusToStringMap} from "../../types";
 import {AppRole} from "../../api/user";
 import './OrderPage.css'
 import StatusPanel from "./StatusPanel";
@@ -10,7 +10,15 @@ import {connect} from "react-redux";
 import Button from "@material-ui/core/Button";
 import {OrderInfo} from "./OrderInfo";
 import {Confirmation} from "./Confirmation";
-import {acceptOrder, cancelOrder, acceptCustomOrder, cancelCustomOrder, checkOrder, declineOrder, startOrder} from "../../api/orders";
+import {
+    acceptCustomOrder,
+    acceptOrder,
+    cancelCustomOrder,
+    cancelOrder,
+    checkOrder,
+    declineOrder,
+    startOrder
+} from "../../api/orders";
 
 const admin: Status[] = [
     Status.ACCEPTANCE,
@@ -102,7 +110,7 @@ const OrderPage = (props: OrderPageProps): JSX.Element => {
             : Status.UNKNOWN
     }, [props.selectedOrder?.status])
 
-    const [isDialog,setDialog] = useState<boolean>(false);
+    const [isDialog, setDialog] = useState<boolean>(false);
     const [isCancelDialog, setCancelDialog] = useState<boolean>(false);
 
     const [orderEvaluation, setOrderEvaluation] = useState<string>('');
@@ -124,7 +132,8 @@ const OrderPage = (props: OrderPageProps): JSX.Element => {
 
     const renderBody = useCallback(() => {
         return <div style={{display: 'flex', flexDirection: 'column', padding: 10}}>
-            <TextField variant="outlined" placeholder="Введите стоимость заказа" onChange={(e) => setOrderEvaluation(e.target.value)}/>
+            <TextField variant="outlined" placeholder="Введите стоимость заказа"
+                       onChange={(e) => setOrderEvaluation(e.target.value)}/>
 
             <div style={{display: 'flex', flexDirection: 'row', padding: 10, justifyContent: 'space-between'}}>
                 <Button
@@ -148,10 +157,11 @@ const OrderPage = (props: OrderPageProps): JSX.Element => {
                 </Button>
             </div>
         </div>
-    },[orderEvaluation])
+    }, [orderEvaluation])
     const renderBodyCancel = useCallback(() => {
         return <div style={{display: 'flex', flexDirection: 'column', padding: 10}}>
-            <TextField variant="outlined" placeholder="Укажите причину" onChange={(e) => setOrderCancel(e.target.value)}/>
+            <TextField variant="outlined" placeholder="Укажите причину"
+                       onChange={(e) => setOrderCancel(e.target.value)}/>
 
             <div style={{display: 'flex', flexDirection: 'row', padding: 10, justifyContent: 'space-between'}}>
                 <Button
@@ -175,7 +185,7 @@ const OrderPage = (props: OrderPageProps): JSX.Element => {
                 </Button>
             </div>
         </div>
-    },[orderCancel])
+    }, [orderCancel])
 
     const adminButtonForCustom = () => [
         {
@@ -215,14 +225,21 @@ const OrderPage = (props: OrderPageProps): JSX.Element => {
             <OrderInfo selectedOrder={selectedOrder} roles={roles}/>
         </div>
 
-        {!(roles.includes(AppRole.USER) || (!roles.includes(AppRole.ADMIN) && selectedOrder?.status !== userRoleToOrderStatusMap[roles[0]])) &&
+        {!roles.includes(AppRole.USER) &&
         <div className='manage'>
             <div>Информация о выполнении</div>
             <Confirmation selectedOrder={selectedOrder} roles={roles}/>
         </div>}
 
         <div className='controlsInOrder'>
-            {(roles.includes(AppRole.USER) ? clientButton : (roles.includes(AppRole.ADMIN) && selectedOrder?.isCustom == false) ? adminButton : (roles.includes(AppRole.ADMIN) && selectedOrder?.isCustom == true) ? adminButtonForCustom : workerButton)(selectedOrder)
+            {(roles.includes(AppRole.USER)
+                ? clientButton
+                : (roles.includes(AppRole.ADMIN) && selectedOrder?.isCustom == false)
+                    ? adminButton
+                    : (roles.includes(AppRole.ADMIN) && selectedOrder?.isCustom == true)
+                        ? adminButtonForCustom
+                        : workerButton)
+            (selectedOrder)
                 .map((el) => <Button
                     type="submit"
                     variant="contained"
@@ -233,13 +250,13 @@ const OrderPage = (props: OrderPageProps): JSX.Element => {
                     {el.label}
                 </Button>)}
 
-            {isDialog &&
-            <Dialog renderBody={renderBody} renderHeader={renderHeader}/>}
-
-            {isCancelDialog &&
-            <Dialog renderBody={renderBodyCancel} renderHeader={renderHeaderCancel}/>}
         </div>
 
+        {isDialog &&
+        <Dialog renderBody={renderBody} renderHeader={renderHeader}/>}
+
+        {isCancelDialog &&
+        <Dialog renderBody={renderBodyCancel} renderHeader={renderHeaderCancel}/>}
     </div>
 }
 

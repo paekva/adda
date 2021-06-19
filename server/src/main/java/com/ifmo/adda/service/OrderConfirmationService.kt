@@ -35,12 +35,11 @@ class OrderConfirmationService(
     private fun restorePhotoFromResources(orderId: Int) {
         val resource = this::class.java.classLoader.getResource("$orderId.jpg") ?: return
         val data = Files.readAllBytes(Paths.get(resource.toURI()))
-        setConfirmation(orderId, 5, data)
+        setConfirmation(orderId, Status.BUY_WAIT, data)
     }
 
-
-    fun setConfirmation(orderId: Int, status: Int, data: ByteArray): OrderConfirmationDto {
-        val new = OrderConfirmation(orderId, status, data)
+    fun setConfirmation(orderId: Int, status: Status, data: ByteArray): OrderConfirmationDto {
+        val new = OrderConfirmation(orderId, getStatusIntItem(status), data)
         val saved = orderConfirmationRepository.saveAndFlush(new)
         return OrderConfirmationDto(saved.orderId, saved.status, saved.confirmation.size)
     }
