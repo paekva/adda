@@ -1,18 +1,19 @@
 package com.ifmo.adda.dto
 
 data class OrderDto(
-    val id: Int?,
-    val client: Int,
-    val isCustom: Boolean,
-    val description: String?,
-    val products: List<ProductToQuantity>?,
-    val dateOfOrder: Long,
-    val dateOfReceive: Long,
-    val status: Status
+        val id: Int?,
+        val client: Int,
+        val isCustom: Boolean,
+        val description: String?,
+        val products: List<ProductToQuantity>?,
+        val dateOfOrder: Long,
+        val dateOfReceive: Long,
+        val status: Status,
+        val price: String?
 )
 
 data class OrdersDto(
-    val orders: List<OrderDto>
+        val orders: List<OrderDto>
 )
 
 enum class Status {

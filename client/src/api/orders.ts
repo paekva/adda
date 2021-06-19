@@ -26,27 +26,27 @@ export const makeCustomOrder = (description: string): Promise<OrdersListResponse
     );
 }
 
-export const cancelOrder = (orderId: number): Promise<any> => {
+export const cancelOrder = (orderId: number, isCustom: boolean): Promise<any> => {
     return customFetch<{}, any>(
-        `${getUrl()}/orders/cancel?orderId=${orderId}`,
+        `${getUrl()}/orders/cancel?orderId=${orderId}&isCustom=${isCustom}`,
         Method.GET,
         undefined,
         true
     );
 }
 
-export const cancelCustomOrder = (orderId: number): Promise<any> => {
+export const cancelCustomOrder = (orderId: number, reason: String): Promise<any> => {
     return customFetch<{}, any>(
-        `${getUrl()}/orders/cancelCustom?orderId=${orderId}`,
+        `${getUrl()}/orders/cancelCustom?orderId=${orderId}&reason=${reason}`,
         Method.GET,
         undefined,
         true
     );
 }
 
-export const acceptCustomOrder = (orderId: number): Promise<any> => {
+export const acceptCustomOrder = (orderId: number, newPrice: string): Promise<any> => {
     return customFetch<{}, any>(
-        `${getUrl()}/orders/acceptCustom?orderId=${orderId}`,
+        `${getUrl()}/orders/acceptCustom?orderId=${orderId}&newPrice=${newPrice}`,
         Method.GET,
         undefined,
         true
