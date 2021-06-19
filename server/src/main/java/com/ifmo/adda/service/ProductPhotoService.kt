@@ -8,8 +8,6 @@ import com.ifmo.adda.repository.ProductsRepository
 import mu.KLogging
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
-import java.lang.IllegalArgumentException
-import java.net.URL
 import java.nio.file.Files
 import java.nio.file.Paths
 import javax.annotation.PostConstruct
