@@ -10,70 +10,8 @@ import {connect} from "react-redux";
 import Button from "@material-ui/core/Button";
 import {OrderInfo} from "./OrderInfo";
 import {Confirmation} from "./Confirmation";
-import {
-    acceptCustomOrder,
-    acceptOrder,
-    cancelCustomOrder,
-    cancelOrder,
-    checkOrder,
-    declineOrder,
-    startOrder
-} from "../../api/orders";
-
-const admin: Status[] = [
-    Status.ACCEPTANCE,
-    Status.BUY,
-    Status.LOAD,
-    Status.ON_THE_WAY,
-    Status.UNLOAD,
-    Status.DELIVERY
-]
-
-const client: Status[] = [
-    Status.ACCEPTANCE,
-    Status.USER_ONLY_PREPARE,
-    Status.ON_THE_WAY,
-    Status.USER_ONLY_DELIVERY
-]
-
-const adminButton = (order?: Order | null) => [
-    {
-        label: "Сообщить об ошибке",
-        handler: () => order?.id ? declineOrder(order.id) : null,
-        disabled: false
-    },
-    {
-        label: "Подтвердить",
-        handler: () => order?.id ? acceptOrder(order.id) : null,
-        disabled: false
-    },
-]
-
-const workerButton = (order?: Order | null) => [
-    {
-        label: "Взять в выполнение",
-        handler: () => order?.id ? startOrder(order.id) : null,
-        disabled: false
-    },
-    {
-        label: "Завершить выполнение",
-        handler: () => order?.id ? checkOrder(order.id) : null,
-        disabled: false
-    },
-]
-
-const clientButton = (order?: Order | null) => [
-    {
-        label: "Отказаться от заказа",
-        handler: () => order?.id ? cancelOrder(order.id) : null,
-        disabled: (order?.status === Status.ACCEPTANCE || order?.status === Status.USER_ONLY_PREPARE)
-    },
-    {
-        label: "Оплатить заказ",
-        handler: () => order?.id ? console.warn('paying') : null,
-        disabled: false
-    },
-]
+import {acceptCustomOrder, cancelCustomOrder} from "../../api/orders";
+import {admin, adminButton, client, clientButton, workerButton} from "./util";
 
 export type OrderPageProps = {
     selectedOrder: Order | null
@@ -241,6 +179,7 @@ const OrderPage = (props: OrderPageProps): JSX.Element => {
                         : workerButton)
             (selectedOrder)
                 .map((el) => <Button
+                    disabled={el.disabled}
                     type="submit"
                     variant="contained"
                     color="default"
