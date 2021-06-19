@@ -17,9 +17,9 @@ class OrderConfirmationService(
     private val ordersRepository: OrdersRepository
 ) {
 
-    fun getConfirmationByOrderAndStatus(orderId: Int, status: Status): ByteArray {
+    fun getConfirmationByOrderAndStatus(orderId: Int, status: Status): ByteArray? {
         val data = orderConfirmationRepository.findAllByOrderIdAndStatus(orderId, getStatusIntItem(status))
-        return data[0].confirmation
+        return if (data.count() > 0) data[0].confirmation else null
     }
 
     @PostConstruct

@@ -83,7 +83,7 @@ class OrderController(
     }
 
     @GetMapping("/confirmation/get")
-    fun getConfirmation(@RequestParam orderId: Int, @RequestParam status: Status): ByteArray {
+    fun getConfirmation(@RequestParam orderId: Int, @RequestParam status: Status): ByteArray? {
         return orderConfirmationService.getConfirmationByOrderAndStatus(orderId, status)
     }
 }
