@@ -82,7 +82,7 @@ class OrderController(
         return ordersService.sendOrderOnCheck(orderId)
     }
 
-    @GetMapping("/confirmation")
+    @GetMapping("/confirmation/get")
     fun getConfirmation(@RequestParam orderId: Int, @RequestParam status: Status): ByteArray {
         return orderConfirmationService.getConfirmationByOrderAndStatus(orderId, status)
     }

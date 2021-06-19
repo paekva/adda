@@ -91,7 +91,7 @@ export const checkOrder = (orderId: number): Promise<any> => {
 
 export const getConfirmation = (orderId: number, status: Status): Promise<any> => {
     return customFetch<{}, any>(
-        `${getUrl()}/orders/confirmation?orderId=${orderId}&status=${status}`,
+        `${getUrl()}/orders/confirmation/get?orderId=${orderId}&status=${status}`,
         Method.GET,
         undefined,
         true
