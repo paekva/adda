@@ -15,6 +15,12 @@ data class OrdersDto(
     val orders: List<OrderDto>
 )
 
+data class OrderConfirmationDto(
+    val orderId: Int,
+    val status: Int,
+    val confirmationSize: Int
+)
+
 enum class Status {
     ACCEPTANCE,
     RETURNED,

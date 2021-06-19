@@ -1,7 +1,7 @@
 import {customFetch} from "./customFetch";
 import {getUrl} from "./url";
 import {Method} from "./types";
-import {Order} from "../types";
+import {Order, Status} from "../types";
 
 
 export type OrdersListResponse = {
@@ -83,6 +83,15 @@ export const startOrder = (orderId: number): Promise<any> => {
 export const checkOrder = (orderId: number): Promise<any> => {
     return customFetch<{}, any>(
         `${getUrl()}/orders/check?orderId=${orderId}`,
+        Method.GET,
+        undefined,
+        true
+    );
+}
+
+export const getConfirmation = (orderId: number, status: Status): Promise<any> => {
+    return customFetch<{}, any>(
+        `${getUrl()}/orders/confirmation?orderId=${orderId}&status=${status}`,
         Method.GET,
         undefined,
         true
