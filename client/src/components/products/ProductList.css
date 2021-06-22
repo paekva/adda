@@ -10,8 +10,8 @@
 .productEl {
     display: flex;
     flex-direction: column;
-    width: 180px;
-    height: 180px;
+    width: 220px;
+    height: 220px;
 
     border: 1px solid black;
     border-radius: 4px;
@@ -20,6 +20,8 @@
     margin: 10px;
 
     background: white;
+
+    overflow: hidden;
 }
 
 .controls {
@@ -30,5 +32,5 @@
 }
 
 .image {
-    flex: 4
+    flex: 4;
 }

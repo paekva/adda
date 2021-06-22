@@ -13,7 +13,11 @@ export const ProductItem = (props: ProductItemProps): JSX.Element => {
     let image = <div className="photo">Фото не задано {product.name}</div>;
     if (product.imageId != null) {
         const url = getImageUrl(product.imageId) + "?dummy=" + new Date();
-        image = <img className="photo" src={url} alt="some pic"/>;
+        image = <img src={url} alt="some pic" style={{
+            height: '100%',
+            width: '100%',
+            objectFit: 'contain'
+        }}/>;
     }
     return <div className='productEl'>
         <div className={'image'}>{image} </div>
