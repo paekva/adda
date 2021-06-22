@@ -7,10 +7,12 @@ import React from "react";
 import {Personal} from "../personal/Personal";
 import OrderPage from "../order/OrderPage";
 import {Card} from "../products/Card";
+import {AppRole} from "../../api/user";
 
 export type RouterProps = {
     currentMenuItem: MenuItem | null
     selectedOrder: Order | null
+    roles: AppRole[]
 }
 
 
@@ -21,7 +23,7 @@ export const Router = (props: RouterProps): JSX.Element => {
         case MenuItem.PRODUCTS:
             return <ProductList/>
         case MenuItem.PERSONAL:
-            return <Personal/>
+            return <Personal roles={props.roles}/>
         case MenuItem.SINGLE_ORDER:
             return <OrderPage selectedOrder={props.selectedOrder}/>
         case MenuItem.BUCKET:
@@ -34,7 +36,8 @@ export const Router = (props: RouterProps): JSX.Element => {
 const mapStateToProps = (store: AppStore) => {
     return {
         currentMenuItem: store.currentMenuItem,
-        selectedOrder: store.lastSelectedOrder
+        selectedOrder: store.lastSelectedOrder,
+        roles: store.roles
     };
 };
 

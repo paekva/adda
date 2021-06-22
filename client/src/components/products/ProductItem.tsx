@@ -3,6 +3,8 @@ import "./ProductList.css";
 import {Product} from "../../types";
 import {addProduct} from "../../api/cart";
 import {getImageUrl} from "../../api/products";
+import {IconButton} from "@material-ui/core";
+import {Add} from "@material-ui/icons";
 
 export type ProductItemProps = {
     product: Product
@@ -20,14 +22,21 @@ export const ProductItem = (props: ProductItemProps): JSX.Element => {
         }}/>;
     }
     return <div className='productEl'>
-        <div className={'image'}>{image} </div>
+        <div className='image'>{image} </div>
         <div className='controls'>
-            <div>
+            <div style={{display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
                 {product.name}
                 {product.price}
             </div>
 
-            <button onClick={() => addProduct(product.id)}>+</button>
+            <IconButton
+                type="submit"
+                color="default"
+                onClick={() => addProduct(product.id)}
+                style={{height: 56, width: 56}}
+            >
+                <Add/>
+            </IconButton>
         </div>
     </div>
 }
