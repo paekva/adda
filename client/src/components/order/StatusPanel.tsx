@@ -11,12 +11,10 @@ const StatusPanel = (props: { statusList: Status[], current: Status }): JSX.Elem
                 <Logo
                     fill={props.current.startsWith(el)
                         ? (props.current.includes('WAIT')
-                            ? 'orange'
-                            : props.current.includes('WAIT')
-                                ? 'yellow'
-                                : props.current.includes('ERROR')
-                                    ? 'red'
-                                    : 'green')
+                            ? 'yellow'
+                            : props.current.includes('ERROR')
+                                ? 'red'
+                                : 'green')
                         : 'gray'}/>
                 {statusToStringMap[el.toString()]}
             </div>

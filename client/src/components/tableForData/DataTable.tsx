@@ -3,7 +3,7 @@ import {DataTableProps} from "./types";
 import "./DataTable.css";
 
 export const DataTable = (props: DataTableProps): JSX.Element | null => {
-    const {scheme, data, onRowClick} = props;
+    const {scheme, data, onRowClick, highlightRowOn} = props;
     const header = useMemo(() => {
         return (
             <div className="headerRow">
@@ -26,6 +26,7 @@ export const DataTable = (props: DataTableProps): JSX.Element | null => {
                 {data.map((singleData, index) => {
                     return (
                         <div className="dataTableRow" key={"dataRow" + index}
+                             style={highlightRowOn && highlightRowOn(singleData) ? {background: 'lightgoldenrodyellow'} : {}}
                              onClick={() => onRowClick ? onRowClick(singleData.id, singleData.isCustom) : null}>
                             {Object.entries(scheme).map((field) => {
                                 const d = singleData[field[0]];

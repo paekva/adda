@@ -2,6 +2,7 @@ export type DataTableProps = {
   scheme: Scheme;
   data: RowData[] | null;
   onRowClick?: (rowId: number, custom: boolean) => void
+  highlightRowOn?: (data: RowData) => boolean
 };
 
 export type RowData = {

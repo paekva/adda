@@ -8,6 +8,7 @@ import store, {AppStore} from "../../store/store";
 import {AppRole} from "../../api/user";
 import {StateChangeActionType} from "../../store/actions";
 import {getProductsList} from "../../api/products";
+import {RowData} from "../tableForData/types";
 
 export type OrdersTableProps = {
     roles: AppRole[]
@@ -51,10 +52,20 @@ const OrdersTable = (props: OrdersTableProps): JSX.Element => {
         },
         [setSelectedOrder, orderList])
 
+    const highlightRowOn = useCallback((data: RowData): boolean => {
+            const admin = roles.includes(AppRole.ADMIN) && data.status.includes('ACCEPTANCE')
+            const purchaser = roles.includes(AppRole.PURCHASER) && data.status.includes('BUY') && !data.status.includes('ACCEPTANCE')
+            const loader = roles.includes(AppRole.LOADER) && data.status.includes('LOAD') && !data.status.includes('UNLOAD') && !data.status.includes('ACCEPTANCE')
+            const master = roles.includes(AppRole.MASTER) && data.status.includes('UNLOAD') && !data.status.includes('ACCEPTANCE')
+            const courier = roles.includes(AppRole.COURIER) && data.status.includes('DELIVERY') && !data.status.includes('ACCEPTANCE')
+            return admin || purchaser || loader || master || courier
+        },
+        [roles])
+
     const scheme = useMemo(() => {
         return ordersTableScheme(roles)
     }, [roles])
-    return <DataTable data={orderList} scheme={scheme} onRowClick={rowCLickHandler}/>
+    return <DataTable data={orderList} scheme={scheme} onRowClick={rowCLickHandler} highlightRowOn={highlightRowOn}/>
 }
 
 const mapStateToProps = (store: AppStore) => {
