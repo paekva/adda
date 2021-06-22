@@ -81,6 +81,9 @@ export const statusToStringMap: { [key: string]: string } = {
     [Status.CANCELED.toString()]: "Отмена заказа",
     [Status.PAID.toString()]: "Заказ оплачен",
     [Status.UNKNOWN.toString()]: "Статус неизвестен",
+
+    [Status.USER_ONLY_PREPARE.toString()]: "Подготовка",
+    [Status.USER_ONLY_DELIVERY.toString()]: "Доставка",
 }
 
 export const userRoleToOrderStatusMap = {
