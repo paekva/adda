@@ -43,18 +43,18 @@ export const workerButton = (order?: Order | null) => [
     },
 ]
 
-export const clientButton = (order?: Order | null) => [
-    {
-        label: "Отказаться от заказа",
-        handler: () => order?.id ? cancelOrder(order.id) : null,
-        disabled: order?.status ? !isCancelAvailableForClient(order?.status) : true
-    },
-    {
-        label: "Оплатить заказ",
-        handler: () => order?.id ? console.warn('paying') : null,
-        disabled: order?.status ? !isPayAvailableForClient(order?.status) : true
-    },
-]
+// export const clientButton = (order?: Order | null) => [
+//     {
+//         label: "Отказаться от заказа",
+//         handler: () => order?.id ? cancelOrder(order.id) : null,
+//         disabled: order?.status ? !isCancelAvailableForClient(order?.status) : true
+//     },
+//     {
+//         label: "Оплатить заказ",
+//         handler: () => order?.id ? console.warn('paying') : null,
+//         disabled: order?.status ? !isPayAvailableForClient(order?.status) : true
+//     },
+// ]
 
 const areActionsAvailableForAdmin = (status: Status) => status.toString().includes('ACCEPTANCE')
 const areActionsAvailableForWorker = (status: Status) => status.toString().includes('WAIT') && !status.toString().includes('ACCEPTANCE')

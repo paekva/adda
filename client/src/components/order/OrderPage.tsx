@@ -10,8 +10,8 @@ import {connect} from "react-redux";
 import Button from "@material-ui/core/Button";
 import {OrderInfo} from "./OrderInfo";
 import {Confirmation} from "./Confirmation";
-import {acceptCustomOrder, cancelCustomOrder} from "../../api/orders";
-import {admin, adminButton, client, clientButton, workerButton} from "./util";
+import {acceptCustomOrder, acceptOrder, cancelCustomOrder, cancelOrder} from "../../api/orders";
+import {admin, adminButton, client, workerButton} from "./util";
 
 export type OrderPageProps = {
     selectedOrder: Order | null
@@ -56,7 +56,12 @@ const OrderPage = (props: OrderPageProps): JSX.Element => {
     const [orderCancel, setOrderCancel] = useState<string>('');
 
     const onCancelByClient = useCallback(() => setClientCancelDialog(true), [])
-    const onAcceptCustomOrder = useCallback(() => setDialog(true), [])
+    const onAcceptCustomOrder = useCallback(() => selectedOrder?.status == Status.ACCEPTANCE
+        ? setDialog(true)
+        : selectedOrder?.id
+            ? acceptOrder(selectedOrder.id)
+            : null,
+        [])
     const onCancelCustomOrder = useCallback(() => setCancelDialog(true), [])
 
     const renderClientCancelHeader = useCallback(() => {
