@@ -48,15 +48,22 @@ const OrderPage = (props: OrderPageProps): JSX.Element => {
             : Status.UNKNOWN
     }, [props.selectedOrder?.status])
 
+    const [isClientCancelDialog, setClientCancelDialog] = useState<boolean>(false);
     const [isDialog, setDialog] = useState<boolean>(false);
     const [isCancelDialog, setCancelDialog] = useState<boolean>(false);
 
     const [orderEvaluation, setOrderEvaluation] = useState<string>('');
     const [orderCancel, setOrderCancel] = useState<string>('');
 
+    const onCancelByClient = useCallback(() => setClientCancelDialog(true), [])
     const onAcceptCustomOrder = useCallback(() => setDialog(true), [])
     const onCancelCustomOrder = useCallback(() => setCancelDialog(true), [])
 
+    const renderClientCancelHeader = useCallback(() => {
+        return <div>
+            ОТМЕНА ЗАКАЗА
+        </div>
+    }, [])
     const renderHeader = useCallback(() => {
         return <div>
             ОЦЕНКА ЗАКАЗА
@@ -68,6 +75,32 @@ const OrderPage = (props: OrderPageProps): JSX.Element => {
         </div>
     }, [])
 
+    const renderClientCancelBody = useCallback(() => {
+        return <div style={{display: 'flex', flexDirection: 'column', padding: 10}}>
+            <div>Вы уверены, что хотите отказаться от заказа?</div>
+            <div style={{display: 'flex', flexDirection: 'row', padding: 10, justifyContent: 'space-between'}}>
+                <Button
+                    type="submit"
+                    variant="contained"
+                    color="default"
+                    onClick={() => selectedOrder?.id ? cancelOrder(selectedOrder.id, selectedOrder.isCustom).then(() => setClientCancelDialog(false)) : null}
+                    style={{height: 56}}
+                >
+                    Отменить заказ
+                </Button>
+
+                <Button
+                    type="submit"
+                    variant="contained"
+                    color="default"
+                    onClick={() => setClientCancelDialog(false)}
+                    style={{height: 56}}
+                >
+                    Отмена
+                </Button>
+            </div>
+        </div>
+    }, [])
     const renderBody = useCallback(() => {
         return <div style={{display: 'flex', flexDirection: 'column', padding: 10}}>
             <TextField variant="outlined" placeholder="Введите стоимость заказа"
@@ -78,7 +111,7 @@ const OrderPage = (props: OrderPageProps): JSX.Element => {
                     type="submit"
                     variant="contained"
                     color="default"
-                    onClick={() => selectedOrder?.id ? acceptCustomOrder(selectedOrder.id).then(() => setDialog(false)) : null}
+                    onClick={() => selectedOrder?.id ? acceptCustomOrder(selectedOrder.id, orderEvaluation).then(() => setDialog(false)) : null}
                     style={{height: 56}}
                 >
                     Принять заказ
@@ -106,7 +139,7 @@ const OrderPage = (props: OrderPageProps): JSX.Element => {
                     type="submit"
                     variant="contained"
                     color="default"
-                    onClick={() => selectedOrder?.id ? cancelCustomOrder(selectedOrder.id).then(() => setCancelDialog(false)) : null}
+                    onClick={() => selectedOrder?.id ? cancelCustomOrder(selectedOrder.id, orderCancel).then(() => setCancelDialog(false)) : null}
                     style={{height: 56}}
                 >
                     Отклонить заказ
@@ -124,6 +157,19 @@ const OrderPage = (props: OrderPageProps): JSX.Element => {
             </div>
         </div>
     }, [orderCancel])
+
+    const clientButton = (order?: Order | null) => [
+        {
+            label: "Отказаться от заказа",
+            handler: () => onCancelByClient(),
+            disabled: (order?.status === Status.ACCEPTANCE || order?.status === Status.USER_ONLY_PREPARE)
+        },
+        {
+            label: "Оплатить заказ",
+            handler: () => order?.id ? console.warn('paying') : null,
+            disabled: false
+        },
+    ]
 
     const adminButtonForCustom = () => [
         {
@@ -196,6 +242,9 @@ const OrderPage = (props: OrderPageProps): JSX.Element => {
 
         {isCancelDialog &&
         <Dialog renderBody={renderBodyCancel} renderHeader={renderHeaderCancel}/>}
+
+        {isClientCancelDialog &&
+        <Dialog renderBody={renderClientCancelBody} renderHeader={renderClientCancelHeader}/>}
     </div>
 }
 

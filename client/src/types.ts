@@ -16,6 +16,7 @@ export type Order = {
     isCustom: boolean;
     products?: any[];
     description?: string;
+    price?: string;
 }
 
 export enum MenuItem {

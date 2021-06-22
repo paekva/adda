@@ -45,23 +45,24 @@ class OrderController(
             null,
             Instant.now().toEpochMilli(),
             Instant.now().plusMillis(EXPECTED_DELIVERY_TIME).toEpochMilli(),
-            Status.ACCEPTANCE
+            Status.ACCEPTANCE,
+            "Оценивается"
         )
     )
 
     @GetMapping("/cancel")
-    fun cancelOrder(@RequestParam orderId: Int): OrderDto {
-        return ordersService.cancelOrder(orderId)
+    fun cancelOrder(@RequestParam orderId: Int, @RequestParam isCustom: Boolean): OrderDto {
+        return ordersService.cancelOrder(orderId, isCustom)
     }
 
     @GetMapping("/cancelCustom")
-    fun cancelCustomOrder(@RequestParam orderId: Int): OrderDto {
-        return ordersService.cancelCustomOrder(orderId)
+    fun cancelCustomOrder(@RequestParam orderId: Int, @RequestParam reason: String): OrderDto {
+        return ordersService.cancelCustomOrder(orderId, reason)
     }
 
     @GetMapping("/acceptCustom")
-    fun acceptCustomOrder(@RequestParam orderId: Int): OrderDto {
-        return ordersService.acceptCustomOrder(orderId)
+    fun acceptCustomOrder(@RequestParam orderId: Int, @RequestParam newPrice: String): OrderDto {
+        return ordersService.acceptCustomOrder(orderId, newPrice)
     }
 
     @GetMapping("/accept")
