@@ -17,6 +17,7 @@ class WebSecurityConfig : WebSecurityConfigurerAdapter() {
             "/configuration/**",
             "/swagger-ui.html",
             "/webjars/**",
-            "/api/1.0/products/image/get/**");
+            "/api/1.0/products/image/get/**",
+            "/api/1.0/orders/confirmation/get/**");
   }
 }

@@ -1,7 +1,7 @@
-import React, {useMemo, useCallback, useState} from "react";
+import React, {useCallback, useMemo, useState} from "react";
 import {Dialog} from "../dialog/Dialog";
 import {TextField} from "@material-ui/core";
-import {Order, Status, statusToStringMap, userRoleToOrderStatusMap} from "../../types";
+import {Order, Status, statusToStringMap} from "../../types";
 import {AppRole} from "../../api/user";
 import './OrderPage.css'
 import StatusPanel from "./StatusPanel";
@@ -10,49 +10,8 @@ import {connect} from "react-redux";
 import Button from "@material-ui/core/Button";
 import {OrderInfo} from "./OrderInfo";
 import {Confirmation} from "./Confirmation";
-import {acceptOrder, cancelOrder, acceptCustomOrder, cancelCustomOrder, checkOrder, declineOrder, startOrder} from "../../api/orders";
-
-const admin: Status[] = [
-    Status.ACCEPTANCE,
-    Status.BUY,
-    Status.LOAD,
-    Status.ON_THE_WAY,
-    Status.UNLOAD,
-    Status.DELIVERY
-]
-
-const client: Status[] = [
-    Status.ACCEPTANCE,
-    Status.USER_ONLY_PREPARE,
-    Status.ON_THE_WAY,
-    Status.USER_ONLY_DELIVERY
-]
-
-const adminButton = (order?: Order | null) => [
-    {
-        label: "Сообщить об ошибке",
-        handler: () => order?.id ? declineOrder(order.id) : null,
-        disabled: false
-    },
-    {
-        label: "Подтвердить",
-        handler: () => order?.id ? acceptOrder(order.id) : null,
-        disabled: false
-    },
-]
-
-const workerButton = (order?: Order | null) => [
-    {
-        label: "Взять в выполнение",
-        handler: () => order?.id ? startOrder(order.id) : null,
-        disabled: false
-    },
-    {
-        label: "Завершить выполнение",
-        handler: () => order?.id ? checkOrder(order.id) : null,
-        disabled: false
-    },
-]
+import {acceptCustomOrder, acceptOrder, cancelCustomOrder, cancelOrder} from "../../api/orders";
+import {admin, adminButton, client, workerButton} from "./util";
 
 export type OrderPageProps = {
     selectedOrder: Order | null
@@ -90,14 +49,19 @@ const OrderPage = (props: OrderPageProps): JSX.Element => {
     }, [props.selectedOrder?.status])
 
     const [isClientCancelDialog, setClientCancelDialog] = useState<boolean>(false);
-    const [isDialog,setDialog] = useState<boolean>(false);
+    const [isDialog, setDialog] = useState<boolean>(false);
     const [isCancelDialog, setCancelDialog] = useState<boolean>(false);
 
     const [orderEvaluation, setOrderEvaluation] = useState<string>('');
     const [orderCancel, setOrderCancel] = useState<string>('');
 
     const onCancelByClient = useCallback(() => setClientCancelDialog(true), [])
-    const onAcceptCustomOrder = useCallback(() => setDialog(true), [])
+    const onAcceptCustomOrder = useCallback(() => selectedOrder?.status == Status.ACCEPTANCE
+        ? setDialog(true)
+        : selectedOrder?.id
+            ? acceptOrder(selectedOrder.id)
+            : null,
+        [])
     const onCancelCustomOrder = useCallback(() => setCancelDialog(true), [])
 
     const renderClientCancelHeader = useCallback(() => {
@@ -144,7 +108,8 @@ const OrderPage = (props: OrderPageProps): JSX.Element => {
     }, [])
     const renderBody = useCallback(() => {
         return <div style={{display: 'flex', flexDirection: 'column', padding: 10}}>
-            <TextField variant="outlined" placeholder="Введите стоимость заказа" onChange={(e) => setOrderEvaluation(e.target.value)}/>
+            <TextField variant="outlined" placeholder="Введите стоимость заказа"
+                       onChange={(e) => setOrderEvaluation(e.target.value)}/>
 
             <div style={{display: 'flex', flexDirection: 'row', padding: 10, justifyContent: 'space-between'}}>
                 <Button
@@ -168,10 +133,11 @@ const OrderPage = (props: OrderPageProps): JSX.Element => {
                 </Button>
             </div>
         </div>
-    },[orderEvaluation])
+    }, [orderEvaluation])
     const renderBodyCancel = useCallback(() => {
         return <div style={{display: 'flex', flexDirection: 'column', padding: 10}}>
-            <TextField variant="outlined" placeholder="Укажите причину" onChange={(e) => setOrderCancel(e.target.value)}/>
+            <TextField variant="outlined" placeholder="Укажите причину"
+                       onChange={(e) => setOrderCancel(e.target.value)}/>
 
             <div style={{display: 'flex', flexDirection: 'row', padding: 10, justifyContent: 'space-between'}}>
                 <Button
@@ -195,7 +161,7 @@ const OrderPage = (props: OrderPageProps): JSX.Element => {
                 </Button>
             </div>
         </div>
-    },[orderCancel])
+    }, [orderCancel])
 
     const clientButton = (order?: Order | null) => [
         {
@@ -248,15 +214,23 @@ const OrderPage = (props: OrderPageProps): JSX.Element => {
             <OrderInfo selectedOrder={selectedOrder} roles={roles}/>
         </div>
 
-        {!(roles.includes(AppRole.USER) || (!roles.includes(AppRole.ADMIN) && selectedOrder?.status !== userRoleToOrderStatusMap[roles[0]])) &&
+        {!roles.includes(AppRole.USER) &&
         <div className='manage'>
             <div>Информация о выполнении</div>
             <Confirmation selectedOrder={selectedOrder} roles={roles}/>
         </div>}
 
         <div className='controlsInOrder'>
-            {(roles.includes(AppRole.USER) ? clientButton : (roles.includes(AppRole.ADMIN) && selectedOrder?.isCustom == false) ? adminButton : (roles.includes(AppRole.ADMIN) && selectedOrder?.isCustom == true) ? adminButtonForCustom : workerButton)(selectedOrder)
+            {(roles.includes(AppRole.USER)
+                ? clientButton
+                : (roles.includes(AppRole.ADMIN) && selectedOrder?.isCustom == false)
+                    ? adminButton
+                    : (roles.includes(AppRole.ADMIN) && selectedOrder?.isCustom == true)
+                        ? adminButtonForCustom
+                        : workerButton)
+            (selectedOrder)
                 .map((el) => <Button
+                    disabled={el.disabled}
                     type="submit"
                     variant="contained"
                     color="default"
@@ -266,16 +240,16 @@ const OrderPage = (props: OrderPageProps): JSX.Element => {
                     {el.label}
                 </Button>)}
 
-            {isDialog &&
-            <Dialog renderBody={renderBody} renderHeader={renderHeader}/>}
-
-            {isCancelDialog &&
-            <Dialog renderBody={renderBodyCancel} renderHeader={renderHeaderCancel}/>}
-
-            {isClientCancelDialog &&
-            <Dialog renderBody={renderClientCancelBody} renderHeader={renderClientCancelHeader}/>}
         </div>
 
+        {isDialog &&
+        <Dialog renderBody={renderBody} renderHeader={renderHeader}/>}
+
+        {isCancelDialog &&
+        <Dialog renderBody={renderBodyCancel} renderHeader={renderHeaderCancel}/>}
+
+        {isClientCancelDialog &&
+        <Dialog renderBody={renderClientCancelBody} renderHeader={renderClientCancelHeader}/>}
     </div>
 }
 
