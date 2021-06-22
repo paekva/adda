@@ -6,14 +6,14 @@ import {StateChangeActionType} from "../../store/actions";
 import {connect} from "react-redux";
 
 export type MenuBarProps = {
-    style: string,
+    styleClass: string,
     items: { menu: MenuItem, title: string }[]
     setMenuItem: (currentMenuItem: MenuItem) => void;
     currentMenuItem: MenuItem | null
 }
 
 const MenuBar = (props: MenuBarProps): JSX.Element => {
-    return <div className={props.style}>
+    return <div className={props.styleClass}>
         {props.items.map((el) =>
             <div className='menuItem' style={props.currentMenuItem === el.menu ? {background: "antiquewhite"} : {}} onClick={() => props.setMenuItem(el.menu)}>{el.title}</div>)}
     </div>

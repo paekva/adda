@@ -60,11 +60,6 @@ const ProductList = (props: ProductListProps) => {
     }, [])
 
     return <div style={{display: 'flex', flexDirection: "column"}}>
-        <div className='wrapper'>
-            {
-                products.map((el) => <ProductItem product={el}/>)
-            }
-        </div>
         <Button
             type="submit"
             variant="contained"
@@ -75,7 +70,11 @@ const ProductList = (props: ProductListProps) => {
         >
             Создать произвольный заказ
         </Button>
-
+        <div className='wrapper'>
+            {
+                products.map((el) => <ProductItem product={el}/>)
+            }
+        </div>
         {isCustomDialog &&
         <Dialog renderBody={renderBody} renderHeader={renderHeader}/>}
     </div>

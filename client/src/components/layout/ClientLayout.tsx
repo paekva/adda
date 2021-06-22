@@ -17,8 +17,8 @@ export const ClientLayout = (): JSX.Element => {
     return <div className='client'>
         <div className='inner'>
             <div className='title'>Каталог</div>
-            <MenuBar style={'clientMenuBar'} items={ClientMenu} />
+            <MenuBar styleClass='clientMenuBar' items={ClientMenu}/>
         </div>
-        <Router />
+        <Router/>
     </div>
 }

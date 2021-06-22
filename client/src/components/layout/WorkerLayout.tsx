@@ -21,7 +21,7 @@ export const WorkerLayout = (props: { roles: AppRole[] }): JSX.Element => {
     return <div className='outer'>
         <div className='title'>Статус заказов</div>
         <div className='worker'>
-            <MenuBar style={'workerMenuBar'}
+            <MenuBar styleClass={'workerMenuBar'}
                      items={props.roles.includes(AppRole.ADMIN) ? [...AdminMenu, ...WorkerMenu] : [...WorkerMenu]}/>
             <Router/>
         </div>
