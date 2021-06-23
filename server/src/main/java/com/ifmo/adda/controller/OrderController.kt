@@ -67,7 +67,7 @@ class OrderController(
 
     @GetMapping("/accept")
     fun acceptOrder(@RequestParam orderId: Int): OrderDto {
-        return ordersService.acceptOrder(orderId)
+        return ordersService.acceptOrder(orderId, userService.iAmAdmin())
     }
 
     @GetMapping("/decline")
@@ -77,12 +77,12 @@ class OrderController(
 
     @GetMapping("/start")
     fun startOrder(@RequestParam orderId: Int): OrderDto {
-        return ordersService.startOrder(orderId)
+        return ordersService.startOrder(orderId, userService.meAsEntity().authorities)
     }
 
     @GetMapping("/check")
     fun checkOrder(@RequestParam orderId: Int): OrderDto {
-        return ordersService.sendOrderOnCheck(orderId)
+        return ordersService.sendOrderOnCheck(orderId, userService.meAsEntity().authorities)
     }
 
     @GetMapping("/confirmation/get")
