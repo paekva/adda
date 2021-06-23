@@ -14,8 +14,10 @@ export type MenuBarProps = {
 
 const MenuBar = (props: MenuBarProps): JSX.Element => {
     return <div className={props.styleClass}>
-        {props.items.map((el) =>
-            <div className='menuItem' style={props.currentMenuItem === el.menu ? {background: "antiquewhite"} : {}} onClick={() => props.setMenuItem(el.menu)}>{el.title}</div>)}
+        {props.items.map((el, index) =>
+            <div key={`menu${index}`} className='menuItem'
+                 style={props.currentMenuItem === el.menu ? {background: "antiquewhite"} : {}}
+                 onClick={() => props.setMenuItem(el.menu)}>{el.title}</div>)}
     </div>
 }
 

@@ -26,17 +26,18 @@ export type OptionsFieldData = {
     onChange: (value: string | null) => void;
 }
 export const SimpleField = (props: FieldData): JSX.Element => {
+    const { isForced, validator, onChange } = props
     const [error, setError] = useState<boolean>(false);
     const [value, setValue] = useState<string>(props.type === 'date' ? '1970-01-01' : props.startValue ?? '');
-    const onChange = useCallback((ev) => {
+    const changeHandler = useCallback((ev) => {
         setValue(ev.currentTarget.value);
-        props.isForced && props.onChange(ev.currentTarget.value);
-    }, [props.isForced]);
+        isForced && onChange(ev.currentTarget.value);
+    }, [isForced, onChange]);
     const onBlur = useCallback(() => {
-        const isValid = props.validator ? props.validator(value) : true;
-        props.onChange(isValid ? value : null);
+        const isValid = validator ? validator(value) : true;
+        onChange(isValid ? value : null);
         setError(!isValid);
-    }, [props.validator, props.onChange, value])
+    }, [validator, onChange, value])
 
     return <TextField
         variant="outlined"
@@ -45,7 +46,7 @@ export const SimpleField = (props: FieldData): JSX.Element => {
         label={props.label}
         name={props.id}
         value={value}
-        onChange={onChange}
+        onChange={changeHandler}
         onBlur={onBlur}
         error={error}
         type={props.type}

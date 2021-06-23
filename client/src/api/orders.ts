@@ -98,7 +98,7 @@ export const setConfirmation = (
     body: any
 ): Promise<any | null> => {
     return customFetchForImages<{}, any | null>(
-        `${getUrl()}/products/confirmation/set/${orderId}/${status}`,
+        `${getUrl()}/orders/confirmation/set/${orderId}/${status}`,
         Method.POST,
         body
     );

@@ -229,7 +229,8 @@ const OrderPage = (props: OrderPageProps): JSX.Element => {
                         ? adminButtonForCustom
                         : workerButton)
             (selectedOrder)
-                .map((el) => <Button
+                .map((el, index) => <Button
+                    key={`btns${index}`}
                     disabled={el.disabled}
                     type="submit"
                     variant="contained"

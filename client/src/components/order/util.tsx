@@ -1,5 +1,6 @@
 import {Order, Status} from "../../types";
-import {acceptOrder, cancelOrder, checkOrder, declineOrder, startOrder} from "../../api/orders";
+import {acceptOrder, checkOrder, declineOrder, startOrder} from "../../api/orders";
+import {AppRole} from "../../api/user";
 
 export const admin: Status[] = [
     Status.ACCEPTANCE,
@@ -60,3 +61,13 @@ const areActionsAvailableForAdmin = (status: Status) => status.toString().includ
 const areActionsAvailableForWorker = (status: Status) => status.toString().includes('WAIT') && !status.toString().includes('ACCEPTANCE')
 const isCancelAvailableForClient = (status: Status) => status.toString().includes('DELIVERY') || status.toString().includes('PAID')
 const isPayAvailableForClient = (status: Status) => !status.toString().includes('ERROR') && !status.toString().includes('PAID')
+
+
+export const checkThatOrderInActiveStateForTheUser = (status: Status, roles: AppRole[]): boolean => {
+    const admin = roles.includes(AppRole.ADMIN) && status.includes('ACCEPTANCE')
+    const purchaser = roles.includes(AppRole.PURCHASER) && status.includes('BUY') && !status.includes('ACCEPTANCE')
+    const loader = roles.includes(AppRole.LOADER) && status.includes('LOAD') && !status.includes('UNLOAD') && !status.includes('ACCEPTANCE')
+    const master = roles.includes(AppRole.MASTER) && status.includes('UNLOAD') && !status.includes('ACCEPTANCE')
+    const courier = roles.includes(AppRole.COURIER) && status.includes('DELIVERY') && !status.includes('ACCEPTANCE')
+    return admin || purchaser || loader || master || courier
+}

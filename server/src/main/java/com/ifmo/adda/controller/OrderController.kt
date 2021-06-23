@@ -90,7 +90,7 @@ class OrderController(
         return orderConfirmationService.getConfirmationByOrderAndStatus(orderId, status)
     }
 
-    @PostMapping("/image/set/{orderId}/{status}")
+    @PostMapping("/confirmation/set/{orderId}/{status}")
     fun setConfirmation(
         @PathVariable("orderId") orderId: Int,
         @PathVariable("status") status: Status,
