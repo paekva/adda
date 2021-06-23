@@ -6,8 +6,9 @@ import {ReactComponent as Logo} from './status.svg';
 
 const StatusPanel = (props: { statusList: Status[], current: Status }): JSX.Element => {
     return <div className='status' style={{fontSize: 18}}>
-        {props.statusList.map((el) => {
-            return <div className='statusElement' style={{color: el === props.current ? 'black' : 'gray'}}>
+        {props.statusList.map((el, index) => {
+            return <div key={`status ${index}`} className='statusElement'
+                        style={{color: el === props.current ? 'black' : 'gray'}}>
                 <Logo
                     fill={props.current.startsWith(el)
                         ? (props.current.includes('WAIT')
