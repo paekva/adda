@@ -1,6 +1,7 @@
 import {Order, Status} from "../../types";
 import {acceptOrder, checkOrder, declineOrder, startOrder} from "../../api/orders";
 import {AppRole} from "../../api/user";
+import {displayAlert} from "../../utils";
 
 export const admin: Status[] = [
     Status.ACCEPTANCE,
@@ -18,44 +19,39 @@ export const client: Status[] = [
     Status.USER_ONLY_DELIVERY
 ]
 
-export const adminButton = (order?: Order | null) => [
+export const adminButton = (sendMessage: (msg: string | null) => void, order?: Order | null,) => [
     {
         label: "Сообщить об ошибке",
-        handler: () => order?.id ? declineOrder(order.id) : null,
+        handler: () => order?.id ? declineOrder(order.id).then((resp) => {
+            resp && displayAlert("Произошла ошибка при отказе от заказа, попробуйте снова", sendMessage)
+        }) : null,
         disabled: order?.status ? !areActionsAvailableForAdmin(order?.status) : true
     },
     {
         label: "Подтвердить",
-        handler: () => order?.id ? acceptOrder(order.id) : null,
+        handler: () => order?.id ? acceptOrder(order.id).then((resp) => {
+            resp && displayAlert("Произошла ошибка при подтверждении заказа, попробуйте снова", sendMessage)
+        }) : null,
         disabled: order?.status ? !areActionsAvailableForAdmin(order?.status) : true
     },
 ]
 
-export const workerButton = (order?: Order | null) => [
+export const workerButton = (sendMessage: (msg: string | null) => void, order?: Order | null,) => [
     {
         label: "Взять в выполнение",
-        handler: () => order?.id ? startOrder(order.id) : null,
+        handler: () => order?.id ? startOrder(order.id).then((resp) => {
+            resp && displayAlert("Произошла ошибка при взятии заказа в выполнение, попробуйте снова", sendMessage)
+        }) : null,
         disabled: order?.status ? !areActionsAvailableForWorker(order?.status) : true
     },
     {
         label: "Завершить выполнение",
-        handler: () => order?.id ? checkOrder(order.id) : null,
+        handler: () => order?.id ? checkOrder(order.id).then((resp) => {
+            resp && displayAlert("Произошла ошибка при завершении выполнения заказ, попробуйте снова", sendMessage)
+        }) : null,
         disabled: order?.status ? !areActionsAvailableForWorker(order?.status) : true
     },
 ]
-
-// export const clientButton = (order?: Order | null) => [
-//     {
-//         label: "Отказаться от заказа",
-//         handler: () => order?.id ? cancelOrder(order.id) : null,
-//         disabled: order?.status ? !isCancelAvailableForClient(order?.status) : true
-//     },
-//     {
-//         label: "Оплатить заказ",
-//         handler: () => order?.id ? console.warn('paying') : null,
-//         disabled: order?.status ? !isPayAvailableForClient(order?.status) : true
-//     },
-// ]
 
 const areActionsAvailableForAdmin = (status: Status) => status.toString().includes('ACCEPTANCE')
 const areActionsAvailableForWorker = (status: Status) => status.toString().includes('WAIT') && !status.toString().includes('ACCEPTANCE')

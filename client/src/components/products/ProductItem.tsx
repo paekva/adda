@@ -5,6 +5,7 @@ import {addProduct} from "../../api/cart";
 import {getImageUrl} from "../../api/products";
 import {IconButton} from "@material-ui/core";
 import {Add} from "@material-ui/icons";
+import {displayAlert} from "../../utils";
 
 export type ProductItemProps = {
     product: Product
@@ -33,9 +34,10 @@ export const ProductItem = (props: ProductItemProps): JSX.Element => {
             <IconButton
                 type="submit"
                 color="default"
-                onClick={() => addProduct(product.id).then(() => {
-                    props.sendUpdateMessage(`Вы добавили "${product.name}" в корзину`)
-                    setTimeout(() => props.sendUpdateMessage(null), 5000)
+                onClick={() => addProduct(product.id).then((resp) => {
+                    displayAlert(resp ? `Вы добавили "${product.name}" в корзину`
+                        : "Произошла ошибка при добавлении товара, попробуйте снова", props.sendUpdateMessage
+                    )
                 })}
                 style={{height: 56, width: 56}}
             >

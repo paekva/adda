@@ -3,8 +3,13 @@ import {AppRole} from "../../api/user";
 import React, {useCallback, useState} from "react";
 import {getConfirmation, setConfirmation} from "../../api/orders";
 import Button from "@material-ui/core/Button"
+import {displayAlert} from "../../utils";
 
-export const Confirmation = (props: { selectedOrder?: Order | null, roles: AppRole[] }): JSX.Element => {
+export const Confirmation = (props: {
+    selectedOrder?: Order | null,
+    roles: AppRole[],
+    sendUpdateMessage: (msg: string | null) => void
+}): JSX.Element => {
     const [bytes, setBytes] = useState<any | null>(null);
     const [url, setUrl] = useState(props.selectedOrder ? getConfirmation(props.selectedOrder?.id, props.selectedOrder?.status) : '');
 
@@ -31,12 +36,13 @@ export const Confirmation = (props: { selectedOrder?: Order | null, roles: AppRo
     const onPhotoFileSubmit = useCallback(
         (ev) => {
             if (props.selectedOrder) {
-                console.log(ev);
-                console.log(bytes);
                 const data = new FormData();
                 data.append("file", bytes.file);
                 setConfirmation(props.selectedOrder?.id, props.selectedOrder?.status, data)
-                    .then(() => setBytes(null));
+                    .then((resp) => {
+                        setBytes(null)
+                        resp && displayAlert("Произошла ошибка при добавлении подтверждения, попробуйте снова", props.sendUpdateMessage)
+                    });
             }
         },
         [bytes, props.selectedOrder]

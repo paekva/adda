@@ -10,11 +10,13 @@ import {StateChangeActionType} from "../../store/actions";
 import {getProductsList} from "../../api/products";
 import {RowData} from "../tableForData/types";
 import {checkThatOrderInActiveStateForTheUser} from "../order/util";
+import {displayAlert} from "../../utils";
 
 export type OrdersTableProps = {
     roles: AppRole[]
     setSelectedOrder: (selectedOrder: Order | null) => void
     resetLastSelectedData: () => void
+    setMessage: (message: string | null) => void
 }
 
 const OrdersTable = (props: OrdersTableProps): JSX.Element => {
@@ -39,6 +41,8 @@ const OrdersTable = (props: OrdersTableProps): JSX.Element => {
                         }
                     });
                     setOrdersList(orders);
+                } else {
+                    displayAlert("Произошла ошибка при получении заказов, попробуйте снова", props.setMessage)
                 }
             })
             .catch((e) => {
@@ -79,6 +83,12 @@ const mapDispatchToProps = () => {
                 type: StateChangeActionType.RESET_LAST_SELECTED_DATA,
             });
         },
+        setMessage: (message: string | null) => {
+            store.dispatch({
+                type: StateChangeActionType.SET_MESSAGE,
+                payload: message,
+            });
+        }
     };
 };
 

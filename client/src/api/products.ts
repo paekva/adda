@@ -14,24 +14,11 @@ export const getProductsList = (): Promise<ProductsListResponse | null> => {
         Method.GET,
         undefined,
         true
-    ).catch((e) => {
+    ).catch(() => {
         console.error('getProductsList not working');
         return null;
     });
 }
-
-export const getProductsByIds = (ids: number[]): Promise<any> => {
-    return customFetch<{}, any>(
-        `${getUrl()}/products/byIds`,
-        Method.POST,
-        ids,
-        true
-    ).catch((e) => {
-        console.error('getProductsByIds not working');
-        return null;
-    });
-}
-
 
 export const getImageUrl = (photoId: number): string => `${getUrl()}/products/image/get/${photoId}`;
 

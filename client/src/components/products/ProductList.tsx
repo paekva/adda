@@ -10,6 +10,7 @@ import {makeCustomOrder} from "../../api/orders";
 import {TextField} from "@material-ui/core";
 import store from "../../store/store";
 import {StateChangeActionType} from "../../store/actions";
+import {displayAlert} from "../../utils";
 
 export type ProductListProps = {
     setMessage: (message: string | null) => void;
@@ -39,10 +40,9 @@ const ProductList = (props: ProductListProps) => {
                     type="submit"
                     variant="contained"
                     color="default"
-                    onClick={() => makeCustomOrder(customOrder).then(() => {
+                    onClick={() => makeCustomOrder(customOrder).then((resp) => {
                         setCustomDialog(false)
-                        props.setMessage(`Вы добавили новый заказ`)
-                        setTimeout(() => props.setMessage(null), 5000)
+                        displayAlert(resp ? `Вы добавили новый заказ` : "Произошла ошибка при подтверждении заказа, попробуйте снова", props.setMessage)
                     })}
                     style={{height: 56}}
                 >

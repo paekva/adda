@@ -3,6 +3,7 @@ import {getProductsList} from "../../api/products";
 import {CardItem} from "./CardItem";
 import Button from "@material-ui/core/Button";
 import {addProduct, clearCat, deleteProductFromCard, getCardList, makeOrder, removeOneProduct} from "../../api/cart";
+import {displayAlert} from "../../utils";
 
 export const Card = (props: { setMessage: (message: string | null) => void }): JSX.Element => {
     const [products, setProducts] = useState<any[]>([]);
@@ -32,31 +33,47 @@ export const Card = (props: { setMessage: (message: string | null) => void }): J
 
     const onDelete = useCallback((id: number) => {
         const name = products.find(el => el.id === id).name
-        deleteProductFromCard(id).then(() => {
+        deleteProductFromCard(id).then((resp) => {
             updateCart()
 
-            props.setMessage(`Вы удалили товар "${name}" из корзины`)
-            setTimeout(() => props.setMessage(null), 5000)
+            displayAlert(resp ? `Вы удалили товар "${name}" из корзины`
+                : "Произошла ошибка при удалении товара из корзины, попробуйте снова", props.setMessage
+            )
         });
     }, [products])
 
     const onIncrement = useCallback((id: number) => {
-        addProduct(id).then(() => updateCart());
+        addProduct(id).then((resp) => {
+            updateCart()
+
+            resp && displayAlert("Произошла ошибка при добавлении товара, попробуйте снова", props.setMessage)
+        });
     }, [])
 
     const onDecrement = useCallback((id: number) => {
-        removeOneProduct(id).then(() => updateCart());
+        removeOneProduct(id).then((resp) => {
+            updateCart()
+            resp && displayAlert("Произошла ошибка при уменьшении числа товаров, попробуйте снова", props.setMessage)
+        });
     }, [])
 
     const onClear = useCallback(() => {
-        clearCat().then(() => updateCart());
+        clearCat().then((resp) => {
+            updateCart()
+
+            displayAlert(resp ? `Вы очистили корзину`
+                : "Произошла ошибка при очищении корзины, попробуйте снова", props.setMessage
+            )
+        });
     }, [])
 
     const onMakeOrder = useCallback(() => {
-        makeOrder().then(() => {
+        makeOrder().then((resp) => {
             updateCart()
-            props.setMessage(`Вы добавили новый заказ`)
-            setTimeout(() => props.setMessage(null), 5000)
+
+            displayAlert(resp ? `Вы добавили новый заказ`
+                : "Произошла ошибка при cоздании заказа, попробуйте снова", props.setMessage
+            )
         });
     }, [])
 

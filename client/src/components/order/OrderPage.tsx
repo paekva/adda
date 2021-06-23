@@ -5,17 +5,20 @@ import {Order, Status, statusToStringMap} from "../../types";
 import {AppRole} from "../../api/user";
 import './OrderPage.css'
 import StatusPanel from "./StatusPanel";
-import {AppStore} from "../../store/store";
+import store, {AppStore} from "../../store/store";
 import {connect} from "react-redux";
 import Button from "@material-ui/core/Button";
 import {OrderInfo} from "./OrderInfo";
 import {Confirmation} from "./Confirmation";
 import {acceptCustomOrder, acceptOrder, cancelCustomOrder, cancelOrder} from "../../api/orders";
 import {admin, adminButton, checkThatOrderInActiveStateForTheUser, client, workerButton} from "./util";
+import {StateChangeActionType} from "../../store/actions";
+import {displayAlert} from "../../utils";
 
 export type OrderPageProps = {
     selectedOrder: Order | null
     roles: AppRole[]
+    setMessage: (message: string | null) => void
 }
 
 export const getStatusForUser: any = (status: Status) => {
@@ -63,7 +66,9 @@ const OrderPage = (props: OrderPageProps): JSX.Element => {
     const onAcceptCustomOrder = useCallback(() => selectedOrder?.status == Status.ACCEPTANCE
         ? setDialog(true)
         : selectedOrder?.id
-            ? acceptOrder(selectedOrder.id)
+            ? acceptOrder(selectedOrder.id).then((resp) => {
+                resp && displayAlert("Произошла ошибка при подтверждении заказа, попробуйте снова", props.setMessage)
+            })
             : null,
         [])
     const onCancelCustomOrder = useCallback(() => setCancelDialog(true), [])
@@ -92,7 +97,10 @@ const OrderPage = (props: OrderPageProps): JSX.Element => {
                     type="submit"
                     variant="contained"
                     color="default"
-                    onClick={() => selectedOrder?.id ? cancelOrder(selectedOrder.id, selectedOrder.isCustom).then(() => setClientCancelDialog(false)) : null}
+                    onClick={() => selectedOrder?.id ? cancelOrder(selectedOrder.id, selectedOrder.isCustom).then((resp) => {
+                        setClientCancelDialog(false)
+                        resp && displayAlert("Произошла ошибка при подтверждении заказа, попробуйте снова", props.setMessage)
+                    }) : null}
                     style={{height: 56}}
                 >
                     Отменить заказ
@@ -120,7 +128,10 @@ const OrderPage = (props: OrderPageProps): JSX.Element => {
                     type="submit"
                     variant="contained"
                     color="default"
-                    onClick={() => selectedOrder?.id ? acceptCustomOrder(selectedOrder.id, orderEvaluation).then(() => setDialog(false)) : null}
+                    onClick={() => selectedOrder?.id ? acceptCustomOrder(selectedOrder.id, orderEvaluation).then((resp) => {
+                        setDialog(false)
+                        resp && displayAlert("Произошла ошибка при подтверждении заказа, попробуйте снова", props.setMessage)
+                    }) : null}
                     style={{height: 56}}
                 >
                     Принять заказ
@@ -148,7 +159,10 @@ const OrderPage = (props: OrderPageProps): JSX.Element => {
                     type="submit"
                     variant="contained"
                     color="default"
-                    onClick={() => selectedOrder?.id ? cancelCustomOrder(selectedOrder.id, orderCancel).then(() => setCancelDialog(false)) : null}
+                    onClick={() => selectedOrder?.id ? cancelCustomOrder(selectedOrder.id, orderCancel).then((resp) => {
+                        setCancelDialog(false)
+                        resp && displayAlert("Произошла ошибка при отмене заказа, попробуйте снова", props.setMessage)
+                    }) : null}
                     style={{height: 56}}
                 >
                     Отклонить заказ
@@ -167,7 +181,7 @@ const OrderPage = (props: OrderPageProps): JSX.Element => {
         </div>
     }, [orderCancel])
 
-    const clientButton = (order?: Order | null) => [
+    const clientButton = (sendMessage: (msg: string | null) => void, order?: Order | null,) => [
         {
             label: "Отказаться от заказа",
             handler: () => onCancelByClient(),
@@ -180,7 +194,7 @@ const OrderPage = (props: OrderPageProps): JSX.Element => {
         },
     ]
 
-    const adminButtonForCustom = () => [
+    const adminButtonForCustom = (sendMessage: (msg: string | null) => void) => [
         {
             label: "Подтвердить",
             handler: () => onAcceptCustomOrder(),
@@ -221,18 +235,17 @@ const OrderPage = (props: OrderPageProps): JSX.Element => {
         {selectedOrder && checkThatOrderInActiveStateForTheUser(selectedOrder?.status, props.roles) &&
         <div className='manage'>
             <div>Информация о выполнении</div>
-            <Confirmation selectedOrder={selectedOrder} roles={roles}/>
+            <Confirmation sendUpdateMessage={props.setMessage} selectedOrder={selectedOrder} roles={roles}/>
         </div>}
 
         <div className='controlsInOrder'>
             {(roles.includes(AppRole.USER)
-                ? clientButton
+                ? clientButton(props.setMessage, selectedOrder)
                 : (roles.includes(AppRole.ADMIN) && selectedOrder?.isCustom == false)
-                    ? adminButton
+                    ? adminButton(props.setMessage, selectedOrder)
                     : (roles.includes(AppRole.ADMIN) && selectedOrder?.isCustom == true)
-                        ? adminButtonForCustom
-                        : workerButton)
-            (selectedOrder)
+                        ? adminButtonForCustom(props.setMessage)
+                        : workerButton(props.setMessage, selectedOrder))
                 .map((el, index) => <Button
                     key={`btns${index}`}
                     disabled={el.disabled}
@@ -263,4 +276,14 @@ const mapStateToProps = (store: AppStore) => {
         roles: store.roles
     }
 }
-export default connect(mapStateToProps)(OrderPage)
+const mapDispatchToProps = () => {
+    return {
+        setMessage: (message: string | null) => {
+            store.dispatch({
+                type: StateChangeActionType.SET_MESSAGE,
+                payload: message,
+            });
+        }
+    };
+};
+export default connect(mapStateToProps, mapDispatchToProps)(OrderPage)

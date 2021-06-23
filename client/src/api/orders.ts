@@ -8,22 +8,28 @@ export type OrdersListResponse = {
     orders: Order[]
 }
 
-export const getOrdersListForUser = (): Promise<OrdersListResponse> => {
+export const getOrdersListForUser = (): Promise<OrdersListResponse | null> => {
     return customFetch<{}, OrdersListResponse>(
         `${getUrl()}/orders/forUser`,
         Method.GET,
         undefined,
         true
-    );
+    ).catch((e) => {
+        console.error('getOrdersListForUser not working');
+        return null;
+    });
 }
 
-export const makeCustomOrder = (description: string): Promise<OrdersListResponse> => {
+export const makeCustomOrder = (description: string): Promise<OrdersListResponse | null> => {
     return customFetch<{}, OrdersListResponse>(
         `${getUrl()}/orders/createCustom`,
         Method.POST,
         description,
         true
-    );
+    ).catch((e) => {
+        console.error('makeCustomOrder not working');
+        return null;
+    });
 }
 
 export const cancelOrder = (orderId: number, isCustom: boolean): Promise<any> => {
@@ -32,7 +38,10 @@ export const cancelOrder = (orderId: number, isCustom: boolean): Promise<any> =>
         Method.GET,
         undefined,
         true
-    );
+    ).catch((e) => {
+        console.error('cancelOrder not working');
+        return null;
+    });
 }
 
 export const cancelCustomOrder = (orderId: number, reason: String): Promise<any> => {
@@ -41,7 +50,10 @@ export const cancelCustomOrder = (orderId: number, reason: String): Promise<any>
         Method.GET,
         undefined,
         true
-    );
+    ).catch((e) => {
+        console.error('cancelCustomOrder not working');
+        return null;
+    });
 }
 
 export const acceptCustomOrder = (orderId: number, newPrice: string): Promise<any> => {
@@ -50,7 +62,10 @@ export const acceptCustomOrder = (orderId: number, newPrice: string): Promise<an
         Method.GET,
         undefined,
         true
-    );
+    ).catch((e) => {
+        console.error('acceptCustomOrder not working');
+        return null;
+    });
 }
 
 export const acceptOrder = (orderId: number): Promise<any> => {
@@ -59,7 +74,10 @@ export const acceptOrder = (orderId: number): Promise<any> => {
         Method.GET,
         undefined,
         true
-    );
+    ).catch((e) => {
+        console.error('acceptOrder not working');
+        return null;
+    });
 }
 
 export const declineOrder = (orderId: number): Promise<any> => {
@@ -68,7 +86,10 @@ export const declineOrder = (orderId: number): Promise<any> => {
         Method.GET,
         undefined,
         true
-    );
+    ).catch((e) => {
+        console.error('declineOrder not working');
+        return null;
+    });
 }
 
 export const startOrder = (orderId: number): Promise<any> => {
@@ -77,7 +98,10 @@ export const startOrder = (orderId: number): Promise<any> => {
         Method.GET,
         undefined,
         true
-    );
+    ).catch((e) => {
+        console.error('startOrder not working');
+        return null;
+    });
 }
 
 export const checkOrder = (orderId: number): Promise<any> => {
@@ -86,7 +110,10 @@ export const checkOrder = (orderId: number): Promise<any> => {
         Method.GET,
         undefined,
         true
-    );
+    ).catch((e) => {
+        console.error('checkOrder not working');
+        return null;
+    });
 }
 
 export const getConfirmation = (orderId: number, status: Status): string =>
@@ -101,5 +128,8 @@ export const setConfirmation = (
         `${getUrl()}/orders/confirmation/set/${orderId}/${status}`,
         Method.POST,
         body
-    );
+    ).catch((e) => {
+        console.error('setConfirmation not working');
+        return null;
+    });
 };
