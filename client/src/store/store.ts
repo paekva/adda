@@ -10,6 +10,7 @@ export type AppStore = {
     username: string | null;
     currentMenuItem: MenuItem | null
     lastSelectedOrder: Order | null
+    message: string | null
 }
 
 export const initialState: AppStore = {
@@ -18,7 +19,8 @@ export const initialState: AppStore = {
     roles: [],
     username: null,
     currentMenuItem: null,
-    lastSelectedOrder: null
+    lastSelectedOrder: null,
+    message: null
 };
 
 const store = createStore(rootReducer);

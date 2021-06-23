@@ -1,4 +1,4 @@
-import {AppStore} from "../../store/store";
+import store, {AppStore} from "../../store/store";
 import {connect} from "react-redux";
 import {MenuItem, Order} from "../../types";
 import OrdersTable from "../orders/OrdersTable";
@@ -8,11 +8,13 @@ import {Personal} from "../personal/Personal";
 import OrderPage from "../order/OrderPage";
 import {Card} from "../products/Card";
 import {AppRole} from "../../api/user";
+import {StateChangeActionType} from "../../store/actions";
 
 export type RouterProps = {
     currentMenuItem: MenuItem | null
     selectedOrder: Order | null
     roles: AppRole[]
+    setMessage: (message: string | null) => void
 }
 
 
@@ -27,7 +29,7 @@ export const Router = (props: RouterProps): JSX.Element => {
         case MenuItem.SINGLE_ORDER:
             return <OrderPage selectedOrder={props.selectedOrder}/>
         case MenuItem.BUCKET:
-            return <Card/>
+            return <Card setMessage={props.setMessage}/>
         default:
             return <div>no such page yet</div>
     }
@@ -41,4 +43,14 @@ const mapStateToProps = (store: AppStore) => {
     };
 };
 
-export default connect(mapStateToProps)(Router);
+const mapDispatchToProps = () => {
+    return {
+        setMessage: (message: string | null) => {
+            store.dispatch({
+                type: StateChangeActionType.SET_MESSAGE,
+                payload: message,
+            });
+        },
+    };
+};
+export default connect(mapStateToProps, mapDispatchToProps)(Router);

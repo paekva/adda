@@ -8,9 +8,13 @@ import Button from "@material-ui/core/Button";
 import {Dialog} from "../dialog/Dialog";
 import {makeCustomOrder} from "../../api/orders";
 import {TextField} from "@material-ui/core";
+import store from "../../store/store";
+import {StateChangeActionType} from "../../store/actions";
 
-export type ProductListProps = {}
-const ProductList = () => {
+export type ProductListProps = {
+    setMessage: (message: string | null) => void;
+}
+const ProductList = (props: ProductListProps) => {
     const [products, setProducts] = useState<Product[]>([]);
     const [isCustomDialog, setCustomDialog] = useState<boolean>(false);
     const [customOrder, setCustomOrder] = useState<string>('');
@@ -35,7 +39,11 @@ const ProductList = () => {
                     type="submit"
                     variant="contained"
                     color="default"
-                    onClick={() => makeCustomOrder(customOrder).then(() => setCustomDialog(false))}
+                    onClick={() => makeCustomOrder(customOrder).then(() => {
+                        setCustomDialog(false)
+                        props.setMessage(`Вы добавили новый заказ`)
+                        setTimeout(() => props.setMessage(null), 5000)
+                    })}
                     style={{height: 56}}
                 >
                     Создать
@@ -72,7 +80,8 @@ const ProductList = () => {
         </Button>
         <div className='wrapper'>
             {
-                products.map((el, index) => <ProductItem key={`product${index}`} product={el}/>)
+                products.map((el, index) => <ProductItem sendUpdateMessage={props.setMessage} key={`product${index}`}
+                                                         product={el}/>)
             }
         </div>
         {isCustomDialog &&
@@ -80,4 +89,14 @@ const ProductList = () => {
     </div>
 }
 
-export default connect()(ProductList);
+const mapDispatchToProps = () => {
+    return {
+        setMessage: (message: string | null) => {
+            store.dispatch({
+                type: StateChangeActionType.SET_MESSAGE,
+                payload: message,
+            });
+        },
+    };
+};
+export default connect(null, mapDispatchToProps)(ProductList);

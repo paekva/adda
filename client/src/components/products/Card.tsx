@@ -4,7 +4,7 @@ import {CardItem} from "./CardItem";
 import Button from "@material-ui/core/Button";
 import {addProduct, clearCat, deleteProductFromCard, getCardList, makeOrder, removeOneProduct} from "../../api/cart";
 
-export const Card = (): JSX.Element => {
+export const Card = (props: { setMessage: (message: string | null) => void }): JSX.Element => {
     const [products, setProducts] = useState<any[]>([]);
 
     const updateCart = useCallback(() => {
@@ -31,8 +31,14 @@ export const Card = (): JSX.Element => {
     }, []);
 
     const onDelete = useCallback((id: number) => {
-        deleteProductFromCard(id).then(() => updateCart());
-    }, [])
+        const name = products.find(el => el.id === id).name
+        deleteProductFromCard(id).then(() => {
+            updateCart()
+
+            props.setMessage(`Вы удалили товар "${name}" из корзины`)
+            setTimeout(() => props.setMessage(null), 5000)
+        });
+    }, [products])
 
     const onIncrement = useCallback((id: number) => {
         addProduct(id).then(() => updateCart());
@@ -47,7 +53,11 @@ export const Card = (): JSX.Element => {
     }, [])
 
     const onMakeOrder = useCallback(() => {
-        makeOrder().then(() => updateCart());
+        makeOrder().then(() => {
+            updateCart()
+            props.setMessage(`Вы добавили новый заказ`)
+            setTimeout(() => props.setMessage(null), 5000)
+        });
     }, [])
 
     return <div style={{display: 'flex', flexDirection: 'column'}}>

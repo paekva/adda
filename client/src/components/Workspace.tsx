@@ -7,6 +7,7 @@ import {connect} from "react-redux";
 import {ClientLayout} from "./layout/ClientLayout";
 import {WorkerLayout} from "./layout/WorkerLayout";
 import {MenuItem} from "../types";
+import {Dialog} from "./dialog/Dialog";
 
 type Props = {
     setUserData: (roles: AppRole[], userName: string) => void;
@@ -14,6 +15,7 @@ type Props = {
     roles: AppRole[],
     username: string | null,
     currentMenuItem: MenuItem | null;
+    message: string | null
 };
 
 const Workspace = (props: Props): JSX.Element => {
@@ -32,11 +34,19 @@ const Workspace = (props: Props): JSX.Element => {
             });
     }, [setUserData, setMenuItem]);
 
-    return currentMenuItem == null
-        ? <div>Wait for it...</div>
-        : roles.includes(AppRole.USER)
-            ? (<ClientLayout/>)
-            : (<WorkerLayout roles={roles}/>)
+    return <div>
+        {currentMenuItem == null
+            ? <div>Wait for it...</div>
+            : roles.includes(AppRole.USER)
+                ? (<ClientLayout/>)
+                : (<WorkerLayout roles={roles}/>)}
+
+        {props.message && <Dialog
+            coords={{bottom: 10, right: 10}}
+            hideOverlay={true}
+            renderHeader={() => <div> Сообщение </div>}
+            renderBody={() => <div> {props.message} </div>}/>}
+    </div>
 
 }
 
@@ -44,7 +54,8 @@ const mapStateToProps = (store: AppStore) => {
     return {
         roles: store.roles,
         username: store.username,
-        currentMenuItem: store.currentMenuItem
+        currentMenuItem: store.currentMenuItem,
+        message: store.message
     };
 };
 

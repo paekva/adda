@@ -45,6 +45,12 @@ function rootReducer(
                 lastOpenedOrder: null
             };
         }
+        case StateChangeActionType.SET_MESSAGE: {
+            return {
+                ...state,
+                message: action.payload
+            };
+        }
     }
     return state;
 }

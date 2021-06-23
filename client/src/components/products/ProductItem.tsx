@@ -8,6 +8,7 @@ import {Add} from "@material-ui/icons";
 
 export type ProductItemProps = {
     product: Product
+    sendUpdateMessage: (message: string | null) => void
 }
 
 export const ProductItem = (props: ProductItemProps): JSX.Element => {
@@ -32,7 +33,10 @@ export const ProductItem = (props: ProductItemProps): JSX.Element => {
             <IconButton
                 type="submit"
                 color="default"
-                onClick={() => addProduct(product.id)}
+                onClick={() => addProduct(product.id).then(() => {
+                    props.sendUpdateMessage(`Вы добавили "${product.name}" в корзину`)
+                    setTimeout(() => props.sendUpdateMessage(null), 5000)
+                })}
                 style={{height: 56, width: 56}}
             >
                 <Add/>
