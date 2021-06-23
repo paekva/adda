@@ -120,7 +120,7 @@ const OrderPage = (props: OrderPageProps): JSX.Element => {
     }, [])
     const renderBody = useCallback(() => {
         return <div style={{display: 'flex', flexDirection: 'column', padding: 10}}>
-            <TextField variant="outlined" placeholder="Введите стоимость заказа"
+            <TextField variant="outlined" error={isNaN(+orderEvaluation)} helperText={isNaN(+orderEvaluation) ? 'Необходимо ввести целое число для стоимости' : ' '} placeholder="Введите стоимость заказа"
                        onChange={(e) => setOrderEvaluation(e.target.value)}/>
 
             <div style={{display: 'flex', flexDirection: 'row', padding: 10, justifyContent: 'space-between'}}>
@@ -128,7 +128,7 @@ const OrderPage = (props: OrderPageProps): JSX.Element => {
                     type="submit"
                     variant="contained"
                     color="default"
-                    onClick={() => selectedOrder?.id ? acceptCustomOrder(selectedOrder.id, orderEvaluation).then((resp) => {
+                    onClick={() => selectedOrder?.id && !(isNaN(+orderEvaluation)) ? acceptCustomOrder(selectedOrder.id, orderEvaluation).then((resp) => {
                         setDialog(false)
                         resp && displayAlert("Произошла ошибка при подтверждении заказа, попробуйте снова", props.setMessage)
                     }) : null}
