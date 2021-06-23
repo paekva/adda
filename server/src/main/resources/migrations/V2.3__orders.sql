@@ -11,19 +11,8 @@ INSERT INTO ORDER_ITEM (client, date_of_order, date_of_receive, status)
 VALUES (21, TIMESTAMP '2011-05-16 15:36:38', TIMESTAMP '2011-06-16 15:36:38', 3);
 
 INSERT INTO ORDER_ITEM (client, date_of_order, date_of_receive, status)
-VALUES (21, TIMESTAMP '2021-05-16 15:36:38', TIMESTAMP '2021-06-16 15:36:38', 4);
+VALUES (22, TIMESTAMP '2021-05-16 15:36:38', TIMESTAMP '2021-06-16 15:36:38', 4);
 
-INSERT INTO ORDER_ITEM (client, date_of_order, date_of_receive, status)
-VALUES (22, TIMESTAMP '2001-05-16 15:36:38', TIMESTAMP '2001-06-16 15:36:38', 5);
-
-INSERT INTO ORDER_ITEM (client, date_of_order, date_of_receive, status)
-VALUES (22, TIMESTAMP '2011-05-16 15:36:38', TIMESTAMP '2011-06-16 15:36:38', 6);
-
-INSERT INTO ORDER_ITEM (client, date_of_order, date_of_receive, status)
-VALUES (23, TIMESTAMP '2021-05-16 15:36:38', TIMESTAMP '2021-06-16 15:36:38', 7);
-
-INSERT INTO ORDER_ITEM (client, date_of_order, date_of_receive, status)
-VALUES (23, TIMESTAMP '2001-05-16 15:36:38', TIMESTAMP '2001-06-16 15:36:38', 8);
 
 create table product_to_order
 (
@@ -46,16 +35,6 @@ insert into product_to_order(order_id, product_id)
 values (2, 3);
 insert into product_to_order(order_id, product_id)
 values (2, 5);
-insert into product_to_order(order_id, product_id)
-values (3, 1);
-insert into product_to_order(order_id, product_id)
-values (3, 2);
-insert into product_to_order(order_id, product_id)
-values (4, 4);
-insert into product_to_order(order_id, product_id)
-values (5, 1);
-insert into product_to_order(order_id, product_id)
-values (5, 5);
 
 create table worker_to_order
 (
@@ -72,3 +51,13 @@ insert into worker_to_order(order_id, client_id)
 values (1, 5);
 insert into worker_to_order(order_id, client_id)
 values (1, 6);
+
+
+insert into worker_to_order(order_id, client_id)
+values (2, 3);
+insert into worker_to_order(order_id, client_id)
+values (2, 4);
+insert into worker_to_order(order_id, client_id)
+values (2, 5);
+insert into worker_to_order(order_id, client_id)
+values (2, 7);

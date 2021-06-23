@@ -31,8 +31,8 @@ data class CustomOrder(
 
         @ManyToMany(fetch = FetchType.LAZY)
         @JoinTable(
-                name = "worker_to_order",
-                joinColumns = [JoinColumn(name = "order_id", referencedColumnName = "ID")],
+                name = "worker_to_custom_order",
+                joinColumns = [JoinColumn(name = "custom_order_id", referencedColumnName = "ID")],
                 inverseJoinColumns = [JoinColumn(name = "client_id", referencedColumnName = "ID")]
         )
         var workers: MutableList<User>
