@@ -2,7 +2,7 @@ import {Order} from "../../types";
 import {AppRole} from "../../api/user";
 import React, {useCallback, useState} from "react";
 import {getConfirmation, setConfirmation} from "../../api/orders";
-import Button from "@material-ui/core/Button";
+import Button from "@material-ui/core/Button"
 
 export const Confirmation = (props: { selectedOrder?: Order | null, roles: AppRole[] }): JSX.Element => {
     const [bytes, setBytes] = useState<any | null>(null);
@@ -51,7 +51,6 @@ export const Confirmation = (props: { selectedOrder?: Order | null, roles: AppRo
                 ? 'Дополнительной информации не имеется'
                 : <div>
                     <div>Вы еще ничего не загрузили</div>
-
                     <div className="imageLoad">
                         <input
                             className="fileInput"
@@ -68,7 +67,8 @@ export const Confirmation = (props: { selectedOrder?: Order | null, roles: AppRo
                             Загрузить
                         </Button>
                     </div>
-                </div>}
+                </div>
+        }
     </div>
 }
 

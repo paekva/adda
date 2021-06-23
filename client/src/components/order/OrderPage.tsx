@@ -11,7 +11,7 @@ import Button from "@material-ui/core/Button";
 import {OrderInfo} from "./OrderInfo";
 import {Confirmation} from "./Confirmation";
 import {acceptCustomOrder, acceptOrder, cancelCustomOrder, cancelOrder} from "../../api/orders";
-import {admin, adminButton, client, workerButton} from "./util";
+import {admin, adminButton, checkThatOrderInActiveStateForTheUser, client, workerButton} from "./util";
 
 export type OrderPageProps = {
     selectedOrder: Order | null
@@ -214,7 +214,7 @@ const OrderPage = (props: OrderPageProps): JSX.Element => {
             <OrderInfo selectedOrder={selectedOrder} roles={roles}/>
         </div>
 
-        {!roles.includes(AppRole.USER) &&
+        {selectedOrder && checkThatOrderInActiveStateForTheUser(selectedOrder?.status, props.roles) &&
         <div className='manage'>
             <div>Информация о выполнении</div>
             <Confirmation selectedOrder={selectedOrder} roles={roles}/>
