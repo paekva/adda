@@ -54,8 +54,9 @@ export const Card = (): JSX.Element => {
         <div className='wrapper'>
             {
                 products.length > 0
-                    ? products.map((el) => <CardItem product={el} deleteCallback={onDelete}
-                                                     incrementCallback={onIncrement} decrementCallback={onDecrement}/>)
+                    ? products.map((el, index) => <CardItem key={`card${index}`} product={el} deleteCallback={onDelete}
+                                                            incrementCallback={onIncrement}
+                                                            decrementCallback={onDecrement}/>)
                     : 'Вы еще ничего не выбрали'
             }
         </div>

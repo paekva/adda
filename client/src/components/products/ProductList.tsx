@@ -10,7 +10,7 @@ import {makeCustomOrder} from "../../api/orders";
 import {TextField} from "@material-ui/core";
 
 export type ProductListProps = {}
-const ProductList = (props: ProductListProps) => {
+const ProductList = () => {
     const [products, setProducts] = useState<Product[]>([]);
     const [isCustomDialog, setCustomDialog] = useState<boolean>(false);
     const [customOrder, setCustomOrder] = useState<string>('');
@@ -72,7 +72,7 @@ const ProductList = (props: ProductListProps) => {
         </Button>
         <div className='wrapper'>
             {
-                products.map((el) => <ProductItem product={el}/>)
+                products.map((el, index) => <ProductItem key={`product${index}`} product={el}/>)
             }
         </div>
         {isCustomDialog &&
