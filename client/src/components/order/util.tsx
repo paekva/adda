@@ -23,14 +23,14 @@ export const adminButton = (sendMessage: (msg: string | null) => void, order?: O
     {
         label: "Сообщить об ошибке",
         handler: () => order?.id ? declineOrder(order.id).then((resp) => {
-            resp && displayAlert("Произошла ошибка при отказе от заказа, попробуйте снова", sendMessage)
+            !resp && displayAlert("Произошла ошибка при отказе от заказа, попробуйте снова", sendMessage)
         }) : null,
         disabled: order?.status ? !areActionsAvailableForAdmin(order?.status) : true
     },
     {
         label: "Подтвердить",
         handler: () => order?.id ? acceptOrder(order.id).then((resp) => {
-            resp && displayAlert("Произошла ошибка при подтверждении заказа, попробуйте снова", sendMessage)
+            !resp && displayAlert("Произошла ошибка при подтверждении заказа, попробуйте снова", sendMessage)
         }) : null,
         disabled: order?.status ? !areActionsAvailableForAdmin(order?.status) : true
     },
@@ -40,14 +40,14 @@ export const workerButton = (sendMessage: (msg: string | null) => void, order?: 
     {
         label: "Взять в выполнение",
         handler: () => order?.id ? startOrder(order.id).then((resp) => {
-            resp && displayAlert("Произошла ошибка при взятии заказа в выполнение, попробуйте снова", sendMessage)
+            !resp && displayAlert("Произошла ошибка при взятии заказа в выполнение, попробуйте снова", sendMessage)
         }) : null,
         disabled: order?.status ? !areActionsAvailableForWorker(order?.status) : true
     },
     {
         label: "Завершить выполнение",
         handler: () => order?.id ? checkOrder(order.id).then((resp) => {
-            resp && displayAlert("Произошла ошибка при завершении выполнения заказ, попробуйте снова", sendMessage)
+            !resp && displayAlert("Произошла ошибка при завершении выполнения заказ, попробуйте снова", sendMessage)
         }) : null,
         disabled: order?.status ? !areActionsAvailableForWorker(order?.status) : true
     },

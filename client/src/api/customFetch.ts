@@ -23,7 +23,7 @@ export const customFetch = <ReqT, ResT>(
         .then(async (data) => {
             const response = await data.json();
 
-            if (throwException && data.status.toString()[0] === '4')
+            if (throwException && (data.status.toString()[0] === '4' || data.status.toString()[0] === '5'))
                 throw Error(response.message ?? response.error);
 
             return response
@@ -41,5 +41,10 @@ export const customFetchForImages = <ReqT, ResT>(
             Authorization: `Bearer ${getAuthService().getToken()}`
         },
         body: requestBody,
-    }).then((data) => data.json());
+    }).then(async (data) => {
+        const response = await data.json();
+        if (response.status.toString()[0] === '4' || response.status.toString()[0] === '5')
+            throw Error(response.message ?? response.error);
+        return response
+    });
 };

@@ -41,7 +41,7 @@ export const Confirmation = (props: {
                 setConfirmation(props.selectedOrder?.id, props.selectedOrder?.status, data)
                     .then((resp) => {
                         setBytes(null)
-                        resp && displayAlert("Произошла ошибка при добавлении подтверждения, попробуйте снова", props.sendUpdateMessage)
+                        !resp && displayAlert("Произошла ошибка при добавлении подтверждения, попробуйте снова", props.sendUpdateMessage)
                     });
             }
         },

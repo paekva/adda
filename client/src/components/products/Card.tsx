@@ -46,14 +46,14 @@ export const Card = (props: { setMessage: (message: string | null) => void }): J
         addProduct(id).then((resp) => {
             updateCart()
 
-            resp && displayAlert("Произошла ошибка при добавлении товара, попробуйте снова", props.setMessage)
+            !resp && displayAlert("Произошла ошибка при добавлении товара, попробуйте снова", props.setMessage)
         });
     }, [])
 
     const onDecrement = useCallback((id: number) => {
         removeOneProduct(id).then((resp) => {
             updateCart()
-            resp && displayAlert("Произошла ошибка при уменьшении числа товаров, попробуйте снова", props.setMessage)
+            !resp && displayAlert("Произошла ошибка при уменьшении числа товаров, попробуйте снова", props.setMessage)
         });
     }, [])
 

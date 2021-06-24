@@ -9,9 +9,9 @@ const ClientMenu = [
     {menu: MenuItem.ORDERS, title: 'Мои заказы'},
     {menu: MenuItem.BUCKET, title: 'Корзина'},
     {menu: MenuItem.PERSONAL, title: 'Личный кабинет'},
-    {menu: MenuItem.NOTIFICATIONS, title: 'Уведомления'},
+    // {menu: MenuItem.NOTIFICATIONS, title: 'Уведомления'},
 ]
-
+/// TODO: return menu items when the pages are ready
 export const ClientLayout = (): JSX.Element => {
 
     return <div className='client'>

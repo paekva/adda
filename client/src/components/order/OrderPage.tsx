@@ -67,7 +67,7 @@ const OrderPage = (props: OrderPageProps): JSX.Element => {
         ? setDialog(true)
         : selectedOrder?.id
             ? acceptOrder(selectedOrder.id).then((resp) => {
-                resp && displayAlert("Произошла ошибка при подтверждении заказа, попробуйте снова", props.setMessage)
+                !resp && displayAlert("Произошла ошибка при подтверждении заказа, попробуйте снова", props.setMessage)
             })
             : null,
         [])
@@ -99,7 +99,7 @@ const OrderPage = (props: OrderPageProps): JSX.Element => {
                     color="default"
                     onClick={() => selectedOrder?.id ? cancelOrder(selectedOrder.id, selectedOrder.isCustom).then((resp) => {
                         setClientCancelDialog(false)
-                        resp && displayAlert("Произошла ошибка при подтверждении заказа, попробуйте снова", props.setMessage)
+                        !resp && displayAlert("Произошла ошибка при подтверждении заказа, попробуйте снова", props.setMessage)
                     }) : null}
                     style={{height: 56}}
                 >
@@ -130,7 +130,7 @@ const OrderPage = (props: OrderPageProps): JSX.Element => {
                     color="default"
                     onClick={() => selectedOrder?.id && !(isNaN(+orderEvaluation)) ? acceptCustomOrder(selectedOrder.id, orderEvaluation).then((resp) => {
                         setDialog(false)
-                        resp && displayAlert("Произошла ошибка при подтверждении заказа, попробуйте снова", props.setMessage)
+                        !resp && displayAlert("Произошла ошибка при подтверждении заказа, попробуйте снова", props.setMessage)
                     }) : null}
                     style={{height: 56}}
                 >
@@ -161,7 +161,7 @@ const OrderPage = (props: OrderPageProps): JSX.Element => {
                     color="default"
                     onClick={() => selectedOrder?.id ? cancelCustomOrder(selectedOrder.id, orderCancel).then((resp) => {
                         setCancelDialog(false)
-                        resp && displayAlert("Произошла ошибка при отмене заказа, попробуйте снова", props.setMessage)
+                        !resp && displayAlert("Произошла ошибка при отмене заказа, попробуйте снова", props.setMessage)
                     }) : null}
                     style={{height: 56}}
                 >
