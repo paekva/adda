@@ -68,6 +68,8 @@ export const acceptCustomOrder = (orderId: number, newPrice: string): Promise<an
     });
 }
 
+export const acceptWork = (orderId: number) => acceptOrder(orderId)
+
 export const acceptOrder = (orderId: number): Promise<any> => {
     return customFetch<{}, any>(
         `${getUrl()}/orders/accept?orderId=${orderId}`,

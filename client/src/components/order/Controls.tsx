@@ -2,22 +2,14 @@ import {AppRole} from "../../api/user";
 import Button from "@material-ui/core/Button";
 import React, {useCallback, useState} from "react";
 import {Order, Status} from "../../types";
-import {
-    acceptCustomOrder,
-    acceptOrder,
-    cancelCustomOrder,
-    cancelOrder,
-    checkOrder,
-    declineOrder,
-    startOrder
-} from "../../api/orders";
+import {acceptCustomOrder, acceptWork, cancelCustomOrder, cancelOrder, checkOrder, startOrder} from "../../api/orders";
 import {displayAlert} from "../../utils";
-import {areActionsAvailableForAdmin, areActionsAvailableForWorker} from "./util";
 import {Dialog} from "../dialog/Dialog";
 import {TextField} from "@material-ui/core";
 import store from "../../store/store";
 import {StateChangeActionType} from "../../store/actions";
 import {connect} from "react-redux";
+import {checkThatOrderInActiveStateForTheUser, getStatusForUser} from "./util";
 
 export type ControlsProps = {
     roles: AppRole[],
@@ -61,11 +53,12 @@ const Controls = (props: ControlsProps): JSX.Element => {
                     type="submit"
                     variant="contained"
                     color="default"
-                    onClick={() => selectedOrder?.id ? cancelOrder(selectedOrder.id, selectedOrder.isCustom).then((resp) => {
-                        setClientCancelDialog(false)
-                        !resp && displayAlert("Произошла ошибка при подтверждении заказа, попробуйте снова", props.setMessage)
-                        resp && props.resetOnOrderUpdate()
-                    }) : null}
+                    onClick={() => selectedOrder?.id
+                        ? cancelOrder(selectedOrder.id, selectedOrder.isCustom)
+                            .then((resp) => {
+                                setClientCancelDialog(false);
+                                afterUpdate(resp, "Произошла ошибка при подтверждении заказа, попробуйте снова");
+                            }) : null}
                     style={{height: 56}}
                 >
                     Отменить заказ
@@ -100,8 +93,7 @@ const Controls = (props: ControlsProps): JSX.Element => {
                         ? acceptCustomOrder(selectedOrder.id, orderEvaluation)
                             .then((resp) => {
                                 setDialog(false)
-                                !resp && displayAlert("Произошла ошибка при подтверждении заказа, попробуйте снова", props.setMessage)
-                                resp && props.resetOnOrderUpdate()
+                                afterUpdate(resp, "Произошла ошибка при подтверждении заказа, попробуйте снова")
                             })
                         : null}
                     style={{height: 56}}
@@ -134,8 +126,7 @@ const Controls = (props: ControlsProps): JSX.Element => {
                     color="default"
                     onClick={() => selectedOrder?.id ? cancelCustomOrder(selectedOrder.id, orderCancel).then((resp) => {
                         setCancelDialog(false)
-                        !resp && displayAlert("Произошла ошибка при отмене заказа, попробуйте снова", props.setMessage)
-                        resp && props.resetOnOrderUpdate()
+                        afterUpdate(resp, "Произошла ошибка при отмене заказа, попробуйте снова")
                     }) : null}
                     style={{height: 56}}
                 >
@@ -156,96 +147,103 @@ const Controls = (props: ControlsProps): JSX.Element => {
     }, [orderCancel])
 
     const onCancelByClient = useCallback(() => setClientCancelDialog(true), [])
-    const onAcceptCustomOrder = useCallback(() => selectedOrder?.status == Status.ACCEPTANCE
-        ? setDialog(true)
-        : selectedOrder?.id
-            ? acceptOrder(selectedOrder.id).then((resp) => {
-                resp && props.resetOnOrderUpdate()
-                !resp && displayAlert("Произошла ошибка при подтверждении заказа, попробуйте снова", props.setMessage)
-            })
-            : null,
+    const onAcceptUserOrder = useCallback(() => setDialog(true), [])
+    const onCancelUserOrder = useCallback(() => setCancelDialog(true), [])
+
+    const onAcceptWork = useCallback(() => selectedOrder?.id
+        ? acceptWork(selectedOrder.id).then((resp) => {
+            resp && props.resetOnOrderUpdate()
+            !resp && displayAlert("Произошла ошибка при подтверждении заказа, попробуйте снова", props.setMessage)
+        })
+        : null,
         [])
-    const onCancelCustomOrder = useCallback(() => setCancelDialog(true), [])
 
+    const afterUpdate = useCallback((resp: any, message: string) => {
+        !resp && displayAlert(message, props.setMessage)
+        resp && props.resetOnOrderUpdate()
+    }, [props.setMessage]);
 
-    const clientButton = (order?: Order | null,) => [
+    const clientButton = () => [
         {
             label: "Отказаться от заказа",
             handler: () => onCancelByClient(),
-            disabled: (order?.status === Status.ACCEPTANCE || order?.status === Status.USER_ONLY_PREPARE)
+            disabled: getStatusForUser(selectedOrder?.status) !== Status.USER_ONLY_PREPARE && getStatusForUser(selectedOrder?.status) !== Status.ACCEPTANCE
         },
         {
             label: "Оплатить заказ",
-            handler: () => order?.id ? console.warn('paying') : null,
+            handler: () => selectedOrder?.id ? console.warn('paying') : null,
+            // TODO: unblock when payment is available
             disabled: true
+            // disabled: getStatusForUser(selectedOrder?.status) !== Status.USER_ONLY_PREPARE && getStatusForUser(selectedOrder?.status) !== Status.ACCEPTANCE
         },
     ]
 
-    const adminButtonForCustom = () => [
+    const adminButtonForWorkAcceptance = () => [
         {
             label: "Подтвердить",
-            handler: () => onAcceptCustomOrder(),
-            disabled: false
+            handler: () => onAcceptWork(),
+            disabled: !selectedOrder?.status.toString().includes('ACCEPTANCE')
+        },
+        {
+            label: "Сообщить об ошибке",
+            handler: () => {
+            },
+            // TODO: unblock when payment is available
+            disabled: true
+            // disabled: !selectedOrder?.status.toString().includes('ACCEPTANCE')
+        },
+    ]
+
+    const adminButtonForOrderAcceptance = () => [
+        {
+            label: "Подтвердить",
+            handler: () => onAcceptUserOrder(),
+            disabled: !selectedOrder?.status.toString().includes('ACCEPTANCE')
         },
         {
             label: "Отклонить",
-            handler: () => onCancelCustomOrder(),
-            disabled: false
-        },
-    ]
-
-    const adminButton = (order?: Order | null,) => [
-        {
-            label: "Сообщить об ошибке",
-            handler: () => order?.id ? declineOrder(order.id).then((resp) => {
-                !resp && displayAlert("Произошла ошибка при отказе от заказа, попробуйте снова", props.setMessage)
-            }) : null,
-            disabled: true // order?.status ? !areActionsAvailableForAdmin(order?.status) : true
-        },
-        {
-            label: "Подтвердить",
-            handler: () => order?.id ? acceptOrder(order.id).then((resp) => {
-                !resp && displayAlert("Произошла ошибка при подтверждении заказа, попробуйте снова", props.setMessage)
-                resp && props.resetOnOrderUpdate()
-            }) : null,
-            disabled: order?.status ? !areActionsAvailableForAdmin(order?.status) : true
+            handler: () => onCancelUserOrder(),
+            disabled: !selectedOrder?.status.toString().includes('ACCEPTANCE')
         },
     ]
 
     const workerButton = (order?: Order | null,) => [
         {
-            label: "Сообщить об ошибке",
-            handler: () => {
-                displayAlert("Произошла ошибка при отказе от заказа, попробуйте снова", props.setMessage)
-            },
-            disabled: true // order?.status ? !areActionsAvailableForWorker(order?.status) : true
-        },
-        {
             label: "Взять в выполнение",
-            handler: () => order?.id ? startOrder(order.id).then((resp) => {
-                !resp && displayAlert("Произошла ошибка при взятии заказа в выполнение, попробуйте снова", props.setMessage)
-                resp && props.resetOnOrderUpdate()
-            }) : null,
-            disabled: order?.status ? !areActionsAvailableForWorker(order?.status) : true
+            handler: () => order?.id
+                ? startOrder(order.id)
+                    .then((r) => afterUpdate(r, "Произошла ошибка при взятии заказа в выполнение, попробуйте снова"))
+                : null,
+            disabled: selectedOrder?.status ? !(checkThatOrderInActiveStateForTheUser(selectedOrder?.status, roles)
+                && selectedOrder?.status.toString().includes('WAIT')) : true
         },
         {
             label: "Завершить выполнение",
-            handler: () => order?.id ? checkOrder(order.id).then((resp) => {
-                !resp && displayAlert("Произошла ошибка при завершении выполнения заказ, попробуйте снова", props.setMessage)
-                resp && props.resetOnOrderUpdate()
-            }) : null,
-            disabled: order?.status ? !areActionsAvailableForWorker(order?.status) : true
+            handler: () => order?.id
+                ? checkOrder(order.id)
+                    .then((r) => afterUpdate(r, "Произошла ошибка при завершении выполнения заказ, попробуйте снова"))
+                : null,
+            disabled: selectedOrder?.status ? !(checkThatOrderInActiveStateForTheUser(selectedOrder?.status, roles)
+                && !(selectedOrder?.status.toString().includes('WAIT'))) : true
+        },
+        {
+            label: "Сообщить об ошибке",
+            handler: () => {
+            },
+            // TODO: unblock when payment is available
+            disabled: true,
+            // disabled: selectedOrder?.status ? !checkThatOrderInActiveStateForTheUser(selectedOrder?.status, roles) : true
         },
     ]
 
     return <>
         <div className='controlsInOrder'>
             {(roles.includes(AppRole.USER)
-                ? clientButton(selectedOrder)
-                : (roles.includes(AppRole.ADMIN) && selectedOrder?.isCustom == false)
-                    ? adminButton(selectedOrder)
-                    : (roles.includes(AppRole.ADMIN) && selectedOrder?.isCustom == true)
-                        ? adminButtonForCustom()
+                ? clientButton()
+                : (roles.includes(AppRole.ADMIN) && selectedOrder?.status === Status.ACCEPTANCE)
+                    ? adminButtonForOrderAcceptance()
+                    : roles.includes(AppRole.ADMIN)
+                        ? adminButtonForWorkAcceptance()
                         : workerButton(selectedOrder))
                 .map((el, index) => <Button
                     key={`btns${index}`}
