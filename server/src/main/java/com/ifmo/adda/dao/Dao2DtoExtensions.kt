@@ -96,6 +96,34 @@ fun getStatusIntItem(status: Status): Int =
             else -> 0
         }
 
+val orderStartMap = mapOf(
+        5 to 6,
+        9 to 10,
+        17 to 18,
+        21 to 22
+)
+
+val orderSubmitMap = mapOf(
+        6 to 7,
+        10 to 14,
+        18 to 19,
+        22 to 23
+)
+
+val orderAcceptMap = mapOf(
+        3 to 5,
+        7 to 9,
+        19 to 21,
+        23 to 25
+)
+
+val orderDeclineMap = mapOf(
+        3 to 4,
+        7 to 8,
+        19 to 20,
+        23 to 24
+)
+
 fun Cart.toDto(): CartDto {
     val productsWithQuantities: List<ProductToQuantity> = if (products.isEmpty()) {
         listOf()

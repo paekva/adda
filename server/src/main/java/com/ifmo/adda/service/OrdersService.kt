@@ -48,7 +48,7 @@ class OrdersService(
             client = cart.client,
             dateOfOrder = Instant.now(),
             dateOfReceive = Instant.now().plusMillis(EXPECTED_DELIVERY_TIME),
-            status = 10,
+            status = getStatusIntItem(Status.BUY_WAIT),
             products = cart.products.toMutableList(),
             workers = selectWorkers()
         )
@@ -96,6 +96,26 @@ class OrdersService(
         val master = roles.contains(Authority(id = 4, name = "MASTER")) && getStatusIntItem(status) < 21
         val courier = roles.contains(Authority(id = 5, name = "COURIER")) && getStatusIntItem(status) < 25
         return purchaser || loader || master || courier
+    }
+
+    fun readyToStart(status: Int, roles: Collection<Authority>): Boolean {
+        val startPurchase = roles.contains(Authority(id = 6, name = "PURCHASER")) && status == 5
+        val startLoading = roles.contains(Authority(id = 3, name = "LOADER")) && status == 9
+        val startUnloading = roles.contains(Authority(id = 4, name = "MASTER")) && status == 17
+        val startDelivery = roles.contains(Authority(id = 5, name = "COURIER")) && status == 21
+        return startPurchase || startLoading || startUnloading || startDelivery
+    }
+
+    fun readyToSubmit(status: Int, roles: Collection<Authority>): Boolean {
+        val startPurchase = roles.contains(Authority(id = 6, name = "PURCHASER")) && status == 6
+        val startLoading = roles.contains(Authority(id = 3, name = "LOADER")) && status == 10
+        val startUnloading = roles.contains(Authority(id = 4, name = "MASTER")) && status == 18
+        val startDelivery = roles.contains(Authority(id = 5, name = "COURIER")) && status == 22
+        return startPurchase || startLoading || startUnloading || startDelivery
+    }
+
+    fun readyToAcceptOrDecline(status: Int): Boolean {
+        return setOf(3, 7, 19, 23).contains(status)
     }
 
     fun cancelOrder(orderId: Int, isCustom: Boolean): OrderDto {
@@ -154,7 +174,7 @@ class OrdersService(
             description = order.get().description,
             dateOfOrder = order.get().dateOfOrder,
             dateOfReceive = order.get().dateOfReceive,
-            status = order.get().status + 2,
+            status = getStatusIntItem(Status.BUY_WAIT),
             price = newPrice,
             workers = order.get().workers
         )
@@ -162,69 +182,72 @@ class OrdersService(
         return newOrder.toDto()
     }
 
-    fun acceptOrder(orderId: Int): OrderDto {
+    fun acceptOrder(orderId: Int, isAdmin: Boolean): OrderDto {
         val order = ordersRepository.findById(orderId)
-
-        val newOrder = Order(
-            id = order.get().id,
-            client = order.get().client,
-            dateOfOrder = order.get().dateOfOrder,
-            dateOfReceive = order.get().dateOfReceive,
-            products = order.get().products,
-            status = order.get().status + 2,
-            workers = order.get().workers
-        )
-        ordersRepository.save(newOrder)
-        return newOrder.toDto()
+        return if (isAdmin && readyToAcceptOrDecline(order.get().status)) {
+            val newOrder = Order(
+                    id = order.get().id,
+                    client = order.get().client,
+                    dateOfOrder = order.get().dateOfOrder,
+                    dateOfReceive = order.get().dateOfReceive,
+                    products = order.get().products,
+                    status = orderAcceptMap[order.get().status]!!,
+                    workers = order.get().workers
+            )
+            ordersRepository.save(newOrder)
+            newOrder.toDto()
+        } else order.get().toDto()
     }
 
     fun declineOrder(orderId: Int, isAdmin: Boolean): OrderDto {
         val order = ordersRepository.findById(orderId)
-        val newOrder = Order(
-            id = order.get().id,
-            client = order.get().client,
-            dateOfOrder = order.get().dateOfOrder,
-            dateOfReceive = order.get().dateOfReceive,
-            products = order.get().products,
-            status = order.get().status + if (isAdmin) 1 else 2,
-            workers = order.get().workers
-        )
-        ordersRepository.save(newOrder)
-        return newOrder.toDto()
+        return if (isAdmin && readyToAcceptOrDecline(order.get().status)) {
+            val newOrder = Order(
+                id = order.get().id,
+                client = order.get().client,
+                dateOfOrder = order.get().dateOfOrder,
+                dateOfReceive = order.get().dateOfReceive,
+                products = order.get().products,
+                status = orderDeclineMap[order.get().status]!!,
+                workers = order.get().workers
+            )
+            ordersRepository.save(newOrder)
+            newOrder.toDto()
+        } else order.get().toDto()
     }
 
-    fun startOrder(orderId: Int): OrderDto {
+    fun startOrder(orderId: Int, roles: Collection<Authority>): OrderDto {
         val order = ordersRepository.findById(orderId)
-        val newOrder = Order(
-            id = order.get().id,
-            client = order.get().client,
-            dateOfOrder = order.get().dateOfOrder,
-            dateOfReceive = order.get().dateOfReceive,
-            products = order.get().products,
-            status = order.get().status + 1,
-            workers = order.get().workers
-        )
-        ordersRepository.save(newOrder)
-        return newOrder.toDto()
+        return if (readyToStart(order.get().status, roles)) {
+            val newOrder = Order(
+                    id = order.get().id,
+                    client = order.get().client,
+                    dateOfOrder = order.get().dateOfOrder,
+                    dateOfReceive = order.get().dateOfReceive,
+                    products = order.get().products,
+                    status = orderStartMap[order.get().status]!!,
+                    workers = order.get().workers
+            )
+            ordersRepository.save(newOrder)
+            newOrder.toDto()
+        } else order.get().toDto()
     }
 
-    fun sendOrderOnCheck(orderId: Int): OrderDto {
+    fun sendOrderOnCheck(orderId: Int, roles: Collection<Authority>): OrderDto {
         val order = ordersRepository.findById(orderId)
-        var newStatus = order.get().status + 1
-        while (getStatusEnumItem(newStatus) == Status.UNKNOWN) {
-            newStatus += 1
-        }
-        val newOrder = Order(
-            id = order.get().id,
-            client = order.get().client,
-            dateOfOrder = order.get().dateOfOrder,
-            dateOfReceive = order.get().dateOfReceive,
-            products = order.get().products,
-            status = newStatus,
-            workers = order.get().workers
-        )
-        ordersRepository.save(newOrder)
-        return newOrder.toDto()
+        return if (readyToSubmit(order.get().status, roles)) {
+            val newOrder = Order(
+                    id = order.get().id,
+                    client = order.get().client,
+                    dateOfOrder = order.get().dateOfOrder,
+                    dateOfReceive = order.get().dateOfReceive,
+                    products = order.get().products,
+                    status = orderSubmitMap[order.get().status]!!,
+                    workers = order.get().workers
+            )
+            ordersRepository.save(newOrder)
+            newOrder.toDto()
+        } else order.get().toDto()
     }
 
     companion object {
