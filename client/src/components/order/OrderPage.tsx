@@ -10,14 +10,22 @@ import {connect} from "react-redux";
 import Button from "@material-ui/core/Button";
 import {OrderInfo} from "./OrderInfo";
 import {Confirmation} from "./Confirmation";
-import {acceptCustomOrder, acceptOrder, cancelCustomOrder, cancelOrder} from "../../api/orders";
+import {
+    acceptCustomOrder,
+    acceptOrder,
+    cancelCustomOrder,
+    cancelOrder,
+    checkOrder,
+    declineOrder,
+    startOrder
+} from "../../api/orders";
 import {
     admin,
-    adminButton,
+    areActionsAvailableForAdmin,
+    areActionsAvailableForWorker,
     checkThatOrderInActiveStateForTheUser,
     client,
-    getStatusForUser,
-    workerButton
+    getStatusForUser
 } from "./util";
 import {StateChangeActionType} from "../../store/actions";
 import {displayAlert} from "../../utils";
@@ -26,6 +34,7 @@ export type OrderPageProps = {
     selectedOrder: Order | null
     roles: AppRole[]
     setMessage: (message: string | null) => void
+    resetOnOrderUpdate: () => void
 }
 
 const OrderPage = (props: OrderPageProps): JSX.Element => {
@@ -49,6 +58,7 @@ const OrderPage = (props: OrderPageProps): JSX.Element => {
         ? setDialog(true)
         : selectedOrder?.id
             ? acceptOrder(selectedOrder.id).then((resp) => {
+                resp && props.resetOnOrderUpdate()
                 !resp && displayAlert("Произошла ошибка при подтверждении заказа, попробуйте снова", props.setMessage)
             })
             : null,
@@ -82,6 +92,7 @@ const OrderPage = (props: OrderPageProps): JSX.Element => {
                     onClick={() => selectedOrder?.id ? cancelOrder(selectedOrder.id, selectedOrder.isCustom).then((resp) => {
                         setClientCancelDialog(false)
                         !resp && displayAlert("Произошла ошибка при подтверждении заказа, попробуйте снова", props.setMessage)
+                        resp && props.resetOnOrderUpdate()
                     }) : null}
                     style={{height: 56}}
                 >
@@ -113,10 +124,14 @@ const OrderPage = (props: OrderPageProps): JSX.Element => {
                     type="submit"
                     variant="contained"
                     color="default"
-                    onClick={() => selectedOrder?.id && !(isNaN(+orderEvaluation)) ? acceptCustomOrder(selectedOrder.id, orderEvaluation).then((resp) => {
-                        setDialog(false)
-                        !resp && displayAlert("Произошла ошибка при подтверждении заказа, попробуйте снова", props.setMessage)
-                    }) : null}
+                    onClick={() => selectedOrder?.id && !(isNaN(+orderEvaluation))
+                        ? acceptCustomOrder(selectedOrder.id, orderEvaluation)
+                            .then((resp) => {
+                                setDialog(false)
+                                !resp && displayAlert("Произошла ошибка при подтверждении заказа, попробуйте снова", props.setMessage)
+                                resp && props.resetOnOrderUpdate()
+                            })
+                        : null}
                     style={{height: 56}}
                 >
                     Принять заказ
@@ -148,6 +163,7 @@ const OrderPage = (props: OrderPageProps): JSX.Element => {
                     onClick={() => selectedOrder?.id ? cancelCustomOrder(selectedOrder.id, orderCancel).then((resp) => {
                         setCancelDialog(false)
                         !resp && displayAlert("Произошла ошибка при отмене заказа, попробуйте снова", props.setMessage)
+                        resp && props.resetOnOrderUpdate()
                     }) : null}
                     style={{height: 56}}
                 >
@@ -167,7 +183,7 @@ const OrderPage = (props: OrderPageProps): JSX.Element => {
         </div>
     }, [orderCancel])
 
-    const clientButton = (sendMessage: (msg: string | null) => void, order?: Order | null,) => [
+    const clientButton = (order?: Order | null,) => [
         {
             label: "Отказаться от заказа",
             handler: () => onCancelByClient(),
@@ -176,11 +192,11 @@ const OrderPage = (props: OrderPageProps): JSX.Element => {
         {
             label: "Оплатить заказ",
             handler: () => order?.id ? console.warn('paying') : null,
-            disabled: false
+            disabled: true
         },
     ]
 
-    const adminButtonForCustom = (sendMessage: (msg: string | null) => void) => [
+    const adminButtonForCustom = () => [
         {
             label: "Подтвердить",
             handler: () => onAcceptCustomOrder(),
@@ -193,6 +209,50 @@ const OrderPage = (props: OrderPageProps): JSX.Element => {
         },
     ]
 
+    const adminButton = (order?: Order | null,) => [
+        {
+            label: "Сообщить об ошибке",
+            handler: () => order?.id ? declineOrder(order.id).then((resp) => {
+                !resp && displayAlert("Произошла ошибка при отказе от заказа, попробуйте снова", props.setMessage)
+            }) : null,
+            disabled: true // order?.status ? !areActionsAvailableForAdmin(order?.status) : true
+        },
+        {
+            label: "Подтвердить",
+            handler: () => order?.id ? acceptOrder(order.id).then((resp) => {
+                !resp && displayAlert("Произошла ошибка при подтверждении заказа, попробуйте снова", props.setMessage)
+                resp && props.resetOnOrderUpdate()
+            }) : null,
+            disabled: order?.status ? !areActionsAvailableForAdmin(order?.status) : true
+        },
+    ]
+
+    const workerButton = (order?: Order | null,) => [
+        {
+            label: "Сообщить об ошибке",
+            handler: () => {
+                displayAlert("Произошла ошибка при отказе от заказа, попробуйте снова", props.setMessage)
+            },
+            disabled: true // order?.status ? !areActionsAvailableForWorker(order?.status) : true
+        },
+        {
+            label: "Взять в выполнение",
+            handler: () => order?.id ? startOrder(order.id).then((resp) => {
+                !resp && displayAlert("Произошла ошибка при взятии заказа в выполнение, попробуйте снова", props.setMessage)
+                resp && props.resetOnOrderUpdate()
+            }) : null,
+            disabled: order?.status ? !areActionsAvailableForWorker(order?.status) : true
+        },
+        {
+            label: "Завершить выполнение",
+            handler: () => order?.id ? checkOrder(order.id).then((resp) => {
+                !resp && displayAlert("Произошла ошибка при завершении выполнения заказ, попробуйте снова", props.setMessage)
+                resp && props.resetOnOrderUpdate()
+            }) : null,
+            disabled: order?.status ? !areActionsAvailableForWorker(order?.status) : true
+        },
+    ]
+
     return <div className='order'>
 
         <div className='header'>
@@ -200,7 +260,7 @@ const OrderPage = (props: OrderPageProps): JSX.Element => {
             <div style={{
                 color:
                     currentStatus.includes('WAIT')
-                        ? 'yellow'
+                        ? 'orange'
                         : currentStatus.includes('ERROR')
                         ? 'red'
                         : 'green'
@@ -226,12 +286,12 @@ const OrderPage = (props: OrderPageProps): JSX.Element => {
 
         <div className='controlsInOrder'>
             {(roles.includes(AppRole.USER)
-                ? clientButton(props.setMessage, selectedOrder)
+                ? clientButton(selectedOrder)
                 : (roles.includes(AppRole.ADMIN) && selectedOrder?.isCustom == false)
-                    ? adminButton(props.setMessage, selectedOrder)
+                    ? adminButton(selectedOrder)
                     : (roles.includes(AppRole.ADMIN) && selectedOrder?.isCustom == true)
-                        ? adminButtonForCustom(props.setMessage)
-                        : workerButton(props.setMessage, selectedOrder))
+                        ? adminButtonForCustom()
+                        : workerButton(selectedOrder))
                 .map((el, index) => <Button
                     key={`btns${index}`}
                     disabled={el.disabled}
@@ -269,7 +329,13 @@ const mapDispatchToProps = () => {
                 type: StateChangeActionType.SET_MESSAGE,
                 payload: message,
             });
-        }
+        },
+
+        resetOnOrderUpdate: () => {
+            store.dispatch({
+                type: StateChangeActionType.RETURN_TO_ORDERS_AFTER_UPDATE,
+            });
+        },
     };
 };
 export default connect(mapStateToProps, mapDispatchToProps)(OrderPage)

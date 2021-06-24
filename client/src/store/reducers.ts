@@ -51,6 +51,13 @@ function rootReducer(
                 message: action.payload
             };
         }
+        case StateChangeActionType.RETURN_TO_ORDERS_AFTER_UPDATE: {
+            return {
+                ...state,
+                lastSelectedOrder: null,
+                currentMenuItem: MenuItem.ORDERS
+            };
+        }
     }
     return state;
 }

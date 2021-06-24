@@ -12,7 +12,7 @@ const StatusPanel = (props: { statusList: Status[], current: Status }): JSX.Elem
                 <Logo
                     fill={props.current.startsWith(el)
                         ? (props.current.includes('WAIT')
-                            ? 'yellow'
+                            ? 'orange'
                             : props.current.includes('ERROR')
                                 ? 'red'
                                 : 'green')

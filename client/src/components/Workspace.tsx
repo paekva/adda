@@ -8,6 +8,8 @@ import {ClientLayout} from "./layout/ClientLayout";
 import {WorkerLayout} from "./layout/WorkerLayout";
 import {MenuItem} from "../types";
 import {Dialog} from "./dialog/Dialog";
+import {Close} from "@material-ui/icons";
+import {IconButton} from "@material-ui/core";
 
 type Props = {
     setUserData: (roles: AppRole[], userName: string) => void;
@@ -16,6 +18,7 @@ type Props = {
     username: string | null,
     currentMenuItem: MenuItem | null;
     message: string | null
+    setMessage: (msg: string | null) => void
 };
 
 const Workspace = (props: Props): JSX.Element => {
@@ -44,7 +47,17 @@ const Workspace = (props: Props): JSX.Element => {
         {props.message && <Dialog
             coords={{bottom: 10, right: 10}}
             hideOverlay={true}
-            renderHeader={() => <div> Сообщение </div>}
+            renderHeader={() => <div
+                style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
+                <div>Сообщение</div>
+                <IconButton
+                    type="submit"
+                    color="default"
+                    onClick={() => props.setMessage(null)}
+                    style={{height: 40, width: 40}}
+                >
+                    <Close/>
+                </IconButton></div>}
             renderBody={() => <div> {props.message} </div>}/>}
     </div>
 
@@ -74,6 +87,12 @@ const mapDispatchToProps = () => {
             store.dispatch({
                 type: StateChangeActionType.SET_CURRENT_MENU_ITEM,
                 payload: currentMenuItem,
+            });
+        },
+        setMessage: (msg: string | null) => {
+            store.dispatch({
+                type: StateChangeActionType.SET_MESSAGE,
+                payload: msg,
             });
         },
     };

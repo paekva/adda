@@ -8,7 +8,8 @@ export enum StateChangeActionType {
     SET_CURRENT_MENU_ITEM = "SET_CURRENT_MENU_ITEM",
     SET_ORDER_OPENED = "SET_ORDER_OPENED",
     RESET_LAST_SELECTED_DATA = "RESET_LAST_SELECTED_DATA",
-    SET_MESSAGE = 'SET_MESSAGE'
+    SET_MESSAGE = 'SET_MESSAGE',
+    RETURN_TO_ORDERS_AFTER_UPDATE = 'RETURN_TO_ORDERS_AFTER_UPDATE'
 }
 
 type SetToken = {
@@ -48,6 +49,11 @@ type SetMessage = {
     payload: string | null
 };
 
+
+type ReturnToOrdersAfterUpdate = {
+    type: StateChangeActionType.RETURN_TO_ORDERS_AFTER_UPDATE;
+};
+
 export type StateChangeActions =
     | SetToken
     | SetAuthFail
@@ -55,4 +61,5 @@ export type StateChangeActions =
     | SetCurrentMenuItem
     | SetOrderOpened
     | ResetLastSelectedData
-    | SetMessage;
+    | SetMessage
+    | ReturnToOrdersAfterUpdate;
