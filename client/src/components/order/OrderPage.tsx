@@ -11,7 +11,14 @@ import Button from "@material-ui/core/Button";
 import {OrderInfo} from "./OrderInfo";
 import {Confirmation} from "./Confirmation";
 import {acceptCustomOrder, acceptOrder, cancelCustomOrder, cancelOrder} from "../../api/orders";
-import {admin, adminButton, checkThatOrderInActiveStateForTheUser, client, workerButton} from "./util";
+import {
+    admin,
+    adminButton,
+    checkThatOrderInActiveStateForTheUser,
+    client,
+    getStatusForUser,
+    workerButton
+} from "./util";
 import {StateChangeActionType} from "../../store/actions";
 import {displayAlert} from "../../utils";
 
@@ -19,31 +26,6 @@ export type OrderPageProps = {
     selectedOrder: Order | null
     roles: AppRole[]
     setMessage: (message: string | null) => void
-}
-
-export const getStatusForUser: any = (status: Status) => {
-    switch (status) {
-        case Status.BUY_WAIT:
-        case Status.BUY:
-        case Status.BUY_ERROR:
-        case Status.BUY_WAIT_ACCEPTANCE:
-        case Status.LOAD_WAIT:
-        case Status.LOAD:
-        case Status.LOAD_ERROR:
-            return Status.USER_ONLY_PREPARE;
-        case Status.UNLOAD_WAIT:
-        case Status.UNLOAD:
-        case Status.UNLOAD_ERROR:
-        case Status.UNLOAD_WAIT_ACCEPTANCE:
-        case Status.DELIVERY_WAIT:
-        case Status.DELIVERY:
-        case Status.DELIVERY_ERROR:
-        case Status.DELIVERY_WAIT_ACCEPTANCE:
-            return Status.USER_ONLY_DELIVERY;
-        default:
-            return status;
-
-    }
 }
 
 const OrderPage = (props: OrderPageProps): JSX.Element => {
@@ -118,9 +100,12 @@ const OrderPage = (props: OrderPageProps): JSX.Element => {
             </div>
         </div>
     }, [])
+
     const renderBody = useCallback(() => {
         return <div style={{display: 'flex', flexDirection: 'column', padding: 10}}>
-            <TextField variant="outlined" error={isNaN(+orderEvaluation)} helperText={isNaN(+orderEvaluation) ? 'Необходимо ввести целое число для стоимости' : ' '} placeholder="Введите стоимость заказа"
+            <TextField variant="outlined" error={isNaN(+orderEvaluation)}
+                       helperText={isNaN(+orderEvaluation) ? 'Необходимо ввести целое число для стоимости' : ' '}
+                       placeholder="Введите стоимость заказа"
                        onChange={(e) => setOrderEvaluation(e.target.value)}/>
 
             <div style={{display: 'flex', flexDirection: 'row', padding: 10, justifyContent: 'space-between'}}>
@@ -149,6 +134,7 @@ const OrderPage = (props: OrderPageProps): JSX.Element => {
             </div>
         </div>
     }, [orderEvaluation])
+
     const renderBodyCancel = useCallback(() => {
         return <div style={{display: 'flex', flexDirection: 'column', padding: 10}}>
             <TextField variant="outlined" placeholder="Укажите причину"

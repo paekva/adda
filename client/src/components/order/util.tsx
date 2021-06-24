@@ -55,9 +55,6 @@ export const workerButton = (sendMessage: (msg: string | null) => void, order?: 
 
 const areActionsAvailableForAdmin = (status: Status) => status.toString().includes('ACCEPTANCE')
 const areActionsAvailableForWorker = (status: Status) => status.toString().includes('WAIT') && !status.toString().includes('ACCEPTANCE')
-const isCancelAvailableForClient = (status: Status) => status.toString().includes('DELIVERY') || status.toString().includes('PAID')
-const isPayAvailableForClient = (status: Status) => !status.toString().includes('ERROR') && !status.toString().includes('PAID')
-
 
 export const checkThatOrderInActiveStateForTheUser = (status: Status, roles: AppRole[]): boolean => {
     const admin = roles.includes(AppRole.ADMIN) && status.includes('ACCEPTANCE')
@@ -66,4 +63,29 @@ export const checkThatOrderInActiveStateForTheUser = (status: Status, roles: App
     const master = roles.includes(AppRole.MASTER) && status.includes('UNLOAD') && !status.includes('ACCEPTANCE')
     const courier = roles.includes(AppRole.COURIER) && status.includes('DELIVERY') && !status.includes('ACCEPTANCE')
     return admin || purchaser || loader || master || courier
+}
+
+export const getStatusForUser: any = (status: Status) => {
+    switch (status) {
+        case Status.BUY_WAIT:
+        case Status.BUY:
+        case Status.BUY_ERROR:
+        case Status.BUY_WAIT_ACCEPTANCE:
+        case Status.LOAD_WAIT:
+        case Status.LOAD:
+        case Status.LOAD_ERROR:
+            return Status.USER_ONLY_PREPARE;
+        case Status.UNLOAD_WAIT:
+        case Status.UNLOAD:
+        case Status.UNLOAD_ERROR:
+        case Status.UNLOAD_WAIT_ACCEPTANCE:
+        case Status.DELIVERY_WAIT:
+        case Status.DELIVERY:
+        case Status.DELIVERY_ERROR:
+        case Status.DELIVERY_WAIT_ACCEPTANCE:
+            return Status.USER_ONLY_DELIVERY;
+        default:
+            return status;
+
+    }
 }

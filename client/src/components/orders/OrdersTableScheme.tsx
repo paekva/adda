@@ -1,7 +1,7 @@
 import {RowData, Scheme} from "../tableForData/types";
 import {Product, statusToStringMap} from "../../types";
-import {getStatusForUser} from "../order/OrderPage";
 import {AppRole} from "../../api/user";
+import {getStatusForUser} from "../order/util";
 
 export const ordersTableScheme = (roles: AppRole[]): Scheme => {
     return {

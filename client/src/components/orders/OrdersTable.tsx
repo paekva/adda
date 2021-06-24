@@ -22,8 +22,9 @@ export type OrdersTableProps = {
 const OrdersTable = (props: OrdersTableProps): JSX.Element => {
     const {roles, setSelectedOrder, resetLastSelectedData} = props;
     const [orderList, setOrdersList] = useState<Order[]>([]);
+    let timer: number;
 
-    useEffect(() => {
+    const updateTableData = useCallback(() => {
         Promise
             .all([getProductsList(), getOrdersListForUser()])
             .then((response) => {
@@ -49,6 +50,17 @@ const OrdersTable = (props: OrdersTableProps): JSX.Element => {
                 console.error(e.toString());
             })
             .then(resetLastSelectedData)
+    }, [])
+
+    // polling table data every 10 sec
+    const updateOnTimeOut = useCallback(() => {
+        updateTableData();
+        timer = window.setTimeout(updateOnTimeOut, 10000)
+    }, [])
+
+    useEffect(() => {
+        updateOnTimeOut()
+        return () => window.clearTimeout(timer)
     }, [roles, resetLastSelectedData]);
 
     const rowCLickHandler = useCallback((id, isCustom) => {
