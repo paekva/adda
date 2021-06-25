@@ -153,7 +153,7 @@ const Controls = (props: ControlsProps): JSX.Element => {
     const onDeclineUserOrder = useCallback(() => setDeclineDialog(true), [])
 
     const onAcceptWork = useCallback(() => selectedOrder?.id
-        ? acceptWork(selectedOrder.id).then((resp) => {
+        ? acceptWork(selectedOrder.id, selectedOrder.isCustom).then((resp) => {
             resp && props.resetOnOrderUpdate()
             !resp && displayAlert("Произошла ошибка при подтверждении заказа, попробуйте снова", props.setMessage)
         })

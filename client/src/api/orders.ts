@@ -74,14 +74,25 @@ export const declineCustomOrder = (orderId: number, reason: String): Promise<any
 }
 
 // work confirmation
-export const acceptWork = (orderId: number): Promise<any> => {
+export const acceptWork = (orderId: number, isCustom: boolean): Promise<any> => {
     return customFetch<{}, any>(
-        `${getUrl()}/orders/acceptWork?orderId=${orderId}`,
+        `${getUrl()}/orders/acceptWork?orderId=${orderId}&isCustom=${isCustom}`,
         Method.GET,
         undefined,
         true
     ).catch((e) => {
         console.error('acceptOrder not working');
+        return null;
+    });
+}
+export const declineWork = (orderId: number, isCustom: boolean, reason: String): Promise<any> => {
+    return customFetch<{}, any>(
+        `${getUrl()}/orders/declineWork?orderId=${orderId}&isCustom=${isCustom}&reason=${reason}`,
+        Method.GET,
+        undefined,
+        true
+    ).catch((e) => {
+        console.error('cancelCustomOrder not working');
         return null;
     });
 }
