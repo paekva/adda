@@ -157,7 +157,7 @@ fun Order.toDto(): OrderDto {
         dateOfReceive.toEpochMilli(),
         getStatusEnumItem(status),
         "",
-        null
+        lastError
     )
 }
 

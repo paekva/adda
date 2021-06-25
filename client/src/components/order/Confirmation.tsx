@@ -65,35 +65,34 @@ export const Confirmation = (props: {
     console.warn(url)
     return <div>
         {url !== '' ?
-            <div>
-                <img
-                    src={url} alt={''}
-                    onError={() => setUrl('')}/>
-                <div className="imageLoad">
-                    <input
-                        className="fileInput"
-                        type="file"
-                        onChange={onPhotoFileChange}
-                        disabled={props.selectedOrder?.status.includes('WAIT')}
-                    />
-                    <Button
-                        variant="contained"
-                        color="default"
-                        onClick={onPhotoFileSubmit}
-                        disabled={props.selectedOrder?.status.includes('WAIT')
-                        || bytes === null}
-                        style={{width: 220, marginTop: 150}}
-                    >
-                        Загрузить
-                    </Button>
-                </div>
-            </div>
+            <img
+                src={url} alt={''}
+                onError={() => setUrl('')}/>
             : props.roles.includes(AppRole.ADMIN)
                 ? 'Дополнительной информации не имеется'
                 : <div>
                     <div>Вы еще ничего не загрузили</div>
                 </div>
         }
+
+        <div className="imageLoad">
+            <input
+                className="fileInput"
+                type="file"
+                onChange={onPhotoFileChange}
+                disabled={props.selectedOrder?.status.includes('WAIT')}
+            />
+        </div>
+        <Button
+            variant="contained"
+            color="default"
+            onClick={onPhotoFileSubmit}
+            disabled={props.selectedOrder?.status.includes('WAIT')
+            || bytes === null}
+            style={{width: 220, marginTop: 150}}
+        >
+            Загрузить
+        </Button>
     </div>
 }
 
