@@ -2,7 +2,15 @@ import {AppRole} from "../../api/user";
 import Button from "@material-ui/core/Button";
 import React, {useCallback, useState} from "react";
 import {Order, Status} from "../../types";
-import {acceptCustomOrder, acceptWork, cancelOrder, checkOrder, declineCustomOrder, startOrder} from "../../api/orders";
+import {
+    acceptCustomOrder,
+    acceptWork,
+    cancelOrder,
+    checkOrder,
+    declineCustomOrder,
+    declineWork,
+    startOrder
+} from "../../api/orders";
 import {displayAlert} from "../../utils";
 import {Dialog} from "../dialog/Dialog";
 import {TextField} from "@material-ui/core";
@@ -24,6 +32,7 @@ const Controls = (props: ControlsProps): JSX.Element => {
     const [isClientCancelDialog, setClientCancelDialog] = useState<boolean>(false);
     const [isDialog, setDialog] = useState<boolean>(false);
     const [isDeclineDialog, setDeclineDialog] = useState<boolean>(false);
+    const [isErrorDialog, setErrorDialog] = useState<boolean>(false);
 
     const [orderEvaluation, setOrderEvaluation] = useState<string>('');
     const [orderCancel, setOrderCancel] = useState<string>('');
@@ -42,6 +51,11 @@ const Controls = (props: ControlsProps): JSX.Element => {
     const renderHeaderDecline = useCallback(() => {
         return <div>
             ОТКЛОНЕНИЕ ЗАКАЗА
+        </div>
+    }, [])
+    const renderHeaderError = useCallback(() => {
+        return <div>
+            СООБЩИТЬ ОБ ОШИБКЕ
         </div>
     }, [])
 
@@ -148,6 +162,41 @@ const Controls = (props: ControlsProps): JSX.Element => {
         </div>
     }, [orderCancel])
 
+    const renderBodyError = useCallback(() => {
+        return <div style={{display: 'flex', flexDirection: 'column', padding: 10}}>
+            <TextField variant="outlined" placeholder="Укажите проблему"
+                       onChange={(e) => setOrderCancel(e.target.value)}/>
+
+            <div style={{display: 'flex', flexDirection: 'row', padding: 10, justifyContent: 'space-between'}}>
+                <Button
+                    type="submit"
+                    variant="contained"
+                    color="default"
+                    onClick={() => selectedOrder?.id ? declineWork(selectedOrder.id, selectedOrder.isCustom, orderCancel)
+                            .then((resp) => {
+                                setErrorDialog(false)
+                                afterUpdate(resp, "Произошла ошибка при отмене заказа, попробуйте снова")
+                            })
+                        : null}
+                    style={{height: 56}}
+                >
+                    Отклонить заказ
+                </Button>
+
+                <Button
+                    type="submit"
+                    variant="contained"
+                    color="default"
+                    onClick={() => setErrorDialog(false)}
+                    style={{height: 56}}
+                >
+                    Отмена
+                </Button>
+            </div>
+        </div>
+    }, [orderCancel])
+
+    const onError = useCallback(() => setErrorDialog(true), [])
     const onCancelByClient = useCallback(() => setClientCancelDialog(true), [])
     const onAcceptUserOrder = useCallback(() => setDialog(true), [])
     const onDeclineUserOrder = useCallback(() => setDeclineDialog(true), [])
@@ -188,10 +237,7 @@ const Controls = (props: ControlsProps): JSX.Element => {
         },
         {
             label: "Сообщить об ошибке",
-            handler: () => {
-            },
-            // TODO: unblock when payment is available
-            disabled: true
+            handler: () => onError(),
             // disabled: !selectedOrder?.status.toString().includes('ACCEPTANCE')
         },
     ]
@@ -230,11 +276,8 @@ const Controls = (props: ControlsProps): JSX.Element => {
         },
         {
             label: "Сообщить об ошибке",
-            handler: () => {
-            },
-            // TODO: unblock when payment is available
-            disabled: true,
-            // disabled: selectedOrder?.status ? !checkThatOrderInActiveStateForTheUser(selectedOrder?.status, roles) : true
+            handler: () => onError(),
+            disabled: selectedOrder?.status ? !checkThatOrderInActiveStateForTheUser(selectedOrder?.status, roles) : true
         },
     ]
 
@@ -268,6 +311,9 @@ const Controls = (props: ControlsProps): JSX.Element => {
 
             {isClientCancelDialog &&
             <Dialog renderBody={renderClientCancelBody} renderHeader={renderClientCancelHeader}/>}
+
+            {isErrorDialog &&
+            <Dialog renderBody={renderBodyError} renderHeader={renderHeaderError}/>}
         </div>
     </>
 }

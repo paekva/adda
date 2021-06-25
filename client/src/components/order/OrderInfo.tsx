@@ -45,7 +45,7 @@ export const OrderInfo = (props: { selectedOrder?: Order | null, roles: AppRole[
                 </div>
 
                 <div>
-                    {selectedOrder.isCustom && selectedOrder.status === Status.RETURNED && (`Причина отказа: ${selectedOrder.lastError}`)}
+                    {(selectedOrder.status === Status.RETURNED || selectedOrder.status.includes('ERROR')) && (`Причина отказа: ${selectedOrder.lastError ?? "He известна"}`)}
                 </div>
 
                 <div>
