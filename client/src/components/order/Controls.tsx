@@ -2,7 +2,7 @@ import {AppRole} from "../../api/user";
 import Button from "@material-ui/core/Button";
 import React, {useCallback, useState} from "react";
 import {Order, Status} from "../../types";
-import {acceptCustomOrder, acceptWork, cancelCustomOrder, cancelOrder, checkOrder, startOrder} from "../../api/orders";
+import {acceptCustomOrder, acceptWork, declineCustomOrder, cancelOrder, checkOrder, startOrder} from "../../api/orders";
 import {displayAlert} from "../../utils";
 import {Dialog} from "../dialog/Dialog";
 import {TextField} from "@material-ui/core";
@@ -23,7 +23,7 @@ const Controls = (props: ControlsProps): JSX.Element => {
 
     const [isClientCancelDialog, setClientCancelDialog] = useState<boolean>(false);
     const [isDialog, setDialog] = useState<boolean>(false);
-    const [isCancelDialog, setCancelDialog] = useState<boolean>(false);
+    const [isDeclineDialog, setDeclineDialog] = useState<boolean>(false);
 
     const [orderEvaluation, setOrderEvaluation] = useState<string>('');
     const [orderCancel, setOrderCancel] = useState<string>('');
@@ -39,7 +39,7 @@ const Controls = (props: ControlsProps): JSX.Element => {
             ОЦЕНКА ЗАКАЗА
         </div>
     }, [])
-    const renderHeaderCancel = useCallback(() => {
+    const renderHeaderDecline = useCallback(() => {
         return <div>
             ОТКЛОНЕНИЕ ЗАКАЗА
         </div>
@@ -114,7 +114,7 @@ const Controls = (props: ControlsProps): JSX.Element => {
         </div>
     }, [orderEvaluation])
 
-    const renderBodyCancel = useCallback(() => {
+    const renderBodyDecline = useCallback(() => {
         return <div style={{display: 'flex', flexDirection: 'column', padding: 10}}>
             <TextField variant="outlined" placeholder="Укажите причину"
                        onChange={(e) => setOrderCancel(e.target.value)}/>
@@ -124,10 +124,12 @@ const Controls = (props: ControlsProps): JSX.Element => {
                     type="submit"
                     variant="contained"
                     color="default"
-                    onClick={() => selectedOrder?.id ? cancelCustomOrder(selectedOrder.id, orderCancel).then((resp) => {
-                        setCancelDialog(false)
-                        afterUpdate(resp, "Произошла ошибка при отмене заказа, попробуйте снова")
-                    }) : null}
+                    onClick={() => selectedOrder?.id ? declineCustomOrder(selectedOrder.id, orderCancel)
+                            .then((resp) => {
+                                setDeclineDialog(false)
+                                afterUpdate(resp, "Произошла ошибка при отмене заказа, попробуйте снова")
+                            })
+                        : null}
                     style={{height: 56}}
                 >
                     Отклонить заказ
@@ -137,7 +139,7 @@ const Controls = (props: ControlsProps): JSX.Element => {
                     type="submit"
                     variant="contained"
                     color="default"
-                    onClick={() => setCancelDialog(false)}
+                    onClick={() => setDeclineDialog(false)}
                     style={{height: 56}}
                 >
                     Отмена
@@ -148,7 +150,7 @@ const Controls = (props: ControlsProps): JSX.Element => {
 
     const onCancelByClient = useCallback(() => setClientCancelDialog(true), [])
     const onAcceptUserOrder = useCallback(() => setDialog(true), [])
-    const onCancelUserOrder = useCallback(() => setCancelDialog(true), [])
+    const onDeclineUserOrder = useCallback(() => setDeclineDialog(true), [])
 
     const onAcceptWork = useCallback(() => selectedOrder?.id
         ? acceptWork(selectedOrder.id).then((resp) => {
@@ -202,7 +204,7 @@ const Controls = (props: ControlsProps): JSX.Element => {
         },
         {
             label: "Отклонить",
-            handler: () => onCancelUserOrder(),
+            handler: () => onDeclineUserOrder(),
             disabled: !selectedOrder?.status.toString().includes('ACCEPTANCE')
         },
     ]
@@ -261,8 +263,8 @@ const Controls = (props: ControlsProps): JSX.Element => {
             {isDialog &&
             <Dialog renderBody={renderBody} renderHeader={renderHeader}/>}
 
-            {isCancelDialog &&
-            <Dialog renderBody={renderBodyCancel} renderHeader={renderHeaderCancel}/>}
+            {isDeclineDialog &&
+            <Dialog renderBody={renderBodyDecline} renderHeader={renderHeaderDecline}/>}
 
             {isClientCancelDialog &&
             <Dialog renderBody={renderClientCancelBody} renderHeader={renderClientCancelHeader}/>}

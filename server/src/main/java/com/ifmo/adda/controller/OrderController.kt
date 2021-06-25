@@ -50,13 +50,13 @@ class OrderController(
         )
     )
 
-    @GetMapping("/cancel")
+    @GetMapping("/user/cancel/order")
     fun cancelOrder(@RequestParam orderId: Int, @RequestParam isCustom: Boolean): OrderDto {
         return ordersService.cancelOrder(orderId, isCustom)
     }
 
-    @GetMapping("/cancelCustom")
-    fun cancelCustomOrder(@RequestParam orderId: Int, @RequestParam reason: String): OrderDto {
+    @GetMapping("/declineCustom")
+    fun declineCustomOrder(@RequestParam orderId: Int, @RequestParam reason: String): OrderDto {
         return ordersService.cancelCustomOrder(orderId, reason)
     }
 
@@ -65,14 +65,9 @@ class OrderController(
         return ordersService.acceptCustomOrder(orderId, newPrice)
     }
 
-    @GetMapping("/accept")
-    fun acceptOrder(@RequestParam orderId: Int): OrderDto {
+    @GetMapping("/acceptWork")
+    fun acceptWork(@RequestParam orderId: Int): OrderDto {
         return ordersService.acceptOrder(orderId, userService.iAmAdmin())
-    }
-
-    @GetMapping("/decline")
-    fun declineOrder(@RequestParam orderId: Int): OrderDto {
-        return ordersService.declineOrder(orderId, userService.iAmAdmin())
     }
 
     @GetMapping("/start")

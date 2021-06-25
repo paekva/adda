@@ -32,9 +32,11 @@ export const makeCustomOrder = (description: string): Promise<OrdersListResponse
     });
 }
 
+// USER
+// cancel order
 export const cancelOrder = (orderId: number, isCustom: boolean): Promise<any> => {
     return customFetch<{}, any>(
-        `${getUrl()}/orders/cancel?orderId=${orderId}&isCustom=${isCustom}`,
+        `${getUrl()}/orders//user/cancel/order?orderId=${orderId}&isCustom=${isCustom}`,
         Method.GET,
         undefined,
         true
@@ -44,18 +46,9 @@ export const cancelOrder = (orderId: number, isCustom: boolean): Promise<any> =>
     });
 }
 
-export const cancelCustomOrder = (orderId: number, reason: String): Promise<any> => {
-    return customFetch<{}, any>(
-        `${getUrl()}/orders/cancelCustom?orderId=${orderId}&reason=${reason}`,
-        Method.GET,
-        undefined,
-        true
-    ).catch((e) => {
-        console.error('cancelCustomOrder not working');
-        return null;
-    });
-}
 
+// ADMIN
+// custom order confirmation
 export const acceptCustomOrder = (orderId: number, newPrice: string): Promise<any> => {
     return customFetch<{}, any>(
         `${getUrl()}/orders/acceptCustom?orderId=${orderId}&newPrice=${newPrice}`,
@@ -68,11 +61,22 @@ export const acceptCustomOrder = (orderId: number, newPrice: string): Promise<an
     });
 }
 
-export const acceptWork = (orderId: number) => acceptOrder(orderId)
-
-export const acceptOrder = (orderId: number): Promise<any> => {
+export const declineCustomOrder = (orderId: number, reason: String): Promise<any> => {
     return customFetch<{}, any>(
-        `${getUrl()}/orders/accept?orderId=${orderId}`,
+        `${getUrl()}/orders/declineCustom?orderId=${orderId}&reason=${reason}`,
+        Method.GET,
+        undefined,
+        true
+    ).catch((e) => {
+        console.error('cancelCustomOrder not working');
+        return null;
+    });
+}
+
+// work confirmation
+export const acceptWork = (orderId: number): Promise<any> => {
+    return customFetch<{}, any>(
+        `${getUrl()}/orders/acceptWork?orderId=${orderId}`,
         Method.GET,
         undefined,
         true
@@ -82,18 +86,7 @@ export const acceptOrder = (orderId: number): Promise<any> => {
     });
 }
 
-export const declineOrder = (orderId: number): Promise<any> => {
-    return customFetch<{}, any>(
-        `${getUrl()}/orders/decline?orderId=${orderId}`,
-        Method.GET,
-        undefined,
-        true
-    ).catch((e) => {
-        console.error('declineOrder not working');
-        return null;
-    });
-}
-
+// WORKER
 export const startOrder = (orderId: number): Promise<any> => {
     return customFetch<{}, any>(
         `${getUrl()}/orders/start?orderId=${orderId}`,
