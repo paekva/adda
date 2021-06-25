@@ -7,8 +7,10 @@ import com.ifmo.adda.dto.Status
 import com.ifmo.adda.repository.OrderConfirmationRepository
 import com.ifmo.adda.repository.OrdersRepository
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import java.nio.file.Files
 import java.nio.file.Paths
+import java.util.*
 import javax.annotation.PostConstruct
 
 @Service
@@ -19,6 +21,7 @@ class OrderConfirmationService(
 
     fun getConfirmationByOrderAndStatus(orderId: Int, status: Status): ByteArray? {
         val data = orderConfirmationRepository.findAllByOrderIdAndStatus(orderId, getStatusIntItem(status))
+            .sortedByDescending { it -> it.dateOfConfirmation }
         return if (data.count() > 0) data[0].confirmation else null
     }
 
@@ -35,11 +38,12 @@ class OrderConfirmationService(
     private fun restorePhotoFromResources(orderId: Int) {
         val resource = this::class.java.classLoader.getResource("$orderId.jpg") ?: return
         val data = Files.readAllBytes(Paths.get(resource.toURI()))
-        setConfirmation(orderId, Status.BUY_WAIT, data)
+        setConfirmation(orderId, Status.BUY, data)
     }
 
+    @Transactional
     fun setConfirmation(orderId: Int, status: Status, data: ByteArray): OrderConfirmationDto {
-        val new = OrderConfirmation(orderId, getStatusIntItem(status), data)
+        val new = OrderConfirmation(orderId, getStatusIntItem(status), data, Calendar.getInstance().time.toInstant())
         val saved = orderConfirmationRepository.saveAndFlush(new)
         return OrderConfirmationDto(saved.orderId, saved.status, saved.confirmation.size)
     }

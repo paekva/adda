@@ -101,10 +101,13 @@ val orderStartMap = mapOf(
     5 to 6,
     9 to 10,
     17 to 18,
-    21 to 22
+    21 to 22,
+    8 to 6,
+    20 to 18,
+    24 to 22
 )
 
-val orderSubmitMap = mapOf(
+val orderSendToCheckMap = mapOf(
     6 to 7,
     10 to 14,
     18 to 19,
@@ -154,7 +157,7 @@ fun Order.toDto(): OrderDto {
         dateOfReceive.toEpochMilli(),
         getStatusEnumItem(status),
         "",
-        null
+        lastError
     )
 }
 

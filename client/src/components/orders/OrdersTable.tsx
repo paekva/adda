@@ -1,9 +1,9 @@
 import React, {useCallback, useEffect, useMemo, useState} from "react";
 import {DataTable} from "../tableForData/DataTable";
 import {ordersTableScheme} from "./OrdersTableScheme";
-import {getOrdersListForUser} from "../../api/orders";
+import {getOrdersListForUser, planeIsOnMoon} from "../../api/orders";
 import {connect} from "react-redux";
-import {Order} from "../../types";
+import {Order, Status} from "../../types";
 import store, {AppStore} from "../../store/store";
 import {AppRole} from "../../api/user";
 import {StateChangeActionType} from "../../store/actions";
@@ -11,6 +11,7 @@ import {getProductsList} from "../../api/products";
 import {RowData} from "../tableForData/types";
 import {checkThatOrderInActiveStateForTheUser} from "../order/util";
 import {displayAlert} from "../../utils";
+import Button from "@material-ui/core/Button";
 
 export type OrdersTableProps = {
     roles: AppRole[]
@@ -55,7 +56,7 @@ const OrdersTable = (props: OrdersTableProps): JSX.Element => {
     // polling table data every 10 sec
     const updateOnTimeOut = useCallback(() => {
         updateTableData();
-        timer = window.setTimeout(updateOnTimeOut, 10000)
+        timer = window.setTimeout(updateOnTimeOut, 5000)
     }, [])
 
     useEffect(() => {
@@ -72,8 +73,22 @@ const OrdersTable = (props: OrdersTableProps): JSX.Element => {
     const scheme = useMemo(() => {
         return ordersTableScheme(roles)
     }, [roles])
-    return <DataTable data={orderList} scheme={scheme} onRowClick={rowCLickHandler}
-                      highlightRowOn={(data: RowData) => checkThatOrderInActiveStateForTheUser(data.status, roles)}/>
+    return <div style={{display: 'flex', flexDirection: 'column', flex: '1 1'}}>
+        {roles.includes(AppRole.ADMIN)
+        && <Button
+            type="submit"
+            variant="contained"
+            color="default"
+            onClick={() => planeIsOnMoon()}
+            style={{height: 56, width: 200, margin: '0 0 10px 0'}}
+            disabled={!orderList.map(el => el.status).includes(Status.ON_THE_WAY)}
+        >
+            Товары на луне
+        </Button>}
+
+        <DataTable data={orderList} scheme={scheme} onRowClick={rowCLickHandler}
+                   highlightRowOn={(data: RowData) => checkThatOrderInActiveStateForTheUser(data.status, roles)}/>
+    </div>
 }
 
 const mapStateToProps = (store: AppStore) => {

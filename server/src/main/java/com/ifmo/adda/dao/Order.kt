@@ -23,6 +23,9 @@ data class Order(
     @Column(nullable = false)
     val status: Int,
 
+    @Column
+    val lastError: String?,
+
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
         name = "product_to_order",

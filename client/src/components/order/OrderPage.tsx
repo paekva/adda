@@ -15,6 +15,7 @@ export type OrderPageProps = {
     selectedOrder: Order | null
     roles: AppRole[]
     setMessage: (message: string | null) => void
+    resetOnOrderUpdate: () => void,
 }
 
 const OrderPage = (props: OrderPageProps): JSX.Element => {
@@ -30,7 +31,8 @@ const OrderPage = (props: OrderPageProps): JSX.Element => {
     return <div className='order'>
 
         <div className='header'>
-            <div className='orderId'>Заказ №{selectedOrder?.id}</div>
+            <div className='orderId'>Заказ
+                №{selectedOrder?.isCustom ? `custom_${selectedOrder?.id}` : selectedOrder?.id}</div>
             <div style={{
                 color:
                     currentStatus.includes('WAIT')
@@ -52,10 +54,11 @@ const OrderPage = (props: OrderPageProps): JSX.Element => {
             <OrderInfo selectedOrder={selectedOrder} roles={roles}/>
         </div>
 
-        {selectedOrder && checkThatOrderInActiveStateForTheUser(selectedOrder?.status, props.roles) &&
+        {selectedOrder && checkThatOrderInActiveStateForTheUser(selectedOrder?.status, props.roles) && selectedOrder?.status !== Status.ACCEPTANCE &&
         <div className='manage'>
             <div>Информация о выполнении</div>
-            <Confirmation sendUpdateMessage={props.setMessage} selectedOrder={selectedOrder} roles={roles}/>
+            <Confirmation sendUpdateMessage={props.setMessage} selectedOrder={selectedOrder} roles={roles}
+                          resetOnOrderUpdate={props.resetOnOrderUpdate}/>
         </div>}
 
         <Controls roles={props.roles}
@@ -74,6 +77,12 @@ const mapDispatchToProps = () => {
             store.dispatch({
                 type: StateChangeActionType.SET_MESSAGE,
                 payload: message,
+            });
+        },
+
+        resetOnOrderUpdate: () => {
+            store.dispatch({
+                type: StateChangeActionType.RETURN_TO_ORDERS_AFTER_UPDATE,
             });
         },
     };

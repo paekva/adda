@@ -38,7 +38,7 @@ class OrdersService(
             status = getStatusIntItem(orderDto.status),
             price = orderDto.price!!,
             workers = selectWorkers(),
-            lastError = orderDto.lastError!!
+            lastError = null
         )
         val saved = customOrdersRepository.save(new)
         return saved.toDto()
@@ -51,7 +51,8 @@ class OrdersService(
             dateOfReceive = Instant.now().plusMillis(EXPECTED_DELIVERY_TIME),
             status = getStatusIntItem(Status.BUY_WAIT),
             products = cart.products.toMutableList(),
-            workers = selectWorkers()
+            workers = selectWorkers(),
+            lastError = null
         )
         val saved = ordersRepository.save(new)
         return saved.toDto()
@@ -99,68 +100,76 @@ class OrdersService(
         return purchaser || loader || master || courier
     }
 
-    fun readyToStart(status: Int, roles: Collection<Authority>): Boolean {
-        val startPurchase = roles.contains(Authority(id = 6, name = "PURCHASER")) && status == 5
-        val startLoading = roles.contains(Authority(id = 3, name = "LOADER")) && status == 9
-        val startUnloading = roles.contains(Authority(id = 4, name = "MASTER")) && status == 17
-        val startDelivery = roles.contains(Authority(id = 5, name = "COURIER")) && status == 21
-        return startPurchase || startLoading || startUnloading || startDelivery
-    }
-
-    fun readyToSubmit(status: Int, roles: Collection<Authority>): Boolean {
-        val startPurchase = roles.contains(Authority(id = 6, name = "PURCHASER")) && status == 6
-        val startLoading = roles.contains(Authority(id = 3, name = "LOADER")) && status == 10
-        val startUnloading = roles.contains(Authority(id = 4, name = "MASTER")) && status == 18
-        val startDelivery = roles.contains(Authority(id = 5, name = "COURIER")) && status == 22
-        return startPurchase || startLoading || startUnloading || startDelivery
-    }
-
-    fun readyToAcceptOrDecline(status: Int): Boolean {
-        return setOf(3, 7, 19, 23).contains(status)
-    }
-
     fun cancelOrder(orderId: Int, isCustom: Boolean): OrderDto {
-        if (isCustom) {
-            val customOrder = customOrdersRepository.findById(orderId)
-            val newCustomOrder = CustomOrder(
-                id = customOrder.get().id,
-                client = customOrder.get().client,
-                description = customOrder.get().description,
-                dateOfOrder = customOrder.get().dateOfOrder,
-                dateOfReceive = customOrder.get().dateOfReceive,
-                status = getStatusIntItem(Status.CANCELED),
-                price = customOrder.get().price,
-                workers = customOrder.get().workers,
-                lastError = customOrder.get().lastError
-            )
-            customOrdersRepository.save(newCustomOrder)
-            return newCustomOrder.toDto()
-        } else {
-            val order = ordersRepository.findById(orderId)
-            val newOrder = Order(
-                id = order.get().id,
-                client = order.get().client,
-                dateOfOrder = order.get().dateOfOrder,
-                dateOfReceive = order.get().dateOfReceive,
-                products = order.get().products,
-                status = getStatusIntItem(Status.CANCELED),
-                workers = order.get().workers
-            )
-            ordersRepository.save(newOrder)
-            return newOrder.toDto()
-        }
+        return if (isCustom) updateCustomOrder(orderId, Transition.CANCEL, null) else updateOrder(
+            orderId,
+            Transition.CANCEL,
+            null
+        )
     }
 
-    fun cancelCustomOrder(orderId: Int, reason: String): OrderDto {
-        val order = customOrdersRepository.findById(orderId)
+    fun acceptCustomOrder(orderId: Int, isCustom: Boolean, newPrice: String): OrderDto {
+        return if (isCustom) updateCustomOrder(orderId, Transition.ACCEPT, null, newPrice) else updateOrder(
+            orderId,
+            Transition.ACCEPT,
+            null
+        )
+    }
+
+    fun declineCustomOrder(orderId: Int, isCustom: Boolean, reason: String): OrderDto {
+        return if (isCustom) updateCustomOrder(orderId, Transition.DECLINE, reason) else updateOrder(
+            orderId,
+            Transition.DECLINE,
+            reason
+        )
+    }
+
+    fun acceptWork(orderId: Int, isCustom: Boolean, isAdmin: Boolean): OrderDto {
+        return if (isCustom) updateCustomOrder(orderId, Transition.ACCEPT, null) else updateOrder(
+            orderId,
+            Transition.ACCEPT,
+            null
+        )
+    }
+
+    fun declineWork(orderId: Int, isCustom: Boolean, reason: String?): OrderDto {
+        return if (isCustom) updateCustomOrder(orderId, Transition.DECLINE, reason) else updateOrder(
+            orderId,
+            Transition.DECLINE,
+            reason
+        )
+    }
+
+    fun startOrder(orderId: Int, isCustom: Boolean, roles: Collection<Authority>): OrderDto {
+        return if (isCustom) updateCustomOrder(orderId, Transition.START, null) else updateOrder(
+            orderId,
+            Transition.START,
+            null
+        )
+    }
+
+    fun sendOrderOnCheck(orderId: Int, isCustom: Boolean, roles: Collection<Authority>): OrderDto {
+        return if (isCustom) updateCustomOrder(orderId, Transition.SEND_TO_CHECK, null) else updateOrder(
+            orderId,
+            Transition.SEND_TO_CHECK,
+            null
+        )
+    }
+
+
+
+    fun updateCustomOrder(id: Int, transition: Transition, reason: String?, price: String? = null): OrderDto {
+        val order = customOrdersRepository.findById(id)
+        val status = getStatusByTransition(order.get().status, transition)
+
         val newOrder = CustomOrder(
             id = order.get().id,
             client = order.get().client,
             description = order.get().description,
             dateOfOrder = order.get().dateOfOrder,
             dateOfReceive = order.get().dateOfReceive,
-            status = getStatusIntItem(Status.RETURNED),
-            price = order.get().price,
+            status = status,
+            price = price ?: order.get().price,
             workers = order.get().workers,
             lastError = reason
         )
@@ -168,93 +177,65 @@ class OrdersService(
         return newOrder.toDto()
     }
 
-    fun acceptCustomOrder(orderId: Int, newPrice: String): OrderDto {
-        val order = customOrdersRepository.findById(orderId)
+    fun updateOrder(id: Int, transition: Transition, reason: String?): OrderDto {
+        val order = ordersRepository.findById(id)
 
-        val newOrder = CustomOrder(
+        val status = getStatusByTransition(order.get().status, transition)
+        val newOrder = Order(
             id = order.get().id,
             client = order.get().client,
-            description = order.get().description,
             dateOfOrder = order.get().dateOfOrder,
             dateOfReceive = order.get().dateOfReceive,
-            status = getStatusIntItem(Status.BUY_WAIT),
-            price = newPrice,
+            products = order.get().products,
+            status = status,
             workers = order.get().workers,
-            lastError = order.get().lastError
+            lastError = reason
         )
-        customOrdersRepository.save(newOrder)
+        ordersRepository.save(newOrder)
         return newOrder.toDto()
     }
 
-    fun acceptOrder(orderId: Int, isAdmin: Boolean): OrderDto {
-        val order = ordersRepository.findById(orderId)
-        return if (isAdmin && readyToAcceptOrDecline(order.get().status)) {
-            val newOrder = Order(
-                id = order.get().id,
-                client = order.get().client,
-                dateOfOrder = order.get().dateOfOrder,
-                dateOfReceive = order.get().dateOfReceive,
-                products = order.get().products,
-                status = orderAcceptMap[order.get().status]!!,
-                workers = order.get().workers
-            )
-            ordersRepository.save(newOrder)
-            newOrder.toDto()
-        } else order.get().toDto()
-    }
-
-    fun declineOrder(orderId: Int, isAdmin: Boolean): OrderDto {
-        val order = ordersRepository.findById(orderId)
-        return if (isAdmin && readyToAcceptOrDecline(order.get().status)) {
-            val newOrder = Order(
-                id = order.get().id,
-                client = order.get().client,
-                dateOfOrder = order.get().dateOfOrder,
-                dateOfReceive = order.get().dateOfReceive,
-                products = order.get().products,
-                status = orderDeclineMap[order.get().status]!!,
-                workers = order.get().workers
-            )
-            ordersRepository.save(newOrder)
-            newOrder.toDto()
-        } else order.get().toDto()
-    }
-
-    fun startOrder(orderId: Int, roles: Collection<Authority>): OrderDto {
-        val order = ordersRepository.findById(orderId)
-        return if (readyToStart(order.get().status, roles)) {
-            val newOrder = Order(
-                id = order.get().id,
-                client = order.get().client,
-                dateOfOrder = order.get().dateOfOrder,
-                dateOfReceive = order.get().dateOfReceive,
-                products = order.get().products,
-                status = orderStartMap[order.get().status]!!,
-                workers = order.get().workers
-            )
-            ordersRepository.save(newOrder)
-            newOrder.toDto()
-        } else order.get().toDto()
-    }
-
-    fun sendOrderOnCheck(orderId: Int, roles: Collection<Authority>): OrderDto {
-        val order = ordersRepository.findById(orderId)
-        return if (readyToSubmit(order.get().status, roles)) {
-            val newOrder = Order(
-                id = order.get().id,
-                client = order.get().client,
-                dateOfOrder = order.get().dateOfOrder,
-                dateOfReceive = order.get().dateOfReceive,
-                products = order.get().products,
-                status = orderSubmitMap[order.get().status]!!,
-                workers = order.get().workers
-            )
-            ordersRepository.save(newOrder)
-            newOrder.toDto()
-        } else order.get().toDto()
+    fun getStatusByTransition(prevStatus: Int, transition: Transition): Int {
+        var status = prevStatus
+        when (transition) {
+            Transition.DECLINE ->
+                status = orderDeclineMap[prevStatus]!!
+            Transition.ACCEPT ->
+                status = orderAcceptMap[prevStatus]!!
+            Transition.START ->
+                status = orderStartMap[prevStatus]!!
+            Transition.SEND_TO_CHECK ->
+                status = orderSendToCheckMap[prevStatus]!!
+            Transition.CANCEL ->
+                status = getStatusIntItem(Status.CANCELED)
+            Transition.LANDED ->
+                status = getStatusIntItem(Status.UNLOAD_WAIT)
+        }
+        return status
     }
 
     companion object {
         val EXPECTED_DELIVERY_TIME = Duration.ofDays(30).toMillis()
     }
+
+    fun setOrdersAreOnMoon(): List<OrderDto> {
+        val orders = ordersRepository.findAll()
+            .filter { el -> getStatusEnumItem(el.status) == Status.ON_THE_WAY }
+            .map { el -> updateOrder(el.id!!, Transition.LANDED, null) }
+        val customOrders =
+            customOrdersRepository.findAll()
+                .filter { el -> getStatusEnumItem(el.status) == Status.ON_THE_WAY }
+                .map { el -> updateCustomOrder(el.id!!, Transition.LANDED, null) }
+
+        return orders + customOrders
+    }
+}
+
+enum class Transition {
+    DECLINE,
+    ACCEPT,
+    START,
+    SEND_TO_CHECK,
+    CANCEL,
+    LANDED,
 }

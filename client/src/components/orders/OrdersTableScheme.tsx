@@ -6,7 +6,12 @@ import {getStatusForUser} from "../order/util";
 export const ordersTableScheme = (roles: AppRole[]): Scheme => {
     return {
         'id': {
-            label: 'Номер заказа'
+            label: 'Номер заказа',
+            renderer: (data: RowData): JSX.Element => {
+                return <div>
+                    {data.isCustom ? `custom_${data.id}` : data.id}
+                </div>
+            }
         },
         'client': {
             label: 'Клиент'

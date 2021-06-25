@@ -57,28 +57,45 @@ class OrderController(
     }
 
     @GetMapping("/declineCustom")
-    fun declineCustomOrder(@RequestParam orderId: Int, @RequestParam reason: String): OrderDto {
-        return ordersService.cancelCustomOrder(orderId, reason)
+    fun declineCustomOrder(
+        @RequestParam orderId: Int,
+        @RequestParam isCustom: Boolean,
+        @RequestParam reason: String
+    ): OrderDto {
+        return ordersService.declineCustomOrder(orderId, isCustom, reason)
     }
 
     @GetMapping("/acceptCustom")
-    fun acceptCustomOrder(@RequestParam orderId: Int, @RequestParam newPrice: String): OrderDto {
-        return ordersService.acceptCustomOrder(orderId, newPrice)
+    fun acceptCustomOrder(
+        @RequestParam orderId: Int,
+        @RequestParam isCustom: Boolean,
+        @RequestParam newPrice: String
+    ): OrderDto {
+        return ordersService.acceptCustomOrder(orderId, isCustom, newPrice)
     }
 
     @GetMapping("/acceptWork")
-    fun acceptWork(@RequestParam orderId: Int): OrderDto {
-        return ordersService.acceptOrder(orderId, userService.iAmAdmin())
+    fun acceptWork(@RequestParam orderId: Int, @RequestParam isCustom: Boolean): OrderDto {
+        return ordersService.acceptWork(orderId, isCustom, userService.iAmAdmin())
+    }
+
+    @GetMapping("/declineWork")
+    fun declineWork(
+        @RequestParam orderId: Int,
+        @RequestParam isCustom: Boolean,
+        @RequestParam reason: String
+    ): OrderDto {
+        return ordersService.declineWork(orderId, isCustom, reason)
     }
 
     @GetMapping("/start")
-    fun startOrder(@RequestParam orderId: Int): OrderDto {
-        return ordersService.startOrder(orderId, userService.meAsEntity().authorities)
+    fun startOrder(@RequestParam orderId: Int, @RequestParam isCustom: Boolean): OrderDto {
+        return ordersService.startOrder(orderId, isCustom, userService.meAsEntity().authorities)
     }
 
     @GetMapping("/check")
-    fun checkOrder(@RequestParam orderId: Int): OrderDto {
-        return ordersService.sendOrderOnCheck(orderId, userService.meAsEntity().authorities)
+    fun checkOrder(@RequestParam orderId: Int, @RequestParam isCustom: Boolean): OrderDto {
+        return ordersService.sendOrderOnCheck(orderId, isCustom, userService.meAsEntity().authorities)
     }
 
     @GetMapping("/confirmation/get")
@@ -93,4 +110,10 @@ class OrderController(
         @RequestParam("file") file: MultipartFile,
         redirectAttributes: RedirectAttributes
     ) = orderConfirmationService.setConfirmation(orderId, status, file.bytes)
+
+
+    @GetMapping("/planeIsOnMoon")
+    fun planeIsOnMoon(): List<OrderDto> {
+        return ordersService.setOrdersAreOnMoon()
+    }
 }
