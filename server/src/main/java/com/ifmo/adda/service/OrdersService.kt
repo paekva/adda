@@ -38,7 +38,7 @@ class OrdersService(
             status = getStatusIntItem(orderDto.status),
             price = orderDto.price!!,
             workers = selectWorkers(),
-            lastError = orderDto.lastError!!
+            lastError = null
         )
         val saved = customOrdersRepository.save(new)
         return saved.toDto()
@@ -171,8 +171,8 @@ class OrdersService(
                 status = orderSendToCheckMap[order.get().status]!!
             Transition.CANCEL ->
                 status = getStatusIntItem(Status.CANCELED)
-
-            else -> print(status)
+            Transition.LANDED ->
+                status = getStatusIntItem(Status.UNLOAD_WAIT)
         }
 
         val newOrder = CustomOrder(
@@ -205,6 +205,8 @@ class OrdersService(
                 status = orderSendToCheckMap[order.get().status]!!
             Transition.CANCEL ->
                 status = getStatusIntItem(Status.CANCELED)
+            Transition.LANDED ->
+                status = getStatusIntItem(Status.UNLOAD_WAIT)
         }
 
         val newOrder = Order(
@@ -223,6 +225,18 @@ class OrdersService(
     companion object {
         val EXPECTED_DELIVERY_TIME = Duration.ofDays(30).toMillis()
     }
+
+    fun setOrdersAreOnMoon(): List<OrderDto> {
+        val orders = ordersRepository.findAll()
+            .filter { el -> getStatusEnumItem(el.status) == Status.ON_THE_WAY }
+            .map { el -> updateOrder(el.id!!, Transition.LANDED, null) }
+        val customOrders =
+            customOrdersRepository.findAll()
+                .filter { el -> getStatusEnumItem(el.status) == Status.ON_THE_WAY }
+                .map { el -> updateCustomOrder(el.id!!, Transition.LANDED, null) }
+
+        return orders + customOrders
+    }
 }
 
 enum class Transition {
@@ -230,5 +244,6 @@ enum class Transition {
     ACCEPT,
     START,
     SEND_TO_CHECK,
-    CANCEL
+    CANCEL,
+    LANDED,
 }

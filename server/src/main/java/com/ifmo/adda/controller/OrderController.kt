@@ -110,4 +110,10 @@ class OrderController(
         @RequestParam("file") file: MultipartFile,
         redirectAttributes: RedirectAttributes
     ) = orderConfirmationService.setConfirmation(orderId, status, file.bytes)
+
+
+    @GetMapping("/planeIsOnMoon")
+    fun planeIsOnMoon(): List<OrderDto> {
+        return ordersService.setOrdersAreOnMoon()
+    }
 }

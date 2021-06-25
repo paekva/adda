@@ -122,6 +122,18 @@ export const checkOrder = (orderId: number, isCustom: boolean): Promise<any> => 
     });
 }
 
+export const planeIsOnMoon = (): Promise<any> => {
+    return customFetch<{}, any>(
+        `${getUrl()}/orders/planeIsOnMoon`,
+        Method.GET,
+        undefined,
+        true
+    ).catch(() => {
+        console.error('planeIsOnMoon not working');
+        return null;
+    });
+}
+
 export const getConfirmation = (orderId: number, status: Status): string =>
     `${getUrl()}/orders/confirmation/get?orderId=${orderId}&status=${status}`
 
