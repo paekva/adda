@@ -257,13 +257,13 @@ const Controls = (props: ControlsProps): JSX.Element => {
 
     const workerButton = (order?: Order | null,) => [
         {
-            label: "Взять в выполнение",
+            label: `${selectedOrder?.status.toString().includes('ERROR') ? "Снова в" : "В"}зять в выполнение`,
             handler: () => order?.id
                 ? startOrder(order.id, order.isCustom)
                     .then((r) => afterUpdate(r, "Произошла ошибка при взятии заказа в выполнение, попробуйте снова"))
                 : null,
             disabled: selectedOrder?.status ? !(checkThatOrderInActiveStateForTheUser(selectedOrder?.status, roles)
-                && selectedOrder?.status.toString().includes('WAIT')) : true
+                && (selectedOrder?.status.toString().includes('WAIT') || selectedOrder?.status.toString().includes('ERROR'))) : true
         },
         {
             label: "Завершить выполнение",
@@ -272,13 +272,13 @@ const Controls = (props: ControlsProps): JSX.Element => {
                     .then((r) => afterUpdate(r, "Произошла ошибка при завершении выполнения заказ, попробуйте снова"))
                 : null,
             disabled: selectedOrder?.status ? !(checkThatOrderInActiveStateForTheUser(selectedOrder?.status, roles)
-                && !(selectedOrder?.status.toString().includes('WAIT'))) : true
+                && !(selectedOrder?.status.toString().includes('WAIT') || selectedOrder?.status.toString().includes('ERROR'))) : true
         },
-        {
-            label: "Сообщить об ошибке",
-            handler: () => onError(),
-            disabled: selectedOrder?.status ? !checkThatOrderInActiveStateForTheUser(selectedOrder?.status, roles) : true
-        },
+        // {
+        //     label: "Сообщить об ошибке",
+        //     handler: () => onError(),
+        //     disabled: selectedOrder?.status ? !checkThatOrderInActiveStateForTheUser(selectedOrder?.status, roles) : true
+        // },
     ]
 
     return <>

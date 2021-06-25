@@ -101,7 +101,10 @@ val orderStartMap = mapOf(
     5 to 6,
     9 to 10,
     17 to 18,
-    21 to 22
+    21 to 22,
+    8 to 6,
+    20 to 18,
+    24 to 22
 )
 
 val orderSendToCheckMap = mapOf(
