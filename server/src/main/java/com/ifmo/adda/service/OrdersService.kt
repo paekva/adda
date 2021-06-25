@@ -1,6 +1,7 @@
 package com.ifmo.adda.service
 
 import com.ifmo.adda.dao.*
+import com.ifmo.adda.dto.CartDto
 import com.ifmo.adda.dto.OrderDto
 import com.ifmo.adda.dto.Status
 import com.ifmo.adda.repository.CustomOrdersRepository
@@ -13,15 +14,19 @@ import java.time.Instant
 class OrdersService(
     private val ordersRepository: OrdersRepository,
     private val customOrdersRepository: CustomOrdersRepository,
+    private val productsService: ProductsService,
     private val userService: UserService
 ) {
 
     fun getOrders(): List<OrderDto> =
         ordersRepository.findAll().map { it.toDto() } + customOrdersRepository.findAll().map { it.toDto() }
 
-    fun getOrdersForClient(clientId: Int): List<OrderDto> =
-        ordersRepository.findAllByClient(clientId).map { it.toDto() } +
+    fun getOrdersForClient(clientId: Int): List<OrderDto> {
+        val or = ordersRepository.findAllByClient(clientId)
+
+        return or.map { it.toDto() } +
                 customOrdersRepository.findAllByClient(clientId).map { it.toDto() }
+    }
 
     fun getOrdersForWorker(workerId: Int): List<OrderDto> {
         val worker = userService.loadUserById(workerId)
@@ -44,17 +49,25 @@ class OrdersService(
         return saved.toDto()
     }
 
-    fun makeNormalOrder(cart: Cart): OrderDto {
+    fun makeNormalOrder(cart: CartDto): OrderDto {
         val new = Order(
             client = cart.client,
             dateOfOrder = Instant.now(),
             dateOfReceive = Instant.now().plusMillis(EXPECTED_DELIVERY_TIME),
             status = getStatusIntItem(Status.BUY_WAIT),
-            products = cart.products.toMutableList(),
+            products = ArrayList(),
             workers = selectWorkers(),
             lastError = null
         )
-        val saved = ordersRepository.save(new)
+
+        cart.products?.forEach { it ->
+            var tmp = it.quantity
+            while (tmp > 0) {
+                tmp--;
+                new.products.add(productsService.getProduct(it.productId))
+            }
+        }
+        val saved = ordersRepository.saveAndFlush(new)
         return saved.toDto()
     }
 
@@ -155,7 +168,6 @@ class OrdersService(
             null
         )
     }
-
 
 
     fun updateCustomOrder(id: Int, transition: Transition, reason: String?, price: String? = null): OrderDto {

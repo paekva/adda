@@ -5,20 +5,19 @@ import './OrderPage.css'
 
 export const OrderInfo = (props: { selectedOrder?: Order | null, roles: AppRole[] }): JSX.Element => {
     const {selectedOrder, roles} = props;
-    const [products, setProducts] = useState<string>('информация о заказе отсутствует')
+    const [products, setProducts] = useState<string[]>(['информация о заказе отсутствует'])
     const [normalOrderCost, setNormalOrderCost] = useState<string>('')
     useEffect(() => {
         if (selectedOrder && selectedOrder?.description && selectedOrder?.products?.length === 0)
-            setProducts(selectedOrder?.description)
+            setProducts([selectedOrder?.description])
         else if (selectedOrder) {
-            const makeDescription = selectedOrder?.products?.map(e => {
-                return `${e.name}  ${e.price}`
-            }).join(",  ");
-            if (makeDescription) setProducts(makeDescription);
+            setProducts(selectedOrder?.products?.map(e => {
+                return `${e.name}  ${e.price} - ${e.quantity} шт.`
+            }) ?? ['информация о заказе отсутствует']);
         }
 
         if (selectedOrder && !(selectedOrder.isCustom) && selectedOrder.products) {
-            const sum = selectedOrder.products.reduce((sum, current) => sum + parseInt(current.price), 0);
+            const sum = selectedOrder.products.reduce((sum, current) => sum + parseInt(current.price) * current['quantity'], 0);
             setNormalOrderCost(String(sum))
         }
     }, [])
@@ -36,8 +35,8 @@ export const OrderInfo = (props: { selectedOrder?: Order | null, roles: AppRole[
                     Дата доставки: {new Date(selectedOrder.dateOfReceive).toLocaleDateString("en-US")}
                 </div>
 
-                <div>
-                    Состав заказа: {products}
+                <div style={{display: 'flex', flexDirection: 'column', alignItems: 'flex-start', padding: '15px 0'}}>
+                    Состав заказа: {products.map(el => <div> {el} </div>)}
                 </div>
 
                 <div>

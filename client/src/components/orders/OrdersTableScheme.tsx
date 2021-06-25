@@ -1,5 +1,5 @@
 import {RowData, Scheme} from "../tableForData/types";
-import {Product, statusToStringMap} from "../../types";
+import {statusToStringMap} from "../../types";
 import {AppRole} from "../../api/user";
 import {getStatusForUser} from "../order/util";
 
@@ -20,7 +20,10 @@ export const ordersTableScheme = (roles: AppRole[]): Scheme => {
             label: 'Состав',
             renderer: (data: RowData): JSX.Element => {
                 return <div>
-                    {data.isCustom ? data.description : data.products?.map((el: Product) => el.name).join(',')}
+                    {data.isCustom
+                        ? data.description
+                        : data.products?.map((el: any) => <div>{el.name} -
+                            {el['quantity']} шт.</div>)}
                 </div>
             }
         },
