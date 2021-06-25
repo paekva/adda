@@ -134,8 +134,18 @@ export const planeIsOnMoon = (): Promise<any> => {
     });
 }
 
-export const getConfirmation = (orderId: number, status: Status): string =>
-    `${getUrl()}/orders/confirmation/get?orderId=${orderId}&status=${status}`
+export const getConfirmation = (orderId: number, st: Status): string => {
+    const statusString: string = st
+        .toString()
+        .replace("ACCEPTANCE", "")
+        .replace("WAIT", "")
+        .replace("ERROR", "")
+        .replaceAll("_", "")
+
+    const status: Status = Status[statusString as keyof typeof Status]
+
+    return `${getUrl()}/orders/confirmation/get?orderId=${orderId}&status=${status}&none=${Date.now()}`
+}
 
 export const setConfirmation = (
     orderId: number,

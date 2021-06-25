@@ -1,5 +1,6 @@
 package com.ifmo.adda.dao
 
+import java.time.Instant
 import javax.persistence.*
 
 @Entity
@@ -14,7 +15,10 @@ data class OrderConfirmation(
     val status: Int,
 
     @Column(nullable = false)
-    val confirmation: ByteArray
+    val confirmation: ByteArray,
+
+    @Column(nullable = false)
+    var dateOfConfirmation: Instant
 ) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

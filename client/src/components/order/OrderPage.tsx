@@ -15,7 +15,7 @@ export type OrderPageProps = {
     selectedOrder: Order | null
     roles: AppRole[]
     setMessage: (message: string | null) => void
-    resetOnOrderUpdate: () => void
+    resetOnOrderUpdate: () => void,
 }
 
 const OrderPage = (props: OrderPageProps): JSX.Element => {
@@ -54,7 +54,7 @@ const OrderPage = (props: OrderPageProps): JSX.Element => {
             <OrderInfo selectedOrder={selectedOrder} roles={roles}/>
         </div>
 
-        {selectedOrder && checkThatOrderInActiveStateForTheUser(selectedOrder?.status, props.roles) &&
+        {selectedOrder && checkThatOrderInActiveStateForTheUser(selectedOrder?.status, props.roles) && selectedOrder?.status !== Status.ACCEPTANCE &&
         <div className='manage'>
             <div>Информация о выполнении</div>
             <Confirmation sendUpdateMessage={props.setMessage} selectedOrder={selectedOrder} roles={roles}

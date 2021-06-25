@@ -1,4 +1,4 @@
-import {Order} from "../../types";
+import {Order, Status} from "../../types";
 import {AppRole} from "../../api/user";
 import React, {useCallback, useState} from "react";
 import {getConfirmation, setConfirmation} from "../../api/orders";
@@ -9,10 +9,13 @@ export const Confirmation = (props: {
     selectedOrder?: Order | null,
     roles: AppRole[],
     sendUpdateMessage: (msg: string | null) => void,
-    resetOnOrderUpdate: () => void
+    resetOnOrderUpdate: () => void,
 }): JSX.Element => {
     const [bytes, setBytes] = useState<any | null>(null);
-    const [url, setUrl] = useState(props.selectedOrder ? getConfirmation(props.selectedOrder?.id, props.selectedOrder?.status) : '');
+    const [url, setUrl] = useState(props.selectedOrder ?
+        getConfirmation(props.selectedOrder?.id, props.selectedOrder?.status)
+        : ''
+    );
 
     const onPhotoFileChange = useCallback(
         (e) => {
@@ -39,7 +42,16 @@ export const Confirmation = (props: {
             if (props.selectedOrder) {
                 const data = new FormData();
                 data.append("file", bytes.file);
-                setConfirmation(props.selectedOrder?.id, props.selectedOrder?.status, data)
+                const statusString: string = props.selectedOrder?.status
+                    .toString()
+                    .replace("ACCEPTANCE", "")
+                    .replace("WAIT", "")
+                    .replace("ERROR", "")
+                    .replace("_", "")
+
+                const status: Status = Status[statusString as keyof typeof Status]
+
+                setConfirmation(props.selectedOrder?.id, status ? status : Status.UNKNOWN, data)
                     .then((resp) => {
                         setBytes(null)
                         resp && props.resetOnOrderUpdate()
@@ -50,32 +62,36 @@ export const Confirmation = (props: {
         [bytes, props.selectedOrder]
     );
 
+    console.warn(url)
     return <div>
         {url !== '' ?
-            <img
-                src={url} alt={''}
-                onError={() => setUrl('')}/>
+            <div>
+                <img
+                    src={url} alt={''}
+                    onError={() => setUrl('')}/>
+                <div className="imageLoad">
+                    <input
+                        className="fileInput"
+                        type="file"
+                        onChange={onPhotoFileChange}
+                        disabled={props.selectedOrder?.status.includes('WAIT')}
+                    />
+                    <Button
+                        variant="contained"
+                        color="default"
+                        onClick={onPhotoFileSubmit}
+                        disabled={props.selectedOrder?.status.includes('WAIT')
+                        || bytes === null}
+                        style={{width: 220, marginTop: 150}}
+                    >
+                        Загрузить
+                    </Button>
+                </div>
+            </div>
             : props.roles.includes(AppRole.ADMIN)
                 ? 'Дополнительной информации не имеется'
                 : <div>
                     <div>Вы еще ничего не загрузили</div>
-                    <div className="imageLoad">
-                        <input
-                            className="fileInput"
-                            type="file"
-                            onChange={onPhotoFileChange}
-                        />
-                        <Button
-                            variant="contained"
-                            color="default"
-                            onClick={onPhotoFileSubmit}
-                            disabled={props.selectedOrder?.status.includes('WAIT')
-                            || bytes === null}
-                            style={{width: 220, marginTop: 150}}
-                        >
-                            Загрузить
-                        </Button>
-                    </div>
                 </div>
         }
     </div>

@@ -9,7 +9,7 @@ CREATE TABLE ORDER_ITEM
 );
 
 INSERT INTO ORDER_ITEM (client, date_of_order, date_of_receive, status, last_error)
-VALUES (21, TIMESTAMP '2011-05-16 15:36:38', TIMESTAMP '2011-06-16 15:36:38', 5, null);
+VALUES (21, TIMESTAMP '2011-05-16 15:36:38', TIMESTAMP '2011-06-16 15:36:38', 7, null);
 
 INSERT INTO ORDER_ITEM (client, date_of_order, date_of_receive, status, last_error)
 VALUES (22, TIMESTAMP '2021-05-16 15:36:38', TIMESTAMP '2021-06-16 15:36:38', 9, null);
