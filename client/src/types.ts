@@ -17,6 +17,7 @@ export type Order = {
     products?: any[];
     description?: string;
     price?: string;
+    lastError?: string;
 }
 
 export enum MenuItem {

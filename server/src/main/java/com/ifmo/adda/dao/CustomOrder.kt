@@ -29,6 +29,9 @@ data class CustomOrder(
         @Column(nullable = false)
         val price: String,
 
+        @Column(nullable = false)
+        val lastError: String,
+
         @ManyToMany(fetch = FetchType.LAZY)
         @JoinTable(
                 name = "worker_to_custom_order",

@@ -9,7 +9,8 @@ data class OrderDto(
         val dateOfOrder: Long,
         val dateOfReceive: Long,
         val status: Status,
-        val price: String?
+        val price: String?,
+        val lastError: String?
 )
 
 data class OrdersDto(

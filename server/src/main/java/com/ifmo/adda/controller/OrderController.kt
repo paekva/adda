@@ -46,7 +46,8 @@ class OrderController(
             Instant.now().toEpochMilli(),
             Instant.now().plusMillis(EXPECTED_DELIVERY_TIME).toEpochMilli(),
             Status.ACCEPTANCE,
-            "Оценивается"
+            "Оценивается",
+            null
         )
     )
 

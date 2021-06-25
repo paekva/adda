@@ -37,7 +37,8 @@ class OrdersService(
             dateOfReceive = Instant.ofEpochMilli(orderDto.dateOfReceive),
             status = getStatusIntItem(orderDto.status),
             price = orderDto.price!!,
-            workers = selectWorkers()
+            workers = selectWorkers(),
+            lastError = orderDto.lastError!!
         )
         val saved = customOrdersRepository.save(new)
         return saved.toDto()
@@ -129,7 +130,8 @@ class OrdersService(
                 dateOfReceive = customOrder.get().dateOfReceive,
                 status = getStatusIntItem(Status.CANCELED),
                 price = customOrder.get().price,
-                workers = customOrder.get().workers
+                workers = customOrder.get().workers,
+                lastError = customOrder.get().lastError
             )
             customOrdersRepository.save(newCustomOrder)
             return newCustomOrder.toDto()
@@ -158,8 +160,9 @@ class OrdersService(
             dateOfOrder = order.get().dateOfOrder,
             dateOfReceive = order.get().dateOfReceive,
             status = getStatusIntItem(Status.RETURNED),
-            price = reason,
-            workers = order.get().workers
+            price = order.get().price,
+            workers = order.get().workers,
+            lastError = reason
         )
         customOrdersRepository.save(newOrder)
         return newOrder.toDto()
@@ -176,7 +179,8 @@ class OrdersService(
             dateOfReceive = order.get().dateOfReceive,
             status = getStatusIntItem(Status.BUY_WAIT),
             price = newPrice,
-            workers = order.get().workers
+            workers = order.get().workers,
+            lastError = order.get().lastError
         )
         customOrdersRepository.save(newOrder)
         return newOrder.toDto()
@@ -186,13 +190,13 @@ class OrdersService(
         val order = ordersRepository.findById(orderId)
         return if (isAdmin && readyToAcceptOrDecline(order.get().status)) {
             val newOrder = Order(
-                    id = order.get().id,
-                    client = order.get().client,
-                    dateOfOrder = order.get().dateOfOrder,
-                    dateOfReceive = order.get().dateOfReceive,
-                    products = order.get().products,
-                    status = orderAcceptMap[order.get().status]!!,
-                    workers = order.get().workers
+                id = order.get().id,
+                client = order.get().client,
+                dateOfOrder = order.get().dateOfOrder,
+                dateOfReceive = order.get().dateOfReceive,
+                products = order.get().products,
+                status = orderAcceptMap[order.get().status]!!,
+                workers = order.get().workers
             )
             ordersRepository.save(newOrder)
             newOrder.toDto()
@@ -220,13 +224,13 @@ class OrdersService(
         val order = ordersRepository.findById(orderId)
         return if (readyToStart(order.get().status, roles)) {
             val newOrder = Order(
-                    id = order.get().id,
-                    client = order.get().client,
-                    dateOfOrder = order.get().dateOfOrder,
-                    dateOfReceive = order.get().dateOfReceive,
-                    products = order.get().products,
-                    status = orderStartMap[order.get().status]!!,
-                    workers = order.get().workers
+                id = order.get().id,
+                client = order.get().client,
+                dateOfOrder = order.get().dateOfOrder,
+                dateOfReceive = order.get().dateOfReceive,
+                products = order.get().products,
+                status = orderStartMap[order.get().status]!!,
+                workers = order.get().workers
             )
             ordersRepository.save(newOrder)
             newOrder.toDto()
@@ -237,13 +241,13 @@ class OrdersService(
         val order = ordersRepository.findById(orderId)
         return if (readyToSubmit(order.get().status, roles)) {
             val newOrder = Order(
-                    id = order.get().id,
-                    client = order.get().client,
-                    dateOfOrder = order.get().dateOfOrder,
-                    dateOfReceive = order.get().dateOfReceive,
-                    products = order.get().products,
-                    status = orderSubmitMap[order.get().status]!!,
-                    workers = order.get().workers
+                id = order.get().id,
+                client = order.get().client,
+                dateOfOrder = order.get().dateOfOrder,
+                dateOfReceive = order.get().dateOfReceive,
+                products = order.get().products,
+                status = orderSubmitMap[order.get().status]!!,
+                workers = order.get().workers
             )
             ordersRepository.save(newOrder)
             newOrder.toDto()
