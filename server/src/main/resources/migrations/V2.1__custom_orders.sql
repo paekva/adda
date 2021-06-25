@@ -11,10 +11,10 @@ CREATE TABLE CUSTOM_ORDER_ITEM
 );
 
 INSERT INTO CUSTOM_ORDER_ITEM (client, description, date_of_order, date_of_receive, status, price, last_error)
-VALUES (21, 'Хочу слона', TIMESTAMP '2011-05-16 15:36:38', TIMESTAMP '2011-06-16 15:36:38', 3, 'Не оценена', null);
+VALUES (21, 'Сигары Доминиканские марки BigSmoke в деревянном кейсе на 20 штук, зажигалка газовая металлическая Firebolt и 500 мл заправки к ней', TIMESTAMP '2011-05-16 15:36:38', TIMESTAMP '2011-06-16 15:36:38', 3, 'Не оценена', null);
 
 INSERT INTO CUSTOM_ORDER_ITEM (client, description, date_of_order, date_of_receive, status, price, last_error)
-VALUES (22, 'Хочу лупу', TIMESTAMP '2021-05-16 15:36:38', TIMESTAMP '2021-06-16 15:36:38', 17, 'Не оценена', null);
+VALUES (22, 'Табак ферментированный мексиканский марки OrangeBox, 400 г.', TIMESTAMP '2021-05-16 15:36:38', TIMESTAMP '2021-06-16 15:36:38', 17, 'Не оценена', null);
 
 
 create table worker_to_custom_order
