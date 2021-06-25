@@ -15,6 +15,7 @@ export type OrderPageProps = {
     selectedOrder: Order | null
     roles: AppRole[]
     setMessage: (message: string | null) => void
+    resetOnOrderUpdate: () => void
 }
 
 const OrderPage = (props: OrderPageProps): JSX.Element => {
@@ -55,7 +56,7 @@ const OrderPage = (props: OrderPageProps): JSX.Element => {
         {selectedOrder && checkThatOrderInActiveStateForTheUser(selectedOrder?.status, props.roles) &&
         <div className='manage'>
             <div>Информация о выполнении</div>
-            <Confirmation sendUpdateMessage={props.setMessage} selectedOrder={selectedOrder} roles={roles}/>
+            <Confirmation sendUpdateMessage={props.setMessage} selectedOrder={selectedOrder} roles={roles} resetOnOrderUpdate={props.resetOnOrderUpdate} />
         </div>}
 
         <Controls roles={props.roles}
@@ -74,6 +75,12 @@ const mapDispatchToProps = () => {
             store.dispatch({
                 type: StateChangeActionType.SET_MESSAGE,
                 payload: message,
+            });
+        },
+
+        resetOnOrderUpdate: () => {
+            store.dispatch({
+                type: StateChangeActionType.RETURN_TO_ORDERS_AFTER_UPDATE,
             });
         },
     };

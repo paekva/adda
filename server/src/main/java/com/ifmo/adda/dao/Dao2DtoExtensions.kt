@@ -104,7 +104,7 @@ val orderStartMap = mapOf(
     21 to 22
 )
 
-val orderSubmitMap = mapOf(
+val orderSendToCheckMap = mapOf(
     6 to 7,
     10 to 14,
     18 to 19,

@@ -8,7 +8,8 @@ import {displayAlert} from "../../utils";
 export const Confirmation = (props: {
     selectedOrder?: Order | null,
     roles: AppRole[],
-    sendUpdateMessage: (msg: string | null) => void
+    sendUpdateMessage: (msg: string | null) => void,
+    resetOnOrderUpdate: () => void
 }): JSX.Element => {
     const [bytes, setBytes] = useState<any | null>(null);
     const [url, setUrl] = useState(props.selectedOrder ? getConfirmation(props.selectedOrder?.id, props.selectedOrder?.status) : '');
@@ -34,13 +35,14 @@ export const Confirmation = (props: {
         [bytes]
     );
     const onPhotoFileSubmit = useCallback(
-        (ev) => {
+        () => {
             if (props.selectedOrder) {
                 const data = new FormData();
                 data.append("file", bytes.file);
                 setConfirmation(props.selectedOrder?.id, props.selectedOrder?.status, data)
                     .then((resp) => {
                         setBytes(null)
+                        resp && props.resetOnOrderUpdate()
                         !resp && displayAlert("Произошла ошибка при добавлении подтверждения, попробуйте снова", props.sendUpdateMessage)
                     });
             }
@@ -52,7 +54,7 @@ export const Confirmation = (props: {
         {url !== '' ?
             <img
                 src={url} alt={''}
-                onError={(event) => setUrl('')}/>
+                onError={() => setUrl('')}/>
             : props.roles.includes(AppRole.ADMIN)
                 ? 'Дополнительной информации не имеется'
                 : <div>
@@ -64,10 +66,11 @@ export const Confirmation = (props: {
                             onChange={onPhotoFileChange}
                         />
                         <Button
-                            variant="outlined"
-                            color="primary"
+                            variant="contained"
+                            color="default"
                             onClick={onPhotoFileSubmit}
-                            disabled={bytes === null}
+                            disabled={props.selectedOrder?.status.includes('WAIT')
+                            || bytes === null}
                             style={{width: 220, marginTop: 150}}
                         >
                             Загрузить

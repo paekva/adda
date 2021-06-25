@@ -14,7 +14,7 @@ export const getOrdersListForUser = (): Promise<OrdersListResponse | null> => {
         Method.GET,
         undefined,
         true
-    ).catch((e) => {
+    ).catch(() => {
         console.error('getOrdersListForUser not working');
         return null;
     });
@@ -26,7 +26,7 @@ export const makeCustomOrder = (description: string): Promise<OrdersListResponse
         Method.POST,
         description,
         true
-    ).catch((e) => {
+    ).catch(() => {
         console.error('makeCustomOrder not working');
         return null;
     });
@@ -40,7 +40,7 @@ export const cancelOrder = (orderId: number, isCustom: boolean): Promise<any> =>
         Method.GET,
         undefined,
         true
-    ).catch((e) => {
+    ).catch(() => {
         console.error('cancelOrder not working');
         return null;
     });
@@ -49,25 +49,25 @@ export const cancelOrder = (orderId: number, isCustom: boolean): Promise<any> =>
 
 // ADMIN
 // custom order confirmation
-export const acceptCustomOrder = (orderId: number, newPrice: string): Promise<any> => {
+export const acceptCustomOrder = (orderId: number, isCustom: boolean, newPrice: string): Promise<any> => {
     return customFetch<{}, any>(
-        `${getUrl()}/orders/acceptCustom?orderId=${orderId}&newPrice=${newPrice}`,
+        `${getUrl()}/orders/acceptCustom?orderId=${orderId}&isCustom=${isCustom}&newPrice=${newPrice}`,
         Method.GET,
         undefined,
         true
-    ).catch((e) => {
+    ).catch(() => {
         console.error('acceptCustomOrder not working');
         return null;
     });
 }
 
-export const declineCustomOrder = (orderId: number, reason: String): Promise<any> => {
+export const declineCustomOrder = (orderId: number, isCustom: boolean, reason: String): Promise<any> => {
     return customFetch<{}, any>(
-        `${getUrl()}/orders/declineCustom?orderId=${orderId}&reason=${reason}`,
+        `${getUrl()}/orders/declineCustom?orderId=${orderId}&isCustom=${isCustom}&reason=${reason}`,
         Method.GET,
         undefined,
         true
-    ).catch((e) => {
+    ).catch(() => {
         console.error('cancelCustomOrder not working');
         return null;
     });
@@ -80,7 +80,7 @@ export const acceptWork = (orderId: number, isCustom: boolean): Promise<any> => 
         Method.GET,
         undefined,
         true
-    ).catch((e) => {
+    ).catch(() => {
         console.error('acceptOrder not working');
         return null;
     });
@@ -91,32 +91,32 @@ export const declineWork = (orderId: number, isCustom: boolean, reason: String):
         Method.GET,
         undefined,
         true
-    ).catch((e) => {
+    ).catch(() => {
         console.error('cancelCustomOrder not working');
         return null;
     });
 }
 
 // WORKER
-export const startOrder = (orderId: number): Promise<any> => {
+export const startOrder = (orderId: number, isCustom: boolean): Promise<any> => {
     return customFetch<{}, any>(
-        `${getUrl()}/orders/start?orderId=${orderId}`,
+        `${getUrl()}/orders/start?orderId=${orderId}&isCustom=${isCustom}`,
         Method.GET,
         undefined,
         true
-    ).catch((e) => {
+    ).catch(() => {
         console.error('startOrder not working');
         return null;
     });
 }
 
-export const checkOrder = (orderId: number): Promise<any> => {
+export const checkOrder = (orderId: number, isCustom: boolean): Promise<any> => {
     return customFetch<{}, any>(
-        `${getUrl()}/orders/check?orderId=${orderId}`,
+        `${getUrl()}/orders/check?orderId=${orderId}&isCustom=${isCustom}`,
         Method.GET,
         undefined,
         true
-    ).catch((e) => {
+    ).catch(() => {
         console.error('checkOrder not working');
         return null;
     });
@@ -134,7 +134,7 @@ export const setConfirmation = (
         `${getUrl()}/orders/confirmation/set/${orderId}/${status}`,
         Method.POST,
         body
-    ).catch((e) => {
+    ).catch(() => {
         console.error('setConfirmation not working');
         return null;
     });

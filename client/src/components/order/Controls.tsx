@@ -2,7 +2,7 @@ import {AppRole} from "../../api/user";
 import Button from "@material-ui/core/Button";
 import React, {useCallback, useState} from "react";
 import {Order, Status} from "../../types";
-import {acceptCustomOrder, acceptWork, declineCustomOrder, cancelOrder, checkOrder, startOrder} from "../../api/orders";
+import {acceptCustomOrder, acceptWork, cancelOrder, checkOrder, declineCustomOrder, startOrder} from "../../api/orders";
 import {displayAlert} from "../../utils";
 import {Dialog} from "../dialog/Dialog";
 import {TextField} from "@material-ui/core";
@@ -90,7 +90,7 @@ const Controls = (props: ControlsProps): JSX.Element => {
                     variant="contained"
                     color="default"
                     onClick={() => selectedOrder?.id && !(isNaN(+orderEvaluation))
-                        ? acceptCustomOrder(selectedOrder.id, orderEvaluation)
+                        ? acceptCustomOrder(selectedOrder.id, selectedOrder.isCustom, orderEvaluation)
                             .then((resp) => {
                                 setDialog(false)
                                 afterUpdate(resp, "Произошла ошибка при подтверждении заказа, попробуйте снова")
@@ -124,7 +124,7 @@ const Controls = (props: ControlsProps): JSX.Element => {
                     type="submit"
                     variant="contained"
                     color="default"
-                    onClick={() => selectedOrder?.id ? declineCustomOrder(selectedOrder.id, orderCancel)
+                    onClick={() => selectedOrder?.id ? declineCustomOrder(selectedOrder.id, selectedOrder.isCustom, orderCancel)
                             .then((resp) => {
                                 setDeclineDialog(false)
                                 afterUpdate(resp, "Произошла ошибка при отмене заказа, попробуйте снова")
@@ -213,7 +213,7 @@ const Controls = (props: ControlsProps): JSX.Element => {
         {
             label: "Взять в выполнение",
             handler: () => order?.id
-                ? startOrder(order.id)
+                ? startOrder(order.id, order.isCustom)
                     .then((r) => afterUpdate(r, "Произошла ошибка при взятии заказа в выполнение, попробуйте снова"))
                 : null,
             disabled: selectedOrder?.status ? !(checkThatOrderInActiveStateForTheUser(selectedOrder?.status, roles)
@@ -222,7 +222,7 @@ const Controls = (props: ControlsProps): JSX.Element => {
         {
             label: "Завершить выполнение",
             handler: () => order?.id
-                ? checkOrder(order.id)
+                ? checkOrder(order.id, order.isCustom)
                     .then((r) => afterUpdate(r, "Произошла ошибка при завершении выполнения заказ, попробуйте снова"))
                 : null,
             disabled: selectedOrder?.status ? !(checkThatOrderInActiveStateForTheUser(selectedOrder?.status, roles)
