@@ -31,7 +31,8 @@ const OrderPage = (props: OrderPageProps): JSX.Element => {
     return <div className='order'>
 
         <div className='header'>
-            <div className='orderId'>Заказ №{selectedOrder?.id}</div>
+            <div className='orderId'>Заказ
+                №{selectedOrder?.isCustom ? `custom_${selectedOrder?.id}` : selectedOrder?.id}</div>
             <div style={{
                 color:
                     currentStatus.includes('WAIT')
@@ -56,7 +57,8 @@ const OrderPage = (props: OrderPageProps): JSX.Element => {
         {selectedOrder && checkThatOrderInActiveStateForTheUser(selectedOrder?.status, props.roles) &&
         <div className='manage'>
             <div>Информация о выполнении</div>
-            <Confirmation sendUpdateMessage={props.setMessage} selectedOrder={selectedOrder} roles={roles} resetOnOrderUpdate={props.resetOnOrderUpdate} />
+            <Confirmation sendUpdateMessage={props.setMessage} selectedOrder={selectedOrder} roles={roles}
+                          resetOnOrderUpdate={props.resetOnOrderUpdate}/>
         </div>}
 
         <Controls roles={props.roles}

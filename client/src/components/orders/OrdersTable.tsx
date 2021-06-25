@@ -56,7 +56,7 @@ const OrdersTable = (props: OrdersTableProps): JSX.Element => {
     // polling table data every 10 sec
     const updateOnTimeOut = useCallback(() => {
         updateTableData();
-        timer = window.setTimeout(updateOnTimeOut, 10000)
+        timer = window.setTimeout(updateOnTimeOut, 5000)
     }, [])
 
     useEffect(() => {

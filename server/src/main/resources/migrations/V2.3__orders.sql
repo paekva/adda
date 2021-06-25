@@ -4,14 +4,15 @@ CREATE TABLE ORDER_ITEM
     client          INT         NOT NULL REFERENCES user_ (id),
     date_of_order   TIMESTAMPTZ NOT NULL,
     date_of_receive TIMESTAMPTZ NOT NULL,
-    status          INT         NOT NULL
+    status          INT         NOT NULL,
+    last_error       TEXT
 );
 
-INSERT INTO ORDER_ITEM (client, date_of_order, date_of_receive, status)
-VALUES (21, TIMESTAMP '2011-05-16 15:36:38', TIMESTAMP '2011-06-16 15:36:38', 3);
+INSERT INTO ORDER_ITEM (client, date_of_order, date_of_receive, status, last_error)
+VALUES (21, TIMESTAMP '2011-05-16 15:36:38', TIMESTAMP '2011-06-16 15:36:38', 5, null);
 
-INSERT INTO ORDER_ITEM (client, date_of_order, date_of_receive, status)
-VALUES (22, TIMESTAMP '2021-05-16 15:36:38', TIMESTAMP '2021-06-16 15:36:38', 4);
+INSERT INTO ORDER_ITEM (client, date_of_order, date_of_receive, status, last_error)
+VALUES (22, TIMESTAMP '2021-05-16 15:36:38', TIMESTAMP '2021-06-16 15:36:38', 9, null);
 
 
 create table product_to_order

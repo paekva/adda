@@ -51,7 +51,8 @@ class OrdersService(
             dateOfReceive = Instant.now().plusMillis(EXPECTED_DELIVERY_TIME),
             status = getStatusIntItem(Status.BUY_WAIT),
             products = cart.products.toMutableList(),
-            workers = selectWorkers()
+            workers = selectWorkers(),
+            lastError = null
         )
         val saved = ordersRepository.save(new)
         return saved.toDto()
@@ -156,24 +157,10 @@ class OrdersService(
     }
 
 
+
     fun updateCustomOrder(id: Int, transition: Transition, reason: String?, price: String? = null): OrderDto {
         val order = customOrdersRepository.findById(id)
-        var status = order.get().status
-
-        when (transition) {
-            Transition.DECLINE ->
-                status = orderDeclineMap[order.get().status]!!
-            Transition.ACCEPT ->
-                status = orderAcceptMap[order.get().status]!!
-            Transition.START ->
-                status = orderStartMap[order.get().status]!!
-            Transition.SEND_TO_CHECK ->
-                status = orderSendToCheckMap[order.get().status]!!
-            Transition.CANCEL ->
-                status = getStatusIntItem(Status.CANCELED)
-            Transition.LANDED ->
-                status = getStatusIntItem(Status.UNLOAD_WAIT)
-        }
+        val status = getStatusByTransition(order.get().status, transition)
 
         val newOrder = CustomOrder(
             id = order.get().id,
@@ -192,23 +179,8 @@ class OrdersService(
 
     fun updateOrder(id: Int, transition: Transition, reason: String?): OrderDto {
         val order = ordersRepository.findById(id)
-        var status = order.get().status
 
-        when (transition) {
-            Transition.DECLINE ->
-                status = orderDeclineMap[order.get().status]!!
-            Transition.ACCEPT ->
-                status = orderAcceptMap[order.get().status]!!
-            Transition.START ->
-                status = orderStartMap[order.get().status]!!
-            Transition.SEND_TO_CHECK ->
-                status = orderSendToCheckMap[order.get().status]!!
-            Transition.CANCEL ->
-                status = getStatusIntItem(Status.CANCELED)
-            Transition.LANDED ->
-                status = getStatusIntItem(Status.UNLOAD_WAIT)
-        }
-
+        val status = getStatusByTransition(order.get().status, transition)
         val newOrder = Order(
             id = order.get().id,
             client = order.get().client,
@@ -216,10 +188,30 @@ class OrdersService(
             dateOfReceive = order.get().dateOfReceive,
             products = order.get().products,
             status = status,
-            workers = order.get().workers
+            workers = order.get().workers,
+            lastError = reason
         )
         ordersRepository.save(newOrder)
         return newOrder.toDto()
+    }
+
+    fun getStatusByTransition(prevStatus: Int, transition: Transition): Int {
+        var status = prevStatus
+        when (transition) {
+            Transition.DECLINE ->
+                status = orderDeclineMap[prevStatus]!!
+            Transition.ACCEPT ->
+                status = orderAcceptMap[prevStatus]!!
+            Transition.START ->
+                status = orderStartMap[prevStatus]!!
+            Transition.SEND_TO_CHECK ->
+                status = orderSendToCheckMap[prevStatus]!!
+            Transition.CANCEL ->
+                status = getStatusIntItem(Status.CANCELED)
+            Transition.LANDED ->
+                status = getStatusIntItem(Status.UNLOAD_WAIT)
+        }
+        return status
     }
 
     companion object {
