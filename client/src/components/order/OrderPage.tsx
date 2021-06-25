@@ -54,7 +54,10 @@ const OrderPage = (props: OrderPageProps): JSX.Element => {
             <OrderInfo selectedOrder={selectedOrder} roles={roles}/>
         </div>
 
-        {selectedOrder && checkThatOrderInActiveStateForTheUser(selectedOrder?.status, props.roles) && selectedOrder?.status !== Status.ACCEPTANCE &&
+        {selectedOrder
+        && checkThatOrderInActiveStateForTheUser(selectedOrder?.status, props.roles)
+        && selectedOrder?.status !== Status.ACCEPTANCE
+        && !(selectedOrder?.status.includes('LOAD') && !selectedOrder?.status.includes('UNLOAD')) &&
         <div className='manage'>
             <div>Информация о выполнении</div>
             <Confirmation sendUpdateMessage={props.setMessage} selectedOrder={selectedOrder} roles={roles}
